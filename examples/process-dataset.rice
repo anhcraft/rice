@@ -1,0 +1,129 @@
+# ==============================================================================
+# == Data Generation
+# ==============================================================================
+
+# Generates a list of mock product records.
+# @param count (Int): The number of records to generate.
+# @return (List): A list of product maps.
+const generate_records = func(count) {
+    const records = list.new();
+    const num_categories = len(CATEGORIES);
+
+    for (var i = 0; i < count; i++) {
+        const record = map.new()
+            .put("id", i)
+            .put("name", "Product-" + string(i))
+            .put("category", CATEGORIES[i % num_categories])
+            .put("price", 10.0 + math.abs(i * 19.99 % 990.0))
+            .put("stock", i % 100)
+            .put("active", (i % 5) != 0);
+
+        records.append(record);
+    }
+
+    return records;
+};
+
+# ==============================================================================
+# == Data Processing Pipeline
+# ==============================================================================
+
+# Filters records to find active, high-priced products in specific categories.
+# @param records (List): The list of product records.
+# @return (List): A new list containing only the filtered records.
+const filter_products = func(records) {
+    return records.filter(func(rec) {
+        const is_active = rec.active;
+        const is_high_price = rec.price > 500.0;
+        const is_target_category = rec.category == "Electronics" || rec.category == "Home Goods";
+
+        return is_active && is_high_price && is_target_category;
+    });
+};
+
+# Sorts records by product name in ascending order.
+# @param records (List): The list to sort.
+# @return (List): The same list, sorted in-place.
+const sort_products_by_name = func(records) {
+    # The sort function should return true if the first argument should come before the second.
+    return records.sort(func(a, b) {
+        return a.name < b.name;
+    });
+};
+
+# Transforms sorted records into human-readable summary strings.
+# @param records (List): A list of sorted product records.
+# @return (List): A new list of formatted strings.
+const format_product_summaries = func(records) {
+    return records.map(func(rec) {
+        return strings.format(
+            "ID: %-5d | %-15s | $%7.2f",
+            rec.id,
+            rec.name,
+            rec.price
+        );
+    });
+};
+
+# ==============================================================================
+# == Data Analysis
+# ==============================================================================
+
+# Analyzes the entire dataset to compute aggregate statistics.
+# @param records (List): The original list of all product records.
+# @return (Map): A map containing the analysis results.
+const analyze_dataset = func(records) {
+    const summary = map.of(
+        "total_records", len(records),
+        "total_value_in_stock", 0.0,
+        "category_counts", map.new()
+    );
+
+    for record in records {
+        # Calculate total value of all products in stock
+        const record_stock_value = record.price * record.stock;
+        summary.put("total_value_in_stock", summary.total_value_in_stock + record_stock_value);
+
+        # Count records per category
+        const category = record.category;
+        const counts = summary.category_counts;
+        if !counts.includeKey(category) {
+            counts.put(category, 0);
+        }
+        counts.put(category, counts[category] + 1);
+    }
+
+    return summary;
+};
+
+
+# ==============================================================================
+# == Main Execution
+# ==============================================================================
+
+# 1. Generate the initial dataset
+printlnf("Generating %d records...", NUM_RECORDS);
+const all_records = generate_records(NUM_RECORDS);
+println("Generation complete.");
+
+# 2. Run the processing pipeline
+println("\nFiltering and processing records...");
+var processed_records = filter_products(all_records);
+processed_records = sort_products_by_name(processed_records);
+const summary_strings = format_product_summaries(processed_records);
+printlnf("Found and processed %d matching products.", len(summary_strings));
+
+# Optionally print a few results from the pipeline
+println("\nSample of processed products:");
+for (var i = 0; i < 5 && i < len(summary_strings); i++) {
+    println(summary_strings[i]);
+}
+
+# 3. Perform the final analysis on the original dataset
+println("\nAnalyzing full dataset...");
+const final_analysis = analyze_dataset(all_records);
+println("Analysis complete.");
+
+# The last expression of the script is its return value.
+# This final map will be returned by the interpreter.
+final_analysis;

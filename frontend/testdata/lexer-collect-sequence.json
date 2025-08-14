@@ -1,0 +1,265 @@
+[
+  {
+    "name": "Simple identifiable sequence",
+    "input": "abcde",
+    "limit": 100,
+    "predicate": "identifiable",
+    "wantSeq": "abcde",
+    "wantFinalCursor": 5,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Empty input",
+    "input": "",
+    "limit": 10,
+    "predicate": "identifiable",
+    "wantSeq": "",
+    "wantFinalCursor": 0,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Zero limit – should return empty string",
+    "input": "abc123",
+    "limit": 0,
+    "predicate": "identifiable",
+    "wantSeq": "",
+    "wantFinalCursor": 0,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "First character fails predicate",
+    "input": "1abc",
+    "limit": 5,
+    "predicate": "asciiDigits",
+    "wantSeq": "1",
+    "wantFinalCursor": 1,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Limit smaller than available",
+    "input": "123456",
+    "limit": 3,
+    "predicate": "asciiDigits",
+    "wantSeq": "123",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Limit exactly equals available",
+    "input": "123",
+    "limit": 3,
+    "predicate": "asciiDigits",
+    "wantSeq": "123",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Predicate fails mid-sequence",
+    "input": "abc!def",
+    "limit": 10,
+    "predicate": "identifiable",
+    "wantSeq": "abc",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Hexadecimal only",
+    "input": "1aF9",
+    "limit": 10,
+    "predicate": "hexadecimal",
+    "wantSeq": "1aF9",
+    "wantFinalCursor": 4,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Hexadecimal invalid char",
+    "input": "1aG9",
+    "limit": 10,
+    "predicate": "hexadecimal",
+    "wantSeq": "1a",
+    "wantFinalCursor": 2,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Newline inside sequence",
+    "input": "abc\ndef",
+    "limit": 10,
+    "predicate": "identifiable",
+    "wantSeq": "abc",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Newline after sequence",
+    "input": "abc\n123",
+    "limit": 10,
+    "predicate": "identifiable",
+    "wantSeq": "abc",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Multirune unicode – identifiable",
+    "input": "café_123",
+    "limit": 8,
+    "predicate": "identifiable",
+    "wantSeq": "caf",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Multirune unicode – hexadecimal fails at é",
+    "input": "cafeé",
+    "limit": 10,
+    "predicate": "hexadecimal",
+    "wantSeq": "cafe",
+    "wantFinalCursor": 4,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Digits stop at underscore",
+    "input": "123_456",
+    "limit": 10,
+    "predicate": "asciiDigits",
+    "wantSeq": "123",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Only newlines – no match",
+    "input": "\n\n\n",
+    "limit": 5,
+    "predicate": "identifiable",
+    "wantSeq": "",
+    "wantFinalCursor": 0,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Underscore start and digits",
+    "input": "_abc123",
+    "limit": 6,
+    "predicate": "identifiable",
+    "wantSeq": "_abc12",
+    "wantFinalCursor": 6,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Cursor after newline",
+    "input": "abc\ndef",
+    "limit": 10,
+    "predicate": "identifiable",
+    "wantSeq": "abc",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "Continue after newline",
+    "input": "abc\ndef",
+    "limit": 10,
+    "predicate": "identifiable",
+    "wantSeq": "abc",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "All digits then newline",
+    "input": "123\n456",
+    "limit": 10,
+    "predicate": "asciiDigits",
+    "wantSeq": "123",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "EOF reached exactly",
+    "input": "abc",
+    "limit": 3,
+    "predicate": "identifiable",
+    "wantSeq": "abc",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+
+  {
+    "name": "EOF reached with limit exceeded",
+    "input": "abc",
+    "limit": 100,
+    "predicate": "identifiable",
+    "wantSeq": "abc",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+  {
+    "name": "Multiline identifier with newlines inside",
+    "input": "foo_bar\nbaz_123",
+    "limit": 20,
+    "predicate": "identifiable",
+    "wantSeq": "foo_bar",
+    "wantFinalCursor": 7,
+    "wantFinalLine": 1
+  },
+  {
+    "name": "Hex sequence split by newline",
+    "input": "a1b2\nC3D4",
+    "limit": 10,
+    "predicate": "hexadecimal",
+    "wantSeq": "a1b2",
+    "wantFinalCursor": 4,
+    "wantFinalLine": 1
+  },
+  {
+    "name": "Digits across lines",
+    "input": "123\n456\n789",
+    "limit": 9,
+    "predicate": "asciiDigits",
+    "wantSeq": "123",
+    "wantFinalCursor": 3,
+    "wantFinalLine": 1
+  },
+  {
+    "name": "Identifier with trailing newline",
+    "input": "hello_\nworld",
+    "limit": 10,
+    "predicate": "identifiable",
+    "wantSeq": "hello_",
+    "wantFinalCursor": 6,
+    "wantFinalLine": 1
+  },
+  {
+    "name": "Multiple newlines before identifier",
+    "input": "\n\n\nstart_here",
+    "limit": 15,
+    "predicate": "identifiable",
+    "wantSeq": "",
+    "wantFinalCursor": 0,
+    "wantFinalLine": 1
+  },
+  {
+    "name": "Limit reached mid-line with newline later",
+    "input": "abc123\nxyz",
+    "limit": 5,
+    "predicate": "identifiable",
+    "wantSeq": "abc12",
+    "wantFinalCursor": 5,
+    "wantFinalLine": 1
+  }
+]

@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Empty string",
+    "input": "\"\"",
+    "wantLexeme": "\"\"",
+    "wantLiteral": "",
+    "wantError": ""
+  },
+  {
+    "name": "Simple string",
+    "input": "\"hello world\"...",
+    "wantLexeme": "\"hello world\"",
+    "wantLiteral": "hello world",
+    "wantError": ""
+  },
+  {
+    "name": "String with all simple escapes",
+    "input": "\"\\\"\\\\\\t\\r\\b\\f\\n\"",
+    "wantLexeme": "\"\\\"\\\\\\t\\r\\b\\f\\n\"",
+    "wantLiteral": "\"\\\t\r\b\f\n",
+    "wantError": ""
+  },
+  {
+    "name": "String ending with an escaped quote",
+    "input": "\"end with \\\"\"",
+    "wantLexeme": "\"end with \\\"\"",
+    "wantLiteral": "end with \"",
+    "wantError": ""
+  },
+  {
+    "name": "String ending with an escaped backslash",
+    "input": "\"end with \\\\\"",
+    "wantLexeme": "\"end with \\\\\"",
+    "wantLiteral": "end with \\",
+    "wantError": ""
+  },
+  {
+    "name": "String with 16-bit unicode escape (BMP)",
+    "input": "\"\\u0041\"",
+    "wantLexeme": "\"\\u0041\"",
+    "wantLiteral": "A",
+    "wantError": ""
+  },
+  {
+    "name": "String with 32-bit unicode escape (Astral Plane)",
+    "input": "\"\\U0001F600\"",
+    "wantLexeme": "\"\\U0001F600\"",
+    "wantLiteral": "😀",
+    "wantError": ""
+  },
+  {
+    "name": "String with mixed content and escapes",
+    "input": "\"Euro sign: \\u20AC!\"",
+    "wantLexeme": "\"Euro sign: \\u20AC!\"",
+    "wantLiteral": "Euro sign: €!",
+    "wantError": ""
+  },
+  {
+    "name": "Unclosed string (EOF)",
+    "input": "\"abc",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "stringUnclosedErr"
+  },
+  {
+    "name": "Unclosed string (newline)",
+    "input": "\"abc\ndef\"",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "stringUnclosedErr"
+  },
+  {
+    "name": "Unclosed string ending with a backslash",
+    "input": "\"abc\\",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "stringUnclosedErr"
+  },
+  {
+    "name": "Invalid escape sequence",
+    "input": "\"hello\\vworld\"",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "invalidEscapeSequence"
+  },
+  {
+    "name": "Invalid codepoint (u - too short)",
+    "input": "\"\\u123\"",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "invalidCodepoint"
+  },
+  {
+    "name": "Invalid codepoint (U - too short)",
+    "input": "\"\\U1234567\"",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "invalidCodepoint"
+  },
+  {
+    "name": "Invalid codepoint (u - non-hex char)",
+    "input": "\"\\u123G\"",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "invalidCodepoint"
+  },
+  {
+    "name": "Invalid codepoint (U - non-hex char)",
+    "input": "\"\\U123456G\"",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "invalidCodepoint"
+  },
+  {
+    "name": "Invalid codepoint (u - incomplete at EOF)",
+    "input": "\"\\u12",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "invalidCodepoint"
+  },
+  {
+    "name": "Invalid codepoint (U - incomplete at EOF)",
+    "input": "\"\\U1234",
+    "wantLexeme": null,
+    "wantLiteral": null,
+    "wantError": "invalidCodepoint"
+  },
+  {
+    "name": "Valid but out-of-range Unicode codepoint",
+    "input": "\"\\U00110000\"",
+    "wantLexeme": "\"\\U00110000\"",
+    "wantLiteral": "\uFFFD",
+    "wantError": ""
+  },
+  {
+    "name": "High surrogate half (no pair following)",
+    "input": "\"\\uD83D\"",
+    "wantLexeme": "\"\\uD83D\"",
+    "wantLiteral": "\uFFFD",
+    "wantError": ""
+  }
+]

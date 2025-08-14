@@ -1,0 +1,6 @@
+const items = list.of(1, 2, 3);
+var total = 0;
+for item in items {
+    total = total + item;
+}
+total; # 1 + 2 + 3 = 6

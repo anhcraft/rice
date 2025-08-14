@@ -1,0 +1,16 @@
+var sum = 0;
+
+# C-style
+for (var i = 0; i < 5; i++) {
+    sum = sum + i; # 0+1+2+3+4 = 10
+}
+
+# While-style (reset sum to test again)
+var j = 0;
+sum = 0;
+for j < 5 {
+    sum = sum + j;
+    j++;
+}
+
+sum; # 10

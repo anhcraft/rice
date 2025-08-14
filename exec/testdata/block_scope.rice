@@ -1,0 +1,6 @@
+var a = 100;
+{
+    var a = 50; # Shadow outer 'a'
+    a = a + 1;  # a is 51 here
+}
+a; # Should return the outer 'a', which is 100

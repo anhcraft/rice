@@ -1,0 +1,607 @@
+[
+  {
+    "name": "Literals",
+    "input": "123; \"hello\"; true; false; null",
+    "expectedOutput": [
+      "(Int 123)",
+      "(Str \"hello\")",
+      "(Bool true)",
+      "(Bool false)",
+      "(Null)"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Arithmetic Precedence",
+    "input": "1 + 2 * 3 - 4 / 5 % 2",
+    "expectedOutput": [
+      "(Sub (Sum (Int 1) (Multi (Int 2) (Int 3))) (Rem (Div (Int 4) (Int 5)) (Int 2)))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Grouped Expression",
+    "input": "(1 + 2) * 3",
+    "expectedOutput": [
+      "(Multi (Sum (Int 1) (Int 2)) (Int 3))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Unary Operators",
+    "input": "-5; !true",
+    "expectedOutput": [
+      "(Neg (Int 5))",
+      "(Inv (Bool true))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Comparison Operators",
+    "input": "a > 1 == b < 2",
+    "expectedOutput": [
+      "(Eq (Gt (Id a) (Int 1)) (Lt (Id b) (Int 2)))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Logical Operators",
+    "input": "a && b || c && !d",
+    "expectedOutput": [
+      "(Or (And (Id a) (Id b)) (And (Id c) (Inv (Id d))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Simple Assignment",
+    "input": "my_key = 123",
+    "expectedOutput": [
+      "(Assign (Id my_key) (Int 123))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Variable Declaration",
+    "input": "var my_key = 123",
+    "expectedOutput": [
+      "(Declare (Id my_key) (Int 123))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Constant Declaration",
+    "input": "const my_key = 123",
+    "expectedOutput": [
+      "(Declare-const (Id my_key) (Int 123))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Element Access Assignment",
+    "input": "list[0] = \"value\"",
+    "expectedOutput": [
+      "(Assign (Get (Id list) (Int 0)) (Str \"value\"))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Call No Args",
+    "input": "my_func()",
+    "expectedOutput": [
+      "(Call (Id my_func))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Call With Args",
+    "input": "add(1, 2 * 3, key)",
+    "expectedOutput": [
+      "(Call (Id add) (Int 1) (Multi (Int 2) (Int 3)) (Id key))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Call With Args (with trailing comma)",
+    "input": "add(1, 2 * 3, key,)",
+    "expectedOutput": [
+      "(Call (Id add) (Int 1) (Multi (Int 2) (Int 3)) (Id key))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Call with Spread Operator",
+    "input": "printf(format, ...args)",
+    "expectedOutput": [
+      "(Call (Id printf) (Id format) ...(Id args))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Chained Postfix Calls",
+    "input": "get_list()[0]()",
+    "expectedOutput": [
+      "(Call (Get (Call (Id get_list)) (Int 0)))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Member Selector",
+    "input": "package.class",
+    "expectedOutput": [
+      "(Sel (Id package) (Id class))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Block Expression without ending semicolon",
+    "input": "{ a = 1; a + 1 }",
+    "expectedOutput": [
+      "(Block (Assign (Id a) (Int 1)) (Sum (Id a) (Int 1)))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Block Expression with ending semicolon",
+    "input": "{ a = 1; a + 1; }",
+    "expectedOutput": [
+      "(Block (Assign (Id a) (Int 1)) (Sum (Id a) (Int 1)))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Block Expression followed by another expression",
+    "input": "{ a = 1; a + 1; } true",
+    "expectedOutput": [
+      "(Block (Assign (Id a) (Int 1)) (Sum (Id a) (Int 1)))",
+      "(Bool true)"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "If Expression",
+    "input": "if (age >= 18) { \"adult\" }",
+    "expectedOutput": [
+      "(If (Gte (Id age) (Int 18)) (Block (Str \"adult\")))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "If-Else Expression",
+    "input": "if (x) { 1 } else { 2 }",
+    "expectedOutput": [
+      "(If (Id x) (Block (Int 1)) (Block (Int 2)))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "If-Else If-Else Expression",
+    "input": "if (a) { 1 } else if (b) { 2 } else { 3 }",
+    "expectedOutput": [
+      "(If (Id a) (Block (Int 1)) (If (Id b) (Block (Int 2)) (Block (Int 3))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Literal (No parameters)",
+    "input": "func(){}",
+    "expectedOutput": [
+      "(Func (Block))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Literal (Single parameter)",
+    "input": "func(a){a+1}",
+    "expectedOutput": [
+      "(Func (Id a) (Block (Sum (Id a) (Int 1))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Literal (Single parameter with trailing comma)",
+    "input": "func(a,){a+1}",
+    "expectedOutput": [
+      "(Func (Id a) (Block (Sum (Id a) (Int 1))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Literal (Multi parameters)",
+    "input": "func(a,b,c){a+b+c}",
+    "expectedOutput": [
+      "(Func (Id a) (Id b) (Id c) (Block (Sum (Sum (Id a) (Id b)) (Id c))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Function Literal (Multi parameters with trailing comma)",
+    "input": "func(a,b,c,){a+b+c}",
+    "expectedOutput": [
+      "(Func (Id a) (Id b) (Id c) (Block (Sum (Sum (Id a) (Id b)) (Id c))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Variadic Function Literal (Only variadic)",
+    "input": "func(args...){ println(args) }",
+    "expectedOutput": [
+      "(Func (Id args)... (Block (Call (Id println) (Id args))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Variadic Function Literal (Mixed parameters)",
+    "input": "func(format, args...){ printf(format, args); 1; }",
+    "expectedOutput": [
+      "(Func (Id format) (Id args)... (Block (Call (Id printf) (Id format) (Id args)) (Int 1)))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Standalone Increment/Decrement Statements",
+    "input": "i++; --j;",
+    "expectedOutput": [
+      "(Post-incDec Inc (Id i))",
+      "(Pre-incDec Dec (Id j))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Illegal Increment/Decrement Statements",
+    "input": "++1; --true;",
+    "expectedOutput": [],
+    "expectedErrorName": "expectReferenceErr"
+  },
+  {
+    "name": "For Statement (C-style full)",
+    "input": "for (var i = 0; i < 10; i++) { print(i) }",
+    "expectedOutput": [
+      "(For (Declare (Id i) (Int 0)) (Lt (Id i) (Int 10)) (Post-incDec Inc (Id i)) (Block (Call (Id print) (Id i))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "For Statement (Condition-only)",
+    "input": "for a < 5 { a = a + 1 }",
+    "expectedOutput": [
+      "(For () (Lt (Id a) (Int 5)) () (Block (Assign (Id a) (Sum (Id a) (Int 1)))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "For-In Statement",
+    "input": "for item in my_list { print(item) }",
+    "expectedOutput": [
+      "(ForIn (Id item) (Id my_list) (Block (Call (Id print) (Id item))))"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Control Statements",
+    "input": "return 1; break; continue;",
+    "expectedOutput": [
+      "(Control Return (Int 1))",
+      "(Control Break)",
+      "(Control Continue)"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Top Level Script Block (with ending semicolon)",
+    "input": "1; 2;",
+    "expectedOutput": [
+      "(Int 1)",
+      "(Int 2)"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "Top Level Script Block (no ending semicolon)",
+    "input": "1; 2",
+    "expectedOutput": [
+      "(Int 1)",
+      "(Int 2)"
+    ],
+    "expectedErrorName": ""
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1+",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1-",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1==",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1!=",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1>",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1>=",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1<",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1<=",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1&&",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1||",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1*",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Binary operator without second operand",
+    "input": "1/",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Prefix unary operator without operand",
+    "input": "-",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Prefix unary operator without operand",
+    "input": "!",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Declaration without target",
+    "input": "var",
+    "expectedOutput": null,
+    "expectedErrorName": "expectIdErr"
+  },
+  {
+    "name": "ERROR: Declaration on non-identifier target",
+    "input": "var 123",
+    "expectedOutput": null,
+    "expectedErrorName": "expectIdErr"
+  },
+  {
+    "name": "ERROR: Declaration on non-identifier target",
+    "input": "var \"a\"",
+    "expectedOutput": null,
+    "expectedErrorName": "expectIdErr"
+  },
+  {
+    "name": "ERROR: Declaration without equal sign",
+    "input": "var what",
+    "expectedOutput": null,
+    "expectedErrorName": "expectEqualRhsErr"
+  },
+  {
+    "name": "ERROR: Declaration without value",
+    "input": "var what=",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Assignment without value",
+    "input": "123 =",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Invalid Assignment Target",
+    "input": "123 = 456",
+    "expectedOutput": null,
+    "expectedErrorName": "invalidAssignmentTargetErr"
+  },
+  {
+    "name": "ERROR: Chained assignment",
+    "input": "a = b = 5",
+    "expectedOutput": null,
+    "expectedErrorName": "expectStmtTerminatorErr"
+  },
+  {
+    "name": "ERROR: Unclosed Group",
+    "input": "(1 + 2",
+    "expectedOutput": null,
+    "expectedErrorName": "expectRparenGroupErr"
+  },
+  {
+    "name": "ERROR: Unclosed Block",
+    "input": "{ 1; 2",
+    "expectedOutput": null,
+    "expectedErrorName": "expectRbraceBlockErr"
+  },
+  {
+    "name": "ERROR: Element Access missing value",
+    "input": "a[",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: Element Access missing closing bracket",
+    "input": "a[0",
+    "expectedOutput": null,
+    "expectedErrorName": "expectRbracketElemAccessErr"
+  },
+  {
+    "name": "ERROR: Incomplete selector",
+    "input": "package.",
+    "expectedOutput": null,
+    "expectedErrorName": "expectIdErr"
+  },
+  {
+    "name": "ERROR: Non-identifier selector",
+    "input": "package.1",
+    "expectedOutput": null,
+    "expectedErrorName": "expectIdErr"
+  },
+  {
+    "name": "ERROR: If without Condition",
+    "input": "if",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueErr"
+  },
+  {
+    "name": "ERROR: If without Then block",
+    "input": "if (true) 1",
+    "expectedOutput": null,
+    "expectedErrorName": "expectLbraceBlockErr"
+  },
+  {
+    "name": "ERROR: Else without If or Block",
+    "input": "if (true) {} else 1",
+    "expectedOutput": null,
+    "expectedErrorName": "expectLbraceOrIfBranchErr"
+  },
+  {
+    "name": "ERROR: Call without closing parenthesis",
+    "input": "foo(",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueRparenCallArgsErr"
+  },
+  {
+    "name": "ERROR: Call without closing parenthesis",
+    "input": "foo(a",
+    "expectedOutput": null,
+    "expectedErrorName": "expectCommaRparenCallArgsErr"
+  },
+  {
+    "name": "ERROR: Call without closing parenthesis",
+    "input": "foo(a,",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueRparenCallArgsErr"
+  },
+  {
+    "name": "ERROR: Function literal without left parenthesis",
+    "input": "func",
+    "expectedOutput": null,
+    "expectedErrorName": "expectLparenFuncErr"
+  },
+  {
+    "name": "ERROR: Function literal without closing parenthesis",
+    "input": "func(",
+    "expectedOutput": null,
+    "expectedErrorName": "expectIdRparenFuncParamsErr"
+  },
+  {
+    "name": "ERROR: Function literal without closing parenthesis",
+    "input": "func(a",
+    "expectedOutput": null,
+    "expectedErrorName": "expectCommaRparenFuncParamsErr"
+  },
+  {
+    "name": "ERROR: Function literal without closing parenthesis",
+    "input": "func(a,",
+    "expectedOutput": null,
+    "expectedErrorName": "expectIdRparenFuncParamsErr"
+  },
+  {
+    "name": "ERROR: Function literal missing body",
+    "input": "func(a,)",
+    "expectedOutput": null,
+    "expectedErrorName": "expectLbraceBlockErr"
+  },
+  {
+    "name": "ERROR: For without clause or condition",
+    "input": "for",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValueLparenForErr"
+  },
+  {
+    "name": "ERROR: For missing semicolon or simple statement",
+    "input": "for(",
+    "expectedOutput": null,
+    "expectedErrorName": "expectSimpleStmtPartSeparatorErr"
+  },
+  {
+    "name": "ERROR: For missing semicolon or value",
+    "input": "for(;",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValuePartSeparatorErr"
+  },
+  {
+    "name": "ERROR: For missing semicolon or value",
+    "input": "for(1;",
+    "expectedOutput": null,
+    "expectedErrorName": "expectValuePartSeparatorErr"
+  },
+  {
+    "name": "ERROR: For missing semicolon",
+    "input": "for(1",
+    "expectedOutput": null,
+    "expectedErrorName": "expectPartSeparatorErr"
+  },
+  {
+    "name": "ERROR: For missing semicolon",
+    "input": "for(;1",
+    "expectedOutput": null,
+    "expectedErrorName": "expectPartSeparatorErr"
+  },
+  {
+    "name": "ERROR: For missing closing parenthesis or simple statement",
+    "input": "for(1;;",
+    "expectedOutput": null,
+    "expectedErrorName": "expectSimpleStmtRparenErr"
+  },
+  {
+    "name": "ERROR: For missing closing parenthesis or simple statement",
+    "input": "for(1;2;",
+    "expectedOutput": null,
+    "expectedErrorName": "expectSimpleStmtRparenErr"
+  },
+  {
+    "name": "ERROR: For missing closing parenthesis",
+    "input": "for(1;2;3",
+    "expectedOutput": null,
+    "expectedErrorName": "expectRparenForClauseErr"
+  },
+  {
+    "name": "ERROR: For missing body",
+    "input": "for(1;2;3)",
+    "expectedOutput": null,
+    "expectedErrorName": "expectLbraceBlockErr"
+  },
+  {
+    "name": "ERROR: Missing statement separator",
+    "input": "1 2",
+    "expectedOutput": null,
+    "expectedErrorName": "expectStmtTerminatorErr"
+  }
+]

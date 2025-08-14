@@ -1,0 +1,110 @@
+(* --- Top Level --- *)
+script = [ ws ] , [ statement_sequence ] , [ ws ] , EOF ;
+statement_sequence = statement , { ws , ";" , ws , statement } , [ ws , ";" ] ;
+
+(* --- Statements --- *)
+statement =
+    for_statement
+  | for_in_statement
+  | control_statement
+  | simple_statement
+  ;
+
+(* Note: simple_statement is nested within a complex statement. *)
+simple_statement =
+    declaration_statement
+  | inc_dec_statement
+  | expression
+  ;
+
+(* --- Statement Definitions --- *)
+
+(* Note: no chaining support on RHS *)
+declaration_statement = ( "var" | "const" ) , ws , identifier , ws , "=" , ws , logical_or_expression ;
+
+for_statement = "for" , ws , [ for_clause ] , ws , block_expression ;
+for_clause =
+    ( "(", [ simple_statement ] , ";" , [ expression ] , ";" , [ simple_statement ], ")" ) (* C-style *)
+  | expression (* Condition-only *)
+  ;
+
+for_in_statement = "for" , ws , identifier , ws , "in" , ws , expression , ws , block_expression ;
+
+(* Note: standalone inc/dec is not expression; cannot return value *)
+inc_dec_statement =
+    ( "++" | "--" ) , ws , postfix_expression
+  | postfix_expression , ws , ( "++" | "--" )
+  ;
+
+control_statement =
+    "break"
+  | "continue"
+  | "return" , [ ws , expression ]
+  ;
+
+(* --- Expressions (Ordered by Precedence) --- *)
+expression = assignment_expression | logical_or_expression ;
+
+(* Note: no chaining support on RHS *)
+assignment_expression = postfix_expression , ws , "=" , ws , logical_or_expression ;
+
+logical_or_expression   = logical_and_expression , { ws , "||" , ws , logical_and_expression } ;
+logical_and_expression  = comparison_expression , { ws , "&&" , ws , comparison_expression } ;
+comparison_expression   = additive_expression , [ ws , comparison_operator , ws , additive_expression ] ;
+additive_expression     = multiplicative_expression , { ws , additive_operator , ws , multiplicative_expression } ;
+multiplicative_expression = unary_expression , { ws , multiplicative_operator , ws , unary_expression } ;
+unary_expression        = { unary_operator , ws } , postfix_expression ;
+
+(* Note: postfix ops can be chained *)
+postfix_expression = primary_expression , { element_access | function_call | selector } ;
+
+(* --- Primary Expressions --- *)
+primary_expression =
+    literal
+  | identifier
+  | parenthesized_expression
+  | block_expression
+  | if_expression
+  ;
+
+parenthesized_expression = "(" , ws , expression , ws , ")" ;
+block_expression = "{" , [ ws ] , [ statement_sequence ] , [ ws ] , "}" ;
+if_expression = "if" , ws , expression , ws , block_expression ,
+                { ws , "else" , ws , "if" , ws , expression , ws , block_expression } ,
+                [ ws , "else" , ws , block_expression ] ;
+
+(* --- Language Constructs --- *)
+identifier = ( letter | "_" ) , { letter | digit | "_" } ;
+element_access = "[" , ws , expression , ws , "]" ;
+selector = "." , ws , identifier ;
+
+function_call = "(" , ws , [ argument_list ] , ws , ")" ;
+argument_list = argument , { ws , "," , ws , argument } ;
+argument = [ "..." , ws ] , expression ;
+
+(* --- Literals --- *)
+literal = string_lit | number_lit | boolean_lit | null_lit | function_lit;
+
+function_lit = "func" , ws , "(" , ws , [ parameter_list ] , ws , ")" , ws , block_expression ;
+parameter_list = normal_parameter_list , [ ws , "," , ws , variadic_parameter ] | variadic_parameter ;
+normal_parameter_list = identifier , { ws , "," , ws , identifier } ;
+variadic_parameter = identifier , ws , "..." ;
+
+string_lit = '"' , { char_in_string } , '"' ;
+number_lit = digits , [ "." , digits ] , [ ("e" | "E") , [ "+" | "-" ] , digits ] ;
+boolean_lit = "true" | "false" ;
+null_lit = "null" ;
+
+(* --- Lexical Tokens --- *)
+comparison_operator = "==" | "!=" | ">=" | "<=" | ">" | "<" ;
+additive_operator = "+" | "-" ;
+multiplicative_operator = "*" | "/" | "%";
+unary_operator = "!" | "-" ;
+
+char_in_string = ? any character except quote or backslash ? | '\' , ( '"' | '\' ) ;
+letter = "a"..."z" | "A"..."Z" ;
+digit = "0"..."9" ;
+digits = digit , { digit } ;
+
+comment = "#" , ? any character except newline ? ;
+ws = ( " " | "\t" | "\n" | "\r" | comment )+ ;

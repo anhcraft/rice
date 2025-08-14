@@ -1,0 +1,4 @@
+const t = true;
+const f = false;
+
+(t && !f) && (f || t);

@@ -1,0 +1,118 @@
+[
+  {
+    "name": "Simple Integer",
+    "input": "123",
+    "wantLexeme": "123",
+    "wantLiteral": 123,
+    "wantLiteralType": "int64"
+  },
+  {
+    "name": "Zero",
+    "input": "0",
+    "wantLexeme": "0",
+    "wantLiteral": 0,
+    "wantLiteralType": "int64"
+  },
+  {
+    "name": "Simple Float (Decimal Part)",
+    "input": "123.45",
+    "wantLexeme": "123.45",
+    "wantLiteral": 123.45,
+    "wantLiteralType": "float64"
+  },
+  {
+    "name": "Float with Trailing Zero in Decimal",
+    "input": "5.0",
+    "wantLexeme": "5.0",
+    "wantLiteral": 5.0,
+    "wantLiteralType": "float64"
+  },
+  {
+    "name": "Float with Leading Zero",
+    "input": "0.123",
+    "wantLexeme": "0.123",
+    "wantLiteral": 0.123,
+    "wantLiteralType": "float64"
+  },
+  {
+    "name": "Float Zero",
+    "input": "0.0",
+    "wantLexeme": "0.0",
+    "wantLiteral": 0.0,
+    "wantLiteralType": "float64"
+  },
+  {
+    "name": "Integer with Positive Exponent",
+    "input": "123e2",
+    "wantLexeme": "123e2",
+    "wantLiteral": 12300,
+    "wantLiteralType": "int64"
+  },
+  {
+    "name": "Integer with Explicit Positive Exponent",
+    "input": "123e+2",
+    "wantLexeme": "123e+2",
+    "wantLiteral": 12300,
+    "wantLiteralType": "int64"
+  },
+  {
+    "name": "Integer with Zero Exponent",
+    "input": "123e0",
+    "wantLexeme": "123e0",
+    "wantLiteral": 123,
+    "wantLiteralType": "int64"
+  },
+  {
+    "name": "Float from Negative Exponent",
+    "input": "123e-2",
+    "wantLexeme": "123e-2",
+    "wantLiteral": 1.23,
+    "wantLiteralType": "float64"
+  },
+  {
+    "name": "Float from Negative Exponent (Capital E)",
+    "input": "45E-1",
+    "wantLexeme": "45E-1",
+    "wantLiteral": 4.5,
+    "wantLiteralType": "float64"
+  },
+  {
+    "name": "Float with Decimal and Positive Exponent",
+    "input": "1.23e2",
+    "wantLexeme": "1.23e2",
+    "wantLiteral": 123.0,
+    "wantLiteralType": "float64"
+  },
+  {
+    "name": "Float with Decimal and Negative Exponent",
+    "input": "1.23e-2",
+    "wantLexeme": "1.23e-2",
+    "wantLiteral": 0.0123,
+    "wantLiteralType": "float64"
+  },
+  {
+    "name": "Error - Trailing Dot",
+    "input": "123.",
+    "wantError": "invalidNumberFormat"
+  },
+  {
+    "name": "Error - Trailing E",
+    "input": "123e",
+    "wantError": "invalidNumberFormat"
+  },
+  {
+    "name": "Error - Trailing E with Sign",
+    "input": "123e-",
+    "wantError": "invalidNumberFormat"
+  },
+  {
+    "name": "Error - Empty Decimal Part",
+    "input": "1.e2",
+    "wantError": "invalidNumberFormat"
+  },
+  {
+    "name": "Error - Empty Exponent Part",
+    "input": "1.2e",
+    "wantError": "invalidNumberFormat"
+  }
+]

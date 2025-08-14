@@ -1,0 +1,105 @@
+# Helper to get the start of an interval.
+const getStart = func(interval) {
+    return interval[0];
+};
+
+# Helper to get the end of an interval.
+const getEnd = func(interval) {
+    return interval[1];
+};
+
+# Checks if two intervals overlap.
+# Overlap condition: startA <= endB AND startB <= endA
+const doOverlap = func(intervalA, intervalB) {
+    const startA = getStart(intervalA);
+    const endA = getEnd(intervalA);
+    const startB = getStart(intervalB);
+    const endB = getEnd(intervalB);
+
+    return startA <= endB && startB <= endA;
+};
+
+# Merges two intervals into a new one that covers both.
+# It returns a new list representing the merged interval.
+const merge = func(intervalA, intervalB) {
+    const mergedStart = math.min(getStart(intervalA), getStart(intervalB));
+    const mergedEnd = math.max(getEnd(intervalA), getEnd(intervalB));
+
+    return list.of(mergedStart, mergedEnd);
+};
+
+# Inserts a new interval into a sorted list of non-overlapping intervals,
+# merging if necessary.
+const insertInterval = func(intervals, newInterval) {
+    const result = list.new();
+    var i = 0;
+    const n = len(intervals);
+
+    # Phase 1: Add all intervals that end before the new interval starts.
+    for i < n && getEnd(intervals[i]) < getStart(newInterval) {
+        result.append(intervals[i]);
+        i++;
+    }
+
+    # Phase 2: Merge the new interval with all overlapping intervals.
+    var mergedInterval = newInterval;
+    for i < n && doOverlap(intervals[i], mergedInterval) {
+        mergedInterval = merge(mergedInterval, intervals[i]);
+        i++;
+    }
+    result.append(mergedInterval);
+
+    # Phase 3: Add all remaining intervals.
+    for i < n {
+        result.append(intervals[i]);
+        i++;
+    }
+
+    return result;
+};
+
+# --- Main Execution ---
+
+# Example 1
+const intervals1 = list.of(
+    list.of(1, 3),
+    list.of(6, 9)
+);
+const newInterval1 = list.of(2, 5);
+const expected1 = list.of(
+    list.of(1, 5),
+    list.of(6, 9)
+);
+const result1 = insertInterval(intervals1, newInterval1);
+
+println("Example 1:");
+println("Input:     ", string(intervals1), ", ", string(newInterval1));
+println("Result:    ", string(result1));
+println("Expected:  ", string(expected1));
+assert(string(result1) == string(expected1), "Test Case 1 Failed");
+println("--------------------");
+
+# Example 2
+const intervals2 = list.of(
+    list.of(1, 2),
+    list.of(3, 5),
+    list.of(6, 7),
+    list.of(8, 10),
+    list.of(12, 16)
+);
+const newInterval2 = list.of(4, 8);
+const expected2 = list.of(
+    list.of(1, 2),
+    list.of(3, 10),
+    list.of(12, 16)
+);
+const result2 = insertInterval(intervals2, newInterval2);
+
+println("Example 2:");
+println("Input:     ", string(intervals2), ", ", string(newInterval2));
+println("Result:    ", string(result2));
+println("Expected:  ", string(expected2));
+assert(string(result2) == string(expected2), "Test Case 2 Failed");
+println("--------------------");
+
+true;

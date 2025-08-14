@@ -1,0 +1,96 @@
+# Blocks
+{
+    # Variables
+    # 1. Declare a variable and a constant
+    const a = 2.0; # float
+    var b = 1 + 1; # int
+
+    # 2. Assign values
+    b = b + 1;
+
+    # Native Function call with variadic support
+    # 1. Support variadic functions
+    const errMsg = strings.format("require a=%d < b=%d", a, b);
+    assert(a < b, errMsg);
+
+    # 2. Type-bound Native functions
+    # > transformation rule: V.f(...) -> f(V, ...)
+    println("a + b = %v + %v = %v".format(a, b, a + b))
+}
+
+# If expression
+const yes = if typeof(true) == "Bool" {
+    const res = "Yes";
+
+    res # The last expression is the code-block's value
+} else {
+    "No"
+};
+
+# User-defined function
+# 1. Recursion support
+const fibo = func(n) {
+    if n >= 2 {
+        n = fibo(n-1) + fibo(n-2)
+    }
+    n
+};
+assert(fibo(10) == 55, "expect fibo(10) == 55");
+
+# 2. Anonymous function
+assert(func(a){len(a)}("Hello") == 5, "expect len=5");
+
+# 3. Variadic function
+assert(func(a...){len(a)}(1, 2, 3) == 3, "expect len=3");
+
+# List
+const arr = list.new();
+arr.append("Apple", 0.2, -4, false); # variable-typed
+
+const getTypeUppercase = func(a, tests...) {
+    const findType = func(a) {
+        # C-style for loop
+        for (var i = 0; i < len(a); i++) {
+            # Element access for collection types (list, string, etc)
+            a[i] = typeof(a[i])
+        }
+        return a; # explicit return
+    };
+
+    const toUpper = func(a) {
+        var i = 0;
+
+        # For..in loop on collection types
+        for v in a {
+            a[i] = v.toUpper();
+            i++ # Increment/Decrement (prefix/postfix)
+        }
+        a; # implicit return
+    };
+
+    const verify = func(a, tests...) {
+        var i = 0;
+        var res = true;
+
+        # Short-form for loop
+        for i < len(a) {
+            if a[i] != tests[i] {
+                break
+            }
+
+            i++;
+            continue
+        }
+
+        res
+    };
+
+    var res = findType(a);
+    res = toUpper(a);
+
+    # Spread operator on collection types (usable within argument list)
+    return verify(res, ...tests);
+};
+
+# the last expression is the script's result
+getTypeUppercase(arr, "STRING", "FLOAT", "INT", "BOOL");

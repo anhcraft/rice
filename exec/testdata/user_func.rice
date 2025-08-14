@@ -1,0 +1,5 @@
+const square = func(x) {
+    return x * x;
+};
+
+square(5);
