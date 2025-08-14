@@ -1,8 +1,8 @@
 package conf
 
 import (
-	"rice/exec/types"
-	"rice/exec/types/values"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 	"time"
 )
 

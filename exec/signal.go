@@ -1,7 +1,7 @@
 package exec
 
 import (
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/types"
 )
 
 type Signal interface {

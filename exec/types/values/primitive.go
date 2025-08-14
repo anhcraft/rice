@@ -2,7 +2,7 @@ package values
 
 import (
 	"errors"
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/types"
 )
 
 type Primitive interface {

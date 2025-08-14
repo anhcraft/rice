@@ -3,8 +3,8 @@ package values
 import (
 	"context"
 	"fmt"
-	"rice/exec/ast"
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/ast"
+	"github.com/anhcraft/rice/exec/types"
 )
 
 // Callable denotes a value that could be called with a list of arguments

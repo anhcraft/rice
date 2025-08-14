@@ -1,6 +1,6 @@
 package fun
 
-import "rice/exec/types/values"
+import "github.com/anhcraft/rice/exec/types/values"
 
 // FunctionImpl is a list of overloading definitions (expected to be under the same name)
 // e.g. [substr0, substr1]

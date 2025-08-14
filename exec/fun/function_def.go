@@ -2,8 +2,8 @@ package fun
 
 import (
 	"errors"
+	"github.com/anhcraft/rice/exec/types"
 	"reflect"
-	"rice/exec/types"
 	"strings"
 )
 

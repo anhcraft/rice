@@ -2,8 +2,8 @@ package values
 
 import (
 	"errors"
+	"github.com/anhcraft/rice/exec/types"
 	"iter"
-	"rice/exec/types"
 )
 
 var _ NamespacedLayer = NativeFunctionLayer{}

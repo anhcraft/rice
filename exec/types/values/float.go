@@ -2,7 +2,7 @@ package values
 
 import (
 	"fmt"
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/types"
 	"strconv"
 )
 

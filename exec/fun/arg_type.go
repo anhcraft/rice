@@ -2,7 +2,7 @@ package fun
 
 import (
 	"fmt"
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/types"
 )
 
 // ArgType the first 4 bits is dimension; the last 4 bits is type ID

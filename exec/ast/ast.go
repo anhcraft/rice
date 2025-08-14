@@ -2,8 +2,8 @@ package ast
 
 import (
 	"fmt"
-	"rice/exec/ast/opr"
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/ast/opr"
+	"github.com/anhcraft/rice/exec/types"
 	"strings"
 )
 

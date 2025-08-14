@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/types"
 )
 
 type Visitor interface {

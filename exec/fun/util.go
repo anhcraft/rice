@@ -3,8 +3,8 @@ package fun
 import (
 	"context"
 	"fmt"
+	"github.com/anhcraft/rice/exec/types"
 	"reflect"
-	"rice/exec/types"
 )
 
 var (

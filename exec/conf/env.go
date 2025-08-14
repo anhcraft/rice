@@ -1,11 +1,11 @@
 package conf
 
 import (
+	"github.com/anhcraft/rice/exec/fun"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 	"io"
 	"os"
-	"rice/exec/fun"
-	"rice/exec/types"
-	"rice/exec/types/values"
 	"time"
 )
 

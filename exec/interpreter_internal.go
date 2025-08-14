@@ -3,12 +3,12 @@ package exec
 import (
 	"context"
 	"errors"
+	"github.com/anhcraft/rice/exec/ast"
+	"github.com/anhcraft/rice/exec/ast/opr"
+	"github.com/anhcraft/rice/exec/mem"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 	"math"
-	"rice/exec/ast"
-	"rice/exec/ast/opr"
-	"rice/exec/mem"
-	"rice/exec/types"
-	"rice/exec/types/values"
 )
 
 func (i *Interpreter) VisitLiteralExpr(expr *ast.LiteralExpr) (types.Value, error) {

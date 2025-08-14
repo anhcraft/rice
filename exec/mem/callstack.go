@@ -1,7 +1,7 @@
 package mem
 
 import (
-	"rice/exec/types/values"
+	"github.com/anhcraft/rice/exec/types/values"
 )
 
 type StackFrame struct {

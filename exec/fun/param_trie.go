@@ -2,9 +2,9 @@ package fun
 
 import (
 	"fmt"
+	"github.com/anhcraft/rice/lib/queue"
+	"github.com/anhcraft/rice/lib/stack"
 	"reflect"
-	"rice/lib/queue"
-	"rice/lib/stack"
 	"slices"
 	"strings"
 )

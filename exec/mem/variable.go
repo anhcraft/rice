@@ -1,6 +1,6 @@
 package mem
 
-import "rice/exec/types"
+import "github.com/anhcraft/rice/exec/types"
 
 type Variable struct {
 	value    types.Value

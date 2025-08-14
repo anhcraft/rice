@@ -1,9 +1,9 @@
 package string
 
 import (
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 	"reflect"
-	"rice/exec/types"
-	"rice/exec/types/values"
 	"testing"
 )
 

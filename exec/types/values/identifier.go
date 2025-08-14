@@ -1,6 +1,6 @@
 package values
 
-import "rice/exec/types"
+import "github.com/anhcraft/rice/exec/types"
 
 var _ = types.Identifier.DefineType(Identifier(""))
 

@@ -3,8 +3,8 @@ package values
 import (
 	"errors"
 	"fmt"
+	"github.com/anhcraft/rice/exec/types"
 	"iter"
-	"rice/exec/types"
 	"unicode/utf8"
 )
 

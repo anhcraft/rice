@@ -2,10 +2,10 @@ package error
 
 import (
 	"fmt"
-	"rice/exec/fun"
-	"rice/exec/stdlib"
-	"rice/exec/types"
-	"rice/exec/types/values"
+	"github.com/anhcraft/rice/exec/fun"
+	"github.com/anhcraft/rice/exec/stdlib"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 )
 
 var Functions = fun.FunctionPackage{

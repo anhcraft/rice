@@ -1,9 +1,9 @@
 package values
 
 import (
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/lib/set"
 	"iter"
-	"rice/exec/types"
-	"rice/lib/set"
 )
 
 var _ = types.Set.DefineType((*Set)(nil))

@@ -3,9 +3,9 @@ package fun
 import (
 	"context"
 	"fmt"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 	"reflect"
-	"rice/exec/types"
-	"rice/exec/types/values"
 	"strings"
 	"testing"
 )

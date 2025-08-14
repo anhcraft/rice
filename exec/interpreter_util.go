@@ -2,10 +2,10 @@ package exec
 
 import (
 	"fmt"
-	"rice/exec/ast"
-	"rice/exec/profiler"
-	"rice/exec/types"
-	"rice/exec/types/values"
+	"github.com/anhcraft/rice/exec/ast"
+	"github.com/anhcraft/rice/exec/profiler"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 )
 
 func (i *Interpreter) Profiler() profiler.Profiler {

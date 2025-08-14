@@ -2,7 +2,7 @@ package values
 
 import (
 	"context"
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/types"
 )
 
 type NativeFunctionSetDelegate func(ctx context.Context, self NativeFunctionSet, site CallSite, args []types.Value) (types.Value, error)

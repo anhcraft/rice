@@ -1,8 +1,8 @@
 package profiler
 
 import (
-	"rice/exec/ast"
-	"rice/lib/stack"
+	"github.com/anhcraft/rice/exec/ast"
+	"github.com/anhcraft/rice/lib/stack"
 	"time"
 )
 

@@ -1,9 +1,9 @@
 package mem
 
 import (
-	"rice/exec/types"
-	"rice/exec/types/values"
-	"rice/lib/stack"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
+	"github.com/anhcraft/rice/lib/stack"
 )
 
 type Environment struct {

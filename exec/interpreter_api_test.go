@@ -3,12 +3,12 @@ package exec
 import (
 	"context"
 	"errors"
+	"github.com/anhcraft/rice/exec/conf"
+	"github.com/anhcraft/rice/exec/types/values"
+	"github.com/anhcraft/rice/frontend"
 	"os"
 	"path/filepath"
 	"reflect"
-	"rice/exec/conf"
-	"rice/exec/types/values"
-	"rice/frontend"
 	"strings"
 	"testing"
 )

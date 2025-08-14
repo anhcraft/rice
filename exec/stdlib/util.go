@@ -1,8 +1,8 @@
 package stdlib
 
 import (
+	"github.com/anhcraft/rice/exec/fun"
 	"reflect"
-	"rice/exec/fun"
 )
 
 // Define scans the given function value; panic if any error occurs

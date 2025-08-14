@@ -2,15 +2,15 @@ package exec
 
 import (
 	"context"
+	"github.com/anhcraft/rice/exec/ast"
+	"github.com/anhcraft/rice/exec/conf"
+	"github.com/anhcraft/rice/exec/ctxkey"
+	"github.com/anhcraft/rice/exec/mem"
+	"github.com/anhcraft/rice/exec/profiler"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 	"io"
 	"iter"
-	"rice/exec/ast"
-	"rice/exec/conf"
-	"rice/exec/ctxkey"
-	"rice/exec/mem"
-	"rice/exec/profiler"
-	"rice/exec/types"
-	"rice/exec/types/values"
 	"sync"
 	"time"
 )

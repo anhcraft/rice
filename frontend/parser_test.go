@@ -2,7 +2,7 @@ package frontend
 
 import (
 	"errors"
-	"rice/lib/set"
+	"github.com/anhcraft/rice/lib/set"
 	"strings"
 	"testing"
 )

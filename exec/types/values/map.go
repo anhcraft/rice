@@ -1,8 +1,8 @@
 package values
 
 import (
+	"github.com/anhcraft/rice/exec/types"
 	"iter"
-	"rice/exec/types"
 )
 
 var _ = types.Map.DefineType((*Map)(nil))

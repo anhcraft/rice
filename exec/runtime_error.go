@@ -2,8 +2,8 @@ package exec
 
 import (
 	"fmt"
-	"rice/exec/ast"
-	"rice/exec/types/values"
+	"github.com/anhcraft/rice/exec/ast"
+	"github.com/anhcraft/rice/exec/types/values"
 	"strings"
 )
 

@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/anhcraft/rice/exec"
+	"github.com/anhcraft/rice/exec/conf"
+	"github.com/anhcraft/rice/exec/types/values"
+	"github.com/anhcraft/rice/frontend"
 	"os"
-	"rice/exec"
-	"rice/exec/conf"
-	"rice/exec/types/values"
-	"rice/frontend"
 	"strings"
 )
 

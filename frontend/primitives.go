@@ -2,7 +2,7 @@ package frontend
 
 import (
 	"fmt"
-	"rice/exec/ast"
+	"github.com/anhcraft/rice/exec/ast"
 )
 
 type Pos struct {

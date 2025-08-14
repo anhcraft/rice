@@ -2,8 +2,8 @@ package frontend
 
 import (
 	"errors"
-	"rice/exec/ast"
-	"rice/exec/ast/opr"
+	"github.com/anhcraft/rice/exec/ast"
+	"github.com/anhcraft/rice/exec/ast/opr"
 )
 
 // TODO update AST position tracking to correctly identify problem spots

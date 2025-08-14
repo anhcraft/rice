@@ -3,12 +3,12 @@ package io
 import (
 	"context"
 	"fmt"
+	"github.com/anhcraft/rice/exec/ctxkey"
+	"github.com/anhcraft/rice/exec/fun"
+	"github.com/anhcraft/rice/exec/stdlib"
+	"github.com/anhcraft/rice/exec/types"
+	"github.com/anhcraft/rice/exec/types/values"
 	"io"
-	"rice/exec/ctxkey"
-	"rice/exec/fun"
-	"rice/exec/stdlib"
-	"rice/exec/types"
-	"rice/exec/types/values"
 )
 
 var Functions = fun.FunctionPackage{

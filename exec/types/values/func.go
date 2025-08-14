@@ -3,7 +3,7 @@ package values
 import (
 	"context"
 	"errors"
-	"rice/exec/types"
+	"github.com/anhcraft/rice/exec/types"
 	"strings"
 )
 

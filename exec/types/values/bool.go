@@ -2,8 +2,8 @@ package values
 
 import (
 	"fmt"
+	"github.com/anhcraft/rice/exec/types"
 	"math"
-	"rice/exec/types"
 	"strconv"
 )
 
