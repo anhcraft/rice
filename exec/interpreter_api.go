@@ -2,6 +2,11 @@ package exec
 
 import (
 	"context"
+	"io"
+	"iter"
+	"sync"
+	"time"
+
 	"github.com/anhcraft/rice/exec/ast"
 	"github.com/anhcraft/rice/exec/conf"
 	"github.com/anhcraft/rice/exec/ctxkey"
@@ -9,10 +14,6 @@ import (
 	"github.com/anhcraft/rice/exec/profiler"
 	"github.com/anhcraft/rice/exec/types"
 	"github.com/anhcraft/rice/exec/types/values"
-	"io"
-	"iter"
-	"sync"
-	"time"
 )
 
 var _ ast.Visitor = (*Interpreter)(nil)
@@ -100,7 +101,7 @@ func NewInterpreter(cfg *conf.EnvConfig) *Interpreter {
 			}
 		}
 
-		it.typeBoundFuncPkg = compileTypeboundPkg(cfg.LoggingOutput, typeboundPkgs)
+		it.typeBoundFuncPkg = compileTypeboundPkg(typeboundPkgs)
 	}
 
 	return it

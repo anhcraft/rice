@@ -3,7 +3,6 @@ package exec
 import (
 	"context"
 	"fmt"
-	"io"
 	"os"
 	"reflect"
 	"time"
@@ -88,7 +87,7 @@ func compileNamespacedPkg(packageNamespaces NamespacedFunctionPackageList) Compi
 	return compiled
 }
 
-func compileTypeboundPkg(stdout io.Writer, packageNamespaces TypeboundFunctionPackageList) CompiledTypeboundFunctionPackageList {
+func compileTypeboundPkg(packageNamespaces TypeboundFunctionPackageList) CompiledTypeboundFunctionPackageList {
 	compiled := make(CompiledTypeboundFunctionPackageList)
 
 	for argType, functionList := range packageNamespaces {
@@ -113,10 +112,6 @@ func compileTypeboundPkg(stdout io.Writer, packageNamespaces TypeboundFunctionPa
 				}
 
 				if !ok {
-					_, err := fmt.Fprintf(stdout, "typebound init (argType %v): skip func %s%s\n", argType, id, def)
-					if err != nil {
-						panic(err)
-					}
 					continue
 				}
 
