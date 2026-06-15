@@ -3,12 +3,18 @@ package exec
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"reflect"
+	"time"
+
 	"github.com/anhcraft/rice/exec/ctxkey"
 	"github.com/anhcraft/rice/exec/fun"
 	"github.com/anhcraft/rice/exec/mem"
 	_datetime "github.com/anhcraft/rice/exec/stdlib/datetime"
 	_error "github.com/anhcraft/rice/exec/stdlib/error"
 	_io "github.com/anhcraft/rice/exec/stdlib/io"
+	_json "github.com/anhcraft/rice/exec/stdlib/json"
 	_list "github.com/anhcraft/rice/exec/stdlib/list"
 	_map "github.com/anhcraft/rice/exec/stdlib/map"
 	_math "github.com/anhcraft/rice/exec/stdlib/math"
@@ -17,10 +23,6 @@ import (
 	_type "github.com/anhcraft/rice/exec/stdlib/type"
 	"github.com/anhcraft/rice/exec/types"
 	"github.com/anhcraft/rice/exec/types/values"
-	"io"
-	"os"
-	"reflect"
-	"time"
 )
 
 // NamespacedFunctionPackageList e.g. {string: [], io: []}
@@ -42,6 +44,7 @@ var standardNamespacedPackages = NamespacedFunctionPackageList{
 	"set":      _set.Functions,
 	"map":      _map.Functions,
 	"datetime": _datetime.Functions,
+	"json":     _json.Functions,
 }
 
 var standardTypeboundPackages = TypeboundFunctionPackageList{
