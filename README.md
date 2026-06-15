@@ -1,6 +1,6 @@
 # Rice
 
-![](./assets/banner.png)
+![](./assets/banner.jpeg)
 
 **Rice** is a minimal embeddable scripting language for Go applications.
 
@@ -12,6 +12,70 @@
 - Verbose error-reporting
 
 > ⚠️ Rice is under development and subject to changes without prior notice; there is currently no backward compatibility. Try at your own risk.
+
+## Playground
+
+Try Rice directly in your browser: https://rice-playground.vercel.app/
+
+## LLM prompt
+An official LLM prompt is available to be attached to LLM conversations. It provides full syntax and standard library guide to the LLM models. Battle-tested on Claude, Gemini, GPT, DeepSeek, MiMo models.
+
+Download here [llm-prompt.md](./llm-prompt.md)
+
+## Install
+
+```bash
+go get github.com/anhcraft/rice
+```
+
+## Quick Start
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/anhcraft/rice/exec"
+	"github.com/anhcraft/rice/exec/conf"
+	"github.com/anhcraft/rice/frontend"
+)
+
+func main() {
+	script := `
+		func greet(name) {
+			return "Hello, " + name + "!"
+		}
+		greet("Rice")
+	`
+
+	// 1. Tokenize
+	tokens, err := frontend.Tokenize(script)
+	if err != nil {
+		panic(err)
+	}
+
+	// 2. Parse
+	parser := frontend.NewParser(tokens)
+	ast := parser.Parse()
+	if len(parser.Errors()) > 0 {
+		panic(parser.Errors()[0])
+	}
+
+	// 3. Interpret
+	it := exec.NewInterpreter(conf.NewDefaultEnvConfig())
+	result, err := it.Interpret(context.Background(), ast, conf.NewDefaultRunConfig())
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(result) // "Hello, Rice!"
+}
+```
+
+> See [examples/example.go](examples/example.go) for a more advanced usage including error tracing and profiling.
 
 ## Language Tour
 
@@ -111,14 +175,6 @@ RuntimeError:
 - The official REPL/CLI allows you to quickly try the language, discover the underlying process of lexing and parsing.
 
 ![](./assets/repl.gif)
-
-### LLM prompt
-An official LLM prompt is available to be attached to LLM conversations. It provides full syntax and standard library guide to the LLM models
-
-Download here [llm-prompt.md](./llm-prompt.md)
-
-## Integrate
-See: [examples/example.go](examples/example.go) on how to use the lexer, parser and interpreter
 
 ## FAQ
 1. What is the file extension of Rice script? Simply, `.rice`
