@@ -1,0 +1,34 @@
+# Test short-circuit evaluation for &&
+# When left side of && is false, right side should NOT be evaluated
+# This would cause an index-out-of-bounds if not short-circuited
+var arr = list.of(1, 2, 3);
+var result = false;
+var i = 3;
+
+# i < len(arr) is false (3 < 3 = false), so arr[i] should never be evaluated
+if i < len(arr) && arr[i] == 1 {
+    result = true;
+}
+
+# Test short-circuit evaluation for ||
+# When left side of || is true, right side should NOT be evaluated
+var j = 3;
+if i >= 0 || arr[j] == 99 {
+    result = result || true;
+}
+
+# Nested short-circuit: the rightmost expression must not be evaluated
+var k = 3;
+if false && arr[k] == 1 {
+    result = false;
+}
+
+# Complex nesting: (true || <crash>) && (false && <crash>)
+# The first && short-circuits on false, so the second && is never reached
+# But more importantly: the right side of || should not be evaluated either
+var m = 3;
+if (true || arr[m] == 99) && false {
+    result = false;
+}
+
+result

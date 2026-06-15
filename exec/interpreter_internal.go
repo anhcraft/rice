@@ -507,6 +507,19 @@ func (i *Interpreter) VisitBinaryExpr(expr *ast.BinaryExpr) (types.Value, error)
 		isLeftPrimitive = true
 	}
 
+	// Short-circuit evaluation for && and ||
+	if isLeftPrimitive {
+		if expr.Op == opr.And {
+			if b, ok := left.(values.Bool); ok && !bool(b) {
+				return values.Bool(false), nil
+			}
+		} else if expr.Op == opr.Or {
+			if b, ok := left.(values.Bool); ok && bool(b) {
+				return values.Bool(true), nil
+			}
+		}
+	}
+
 	if right, err = i.eval(expr.Right); err != nil {
 		return nil, i.throw(expr.Right, "cannot eval right operand").causedBy(err)
 	} else if _, ok := right.(values.Primitive); ok {

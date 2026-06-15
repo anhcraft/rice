@@ -32,6 +32,7 @@ func TestInterpreterScripts(t *testing.T) {
 		{name: "For-In Loop", filename: "for_in_loop.rice", expected: values.Int(6)},
 		{name: "User-Defined Function", filename: "user_func.rice", expected: values.Int(25)},
 		{name: "Recursion (Fibonacci)", filename: "recursion.rice", expected: values.Int(55)},
+		{name: "Short-Circuit Evaluation", filename: "short_circuit.rice", expected: values.Bool(true)},
 	}
 
 	it := NewInterpreter(conf.NewDefaultEnvConfig())
