@@ -675,6 +675,17 @@ func (i *Interpreter) execBlockExpr(expr *ast.BlockExpr, pre func() (types.Value
 
 		if err != nil {
 			if _, ok := err.(Signal); ok {
+				// Continue should still execute the post-iteration step
+				// before propagating the signal up to the loop handler.
+				// Without this, a C-style for loop's post (e.g. i++) is skipped,
+				// causing an infinite loop.
+				var continueSignal ContinueSignal
+				if errors.As(err, &continueSignal) && post != nil {
+					_, err := post()
+					if err != nil {
+						return nil, err
+					}
+				}
 				return nil, err
 			}
 			return nil, i.throw(stmt, "cannot eval block statement #%d", idx+1).causedBy(err)

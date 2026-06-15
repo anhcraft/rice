@@ -41,6 +41,7 @@ func TestInterpreterScripts(t *testing.T) {
 		{name: "Scientific Notation", filename: "scientific_notation.rice", expected: values.Bool(true)},
 		{name: "Modulo Operator", filename: "modulo_ops.rice", expected: values.Bool(true)},
 		{name: "Break and Continue", filename: "break_continue.rice", expected: values.Bool(true)},
+		{name: "Nested Loop Control (break/continue/return)", filename: "nested_loop_control.rice", expected: values.Bool(true)},
 		{name: "Return Expression", filename: "return_expr.rice", expected: values.Bool(true)},
 		{name: "Assignment Expression", filename: "assignment.rice", expected: values.Bool(true)},
 		{name: "Anonymous Functions", filename: "anonymous_func.rice", expected: values.Bool(true)},

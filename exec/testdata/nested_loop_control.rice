@@ -1,0 +1,158 @@
+# Nested Loops and Loop-in-Function with Break, Continue, Return
+# Tests: nested loops, function-scoped loops, signal interactions
+
+# --- Nested loops: continue in inner C-style loop ---
+# The inner loop's post (j++) MUST still execute on continue
+var nestedContinueSum = 0;
+for (var i = 0; i < 3; i++) {
+    for (var j = 0; j < 4; j++) {
+        if j % 2 == 0 {
+            continue;  # skip even j, but j++ should still run
+        }
+        nestedContinueSum = nestedContinueSum + i * 10 + j;
+    }
+}
+# i=0: j=1,3 => 1+3=4 ; i=1: j=1,3 => 11+13=24 ; i=2: j=1,3 => 21+23=44
+# Total: 4+24+44 = 72
+
+# --- Nested loops: break in inner C-style loop ---
+# Break should exit only the inner loop, outer loop continues
+var nestedBreakSum = 0;
+for (var i = 0; i < 3; i++) {
+    for (var j = 0; j < 10; j++) {
+        if j == 3 {
+            break;
+        }
+        nestedBreakSum = nestedBreakSum + j;
+    }
+}
+# i=0: 0+1+2=3 ; i=1: 0+1+2=3 ; i=2: 0+1+2=3 => total 9
+
+# --- Continue in outer C-style loop ---
+# Outer post (i++) MUST still execute on continue
+var outerContinueSum = 0;
+for (var i = 0; i < 5; i++) {
+    if i % 2 == 0 {
+        continue;
+    }
+    outerContinueSum = outerContinueSum + i;
+}
+# 1+3 = 4
+
+# --- Break in outer C-style loop ---
+var outerBreakSum = 0;
+for (var i = 0; i < 10; i++) {
+    if i == 4 {
+        break;
+    }
+    outerBreakSum = outerBreakSum + i;
+}
+# 0+1+2+3 = 6
+
+# --- Loop inside function: continue ---
+# Continue should NOT skip the function's post-step (the loop post i++)
+const funcWithContinue = func() {
+    var s = 0;
+    for (var i = 0; i < 10; i++) {
+        if i % 2 == 0 {
+            continue;
+        }
+        s = s + i;
+    }
+    return s;
+};
+var funcContinueResult = funcWithContinue();
+# 1+3+5+7+9 = 25
+
+# --- Loop inside function: break ---
+const funcWithBreak = func() {
+    var s = 0;
+    for (var i = 0; i < 10; i++) {
+        if i == 5 {
+            break;
+        }
+        s = s + i;
+    }
+    return s;
+};
+var funcBreakResult = funcWithBreak();
+# 0+1+2+3+4 = 10
+
+# --- Loop inside function: return inside loop ---
+# Return should exit the FUNCTION (not just the loop), post should NOT be called
+const funcWithReturnInLoop = func() {
+    for (var i = 0; i < 10; i++) {
+        if i == 3 {
+            return i * 10;
+        }
+    }
+    return 0;
+};
+var funcReturnInLoopResult = funcWithReturnInLoop();
+# return 30 immediately
+
+# --- Complex: continue, break, return all in nested loops ---
+# Tests signal priority and correct scoping
+var complexSum = 0;
+const complexFunc = func() {
+    var s = 0;
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4; j++) {
+            if i == j {
+                continue;  # skip diagonal, inner post (j++) must still run
+            }
+            if i + j == 5 {
+                break;     # exit inner loop only
+            }
+            if i + j == 4 && i > 1 {
+                return s + 100;  # exit function entirely
+            }
+            s = s + i + j;
+        }
+    }
+    return s;
+};
+complexSum = complexFunc();
+# Trace:
+# i=0: j=0 cont, j=1 s=1, j=2 s=3, j=3 s=6
+# i=1: j=0 s=7, j=1 cont, j=2 s=10, j=3 s=14
+# i=2: j=0 s=16, j=1 s=19, j=2 cont, j=3 i+j=5 -> break
+# i=3: j=0 s=22, j=1 i+j=4 && i>1 -> return 122
+
+# --- Multiple continues in same loop body ---
+var multiContSum = 0;
+for (var i = 0; i < 10; i++) {
+    if i < 3 {
+        continue;
+    }
+    if i > 7 {
+        continue;
+    }
+    multiContSum = multiContSum + i;
+}
+# 3+4+5+6+7 = 25
+
+# --- Nested: continue in inner, break in outer (via inner) ---
+var nestedMixedSum = 0;
+for (var i = 0; i < 5; i++) {
+    var broke = false;
+    for (var j = 0; j < 5; j++) {
+        if j % 2 == 0 {
+            continue;  # skip even j, but j++ should run
+        }
+        if i == 2 && j == 3 {
+            broke = true;
+            break;     # exit inner loop
+        }
+        nestedMixedSum = nestedMixedSum + i * 10 + j;
+    }
+    if broke && i == 2 {
+        break;  # exit outer loop when i==2 after inner broke
+    }
+}
+# i=0: j=1,3 => 1+3=4
+# i=1: j=1,3 => 11+13=24 => cumulative 4+24=28
+# i=2: j=1 => 21 => cumulative 28+21=49, then j=3 breaks inner, outer also breaks
+# Total: 49
+
+nestedContinueSum == 72 && nestedBreakSum == 9 && outerContinueSum == 4 && outerBreakSum == 6 && funcContinueResult == 25 && funcBreakResult == 10 && funcReturnInLoopResult == 30 && complexSum == 122 && multiContSum == 25 && nestedMixedSum == 49
