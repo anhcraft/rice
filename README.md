@@ -45,10 +45,10 @@ import (
 
 func main() {
 	script := `
-		func greet(name) {
-			return "Hello, " + name + "!"
-		}
-		greet("Rice")
+    var greet = func (name) {
+        return "Hello, " + name + "!"
+    };
+		greet("Rice");
 	`
 
 	// 1. Tokenize
