@@ -1,0 +1,30 @@
+# 36. Missing Number
+# Given an array containing n distinct numbers in [0, n], find the missing one.
+# Approach: Sum formula n*(n+1)/2 minus actual sum
+
+const missingNumber = func(nums) {
+    const n = len(nums);
+    const expectedSum = n * (n + 1) / 2;
+    var actualSum = 0;
+    for (var i = 0; i < len(nums); i++) {
+        actualSum = actualSum + nums[i];
+    }
+    return expectedSum - actualSum;
+};
+
+# Test 1: Missing in middle
+assert(missingNumber(list.of(3, 0, 1)) == 2, "Missing Number test 1 failed");
+
+# Test 2: Missing at start
+assert(missingNumber(list.of(1, 2)) == 0, "Missing Number test 2 failed");
+
+# Test 3: Missing at end
+assert(missingNumber(list.of(0, 1)) == 2, "Missing Number test 3 failed");
+
+# Test 4: Single element
+assert(missingNumber(list.of(0)) == 1, "Missing Number test 4 failed");
+
+# Test 5: Larger array
+assert(missingNumber(list.of(9, 6, 4, 2, 3, 5, 7, 0, 1)) == 8, "Missing Number test 5 failed");
+
+true

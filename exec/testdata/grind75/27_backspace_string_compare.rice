@@ -1,0 +1,50 @@
+# 27. Backspace String Compare
+# Given two strings s and t, return true if they are equal when both are typed into
+# empty text editors. '#' means a backspace character.
+# Approach: Simulate typing with a stack
+
+const processString = func(s) {
+    const stack = list.new();
+    for ch in s {
+        if ch == "#" {
+            if len(stack) > 0 {
+                stack.removeAt(len(stack) - 1);
+            }
+        } else {
+            stack.append(ch);
+        }
+    }
+    return stack;
+};
+
+const backspaceCompare = func(s, t) {
+    const sProcessed = processString(s);
+    const tProcessed = processString(t);
+
+    if len(sProcessed) != len(tProcessed) {
+        return false;
+    }
+    for (var i = 0; i < len(sProcessed); i++) {
+        if sProcessed[i] != tProcessed[i] {
+            return false;
+        }
+    }
+    return true;
+};
+
+# Test 1: Equal after backspace
+assert(backspaceCompare("ab#c", "ad#c"), "Backspace Compare test 1 failed");
+
+# Test 2: Equal empty
+assert(backspaceCompare("ab##", "c#d#"), "Backspace Compare test 2 failed");
+
+# Test 3: Not equal
+assert(!backspaceCompare("a#c", "b"), "Backspace Compare test 3 failed");
+
+# Test 4: Both empty
+assert(backspaceCompare("a##c", "#a#c"), "Backspace Compare test 4 failed");
+
+# Test 5: More backspaces than chars
+assert(backspaceCompare("y#fo##f", "y#f#o##f"), "Backspace Compare test 5 failed");
+
+true

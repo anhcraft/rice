@@ -1,0 +1,39 @@
+# 34. Move Zeroes
+# Given an integer array nums, move all 0's to the end while maintaining relative order of non-zero elements.
+# Approach: Two-pointer (shift non-zero forward, then fill zeros)
+
+const moveZeroes = func(nums) {
+    var writePos = 0;
+    for (var i = 0; i < len(nums); i++) {
+        if nums[i] != 0 {
+            nums[writePos] = nums[i];
+            writePos++;
+        }
+    }
+    for (var j = writePos; j < len(nums); j++) {
+        nums[j] = 0;
+    }
+    return nums;
+};
+
+# Test 1: Basic
+const r1 = moveZeroes(list.of(0, 1, 0, 3, 12));
+assert(r1[0] == 1 && r1[1] == 3 && r1[2] == 12 && r1[3] == 0 && r1[4] == 0, "Move Zeroes test 1 failed");
+
+# Test 2: All zeros
+const r2 = moveZeroes(list.of(0, 0, 0));
+assert(r2[0] == 0 && r2[1] == 0 && r2[2] == 0, "Move Zeroes test 2 failed");
+
+# Test 3: No zeros
+const r3 = moveZeroes(list.of(1, 2, 3));
+assert(r3[0] == 1 && r3[1] == 2 && r3[2] == 3, "Move Zeroes test 3 failed");
+
+# Test 4: Single element zero
+const r4 = moveZeroes(list.of(0));
+assert(r4[0] == 0, "Move Zeroes test 4 failed");
+
+# Test 5: Single element non-zero
+const r5 = moveZeroes(list.of(5));
+assert(r5[0] == 5, "Move Zeroes test 5 failed");
+
+true

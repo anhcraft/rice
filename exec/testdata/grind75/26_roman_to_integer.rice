@@ -1,0 +1,48 @@
+# 26. Roman to Integer
+# Given a roman numeral, convert it to an integer.
+# Approach: Map each symbol to value, subtract when smaller precedes larger
+
+const romanToInt = func(s) {
+    const values = map.of(
+        "I", 1, "V", 5, "X", 10, "L", 50,
+        "C", 100, "D", 500, "M", 1000
+    );
+
+    var result = 0;
+    var i = 0;
+    const n = len(s);
+
+    for i < n {
+        if i + 1 < n {
+            if values[s[i]] < values[s[i + 1]] {
+                result = result + values[s[i + 1]] - values[s[i]];
+                i = i + 2;
+            } else {
+                result = result + values[s[i]];
+                i++;
+            }
+        } else {
+            result = result + values[s[i]];
+            i++;
+        }
+    }
+
+    return result;
+};
+
+# Test 1: Basic
+assert(romanToInt("III") == 3, "Roman to Integer test 1 failed");
+
+# Test 2: Subtraction case
+assert(romanToInt("IV") == 4, "Roman to Integer test 2 failed");
+
+# Test 3: Complex
+assert(romanToInt("MCMXCIV") == 1994, "Roman to Integer test 3 failed");
+
+# Test 4: Large
+assert(romanToInt("LVIII") == 58, "Roman to Integer test 4 failed");
+
+# Test 5: Subtraction
+assert(romanToInt("IX") == 9, "Roman to Integer test 5 failed");
+
+true

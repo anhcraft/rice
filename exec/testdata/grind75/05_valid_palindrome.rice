@@ -1,0 +1,36 @@
+# 05. Valid Palindrome
+# Given a string, determine if it is a palindrome considering only alphanumeric chars.
+# Approach: Filter alphanumeric, convert to lowercase, compare with reverse
+
+const isPalindrome = func(s) {
+    var clean = "";
+    const lower = s.toLower();
+    for ch in lower {
+        # Check if alphanumeric using lexicographic string comparison
+        if (ch >= "a" && ch <= "z") || (ch >= "0" && ch <= "9") {
+            clean = clean + ch;
+        }
+    }
+
+    const n = len(clean);
+    for (var i = 0; i < n / 2; i++) {
+        if clean[i] != clean[n - 1 - i] {
+            return false;
+        }
+    }
+    return true;
+};
+
+# Test 1: Classic palindrome
+assert(isPalindrome("A man, a plan, a canal: Panama"), "Valid Palindrome test 1 failed");
+
+# Test 2: Not palindrome
+assert(!isPalindrome("race a car"), "Valid Palindrome test 2 failed");
+
+# Test 3: Empty / whitespace only
+assert(isPalindrome(" "), "Valid Palindrome test 3 failed");
+
+# Test 4: Single char
+assert(isPalindrome("a"), "Valid Palindrome test 4 failed");
+
+true

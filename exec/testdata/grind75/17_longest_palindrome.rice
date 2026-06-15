@@ -1,0 +1,51 @@
+# 17. Longest Palindrome
+# Given a string s which consists of lowercase or uppercase letters,
+# return the length of the longest palindrome that can be built with those letters.
+# Approach: Count character frequencies; take even counts fully, odd counts minus 1, plus 1 center
+
+const longestPalindrome = func(s) {
+    const counts = map.new();
+    for ch in s {
+        if counts.includeKey(ch) {
+            counts[ch] = counts[ch] + 1;
+        } else {
+            counts.put(ch, 1);
+        }
+    }
+
+    var length = 0;
+    var hasOdd = false;
+
+    for entry in counts.entries() {
+        const count = entry[1];
+        if count % 2 == 0 {
+            length = length + count;
+        } else {
+            length = length + count - 1;
+            hasOdd = true;
+        }
+    }
+
+    if hasOdd {
+        length = length + 1;
+    }
+
+    return length;
+};
+
+# Test 1: Mixed case
+assert(longestPalindrome("abccccdd") == 7, "Longest Palindrome test 1 failed");
+
+# Test 2: Single char
+assert(longestPalindrome("a") == 1, "Longest Palindrome test 2 failed");
+
+# Test 3: All same
+assert(longestPalindrome("aaaa") == 4, "Longest Palindrome test 3 failed");
+
+# Test 4: All unique
+assert(longestPalindrome("abcde") == 1, "Longest Palindrome test 4 failed");
+
+# Test 5: Pairs
+assert(longestPalindrome("aabb") == 4, "Longest Palindrome test 5 failed");
+
+true

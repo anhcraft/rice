@@ -1,0 +1,37 @@
+# 41. Palindrome Number
+# Given an integer x, return true if x is a palindrome integer.
+# Approach: Convert to string and check characters from both ends
+
+const isPalindrome = func(x) {
+    if x < 0 {
+        return false;
+    }
+    const s = string(x);
+    const n = len(s);
+    for (var i = 0; i < n / 2; i++) {
+        if s[i] != s[n - 1 - i] {
+            return false;
+        }
+    }
+    return true;
+};
+
+# Test 1: Palindrome
+assert(isPalindrome(121), "Palindrome Number test 1 failed");
+
+# Test 2: Negative
+assert(!isPalindrome(-121), "Palindrome Number test 2 failed");
+
+# Test 3: Not palindrome
+assert(!isPalindrome(10), "Palindrome Number test 3 failed");
+
+# Test 4: Single digit
+assert(isPalindrome(7), "Palindrome Number test 4 failed");
+
+# Test 5: Zero
+assert(isPalindrome(0), "Palindrome Number test 5 failed");
+
+# Test 6: Large palindrome
+assert(isPalindrome(1234321), "Palindrome Number test 6 failed");
+
+true

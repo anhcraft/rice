@@ -1,0 +1,40 @@
+# 20. Add Binary
+# Given two binary strings, return their sum as a binary string.
+# Approach: Simulate addition from right to left with carry
+
+const addBinary = func(a, b) {
+    var result = "";
+    var i = len(a) - 1;
+    var j = len(b) - 1;
+    var carry = 0;
+
+    for i >= 0 || j >= 0 || carry > 0 {
+        var sum = carry;
+        if i >= 0 {
+            sum = sum + int(a[i]);
+        }
+        if j >= 0 {
+            sum = sum + int(b[j]);
+        }
+        result = string(sum % 2) + result;
+        carry = sum / 2;
+        i--;
+        j--;
+    }
+
+    return result;
+};
+
+# Test 1: Basic addition
+assert(addBinary("11", "1") == "100", "Add Binary test 1 failed");
+
+# Test 2: Larger numbers
+assert(addBinary("1010", "1011") == "10101", "Add Binary test 2 failed");
+
+# Test 3: Both zero
+assert(addBinary("0", "0") == "0", "Add Binary test 3 failed");
+
+# Test 4: Different lengths
+assert(addBinary("1", "111") == "1000", "Add Binary test 4 failed");
+
+true

@@ -1,0 +1,51 @@
+# 07. Valid Anagram
+# Given two strings, determine if t is an anagram of s.
+# Approach: Character frequency counting using map
+
+const isAnagram = func(s, t) {
+    if len(s) != len(t) {
+        return false;
+    }
+
+    const count = map.new();
+
+    for ch in s {
+        if count.includeKey(ch) {
+            count[ch] = count[ch] + 1;
+        } else {
+            count.put(ch, 1);
+        }
+    }
+
+    for ch in t {
+        if !count.includeKey(ch) {
+            return false;
+        }
+        count[ch] = count[ch] - 1;
+        if count[ch] < 0 {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+# Test 1: Valid anagram
+assert(isAnagram("anagram", "nagaram"), "Valid Anagram test 1 failed");
+
+# Test 2: Not anagram
+assert(!isAnagram("rat", "car"), "Valid Anagram test 2 failed");
+
+# Test 3: Different length
+assert(!isAnagram("ab", "a"), "Valid Anagram test 3 failed");
+
+# Test 4: Empty strings
+assert(isAnagram("", ""), "Valid Anagram test 4 failed");
+
+# Test 5: Single char
+assert(isAnagram("a", "a"), "Valid Anagram test 5 failed");
+
+# Test 6: Repeated chars
+assert(isAnagram("aacc", "ccaa"), "Valid Anagram test 6 failed");
+
+true

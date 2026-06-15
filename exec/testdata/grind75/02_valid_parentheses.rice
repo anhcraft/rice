@@ -1,0 +1,50 @@
+# 02. Valid Parentheses
+# Given a string containing just the characters '(', ')', '{', '}', '[' and ']',
+# determine if the input string is valid.
+# Approach: Stack-based matching
+
+const isValid = func(s) {
+    const stack = list.new();
+    for ch in s {
+        if ch == "(" || ch == "{" || ch == "[" {
+            stack.append(ch);
+        } else {
+            if len(stack) == 0 {
+                return false;
+            }
+            const top = stack[len(stack) - 1];
+            if (ch == ")" && top == "(") || (ch == "}" && top == "{") || (ch == "]" && top == "[") {
+                stack.removeAt(len(stack) - 1);
+            } else {
+                return false;
+            }
+        }
+    }
+    return len(stack) == 0;
+};
+
+# Test 1: Simple valid
+assert(isValid("()"), "Valid Parentheses test 1 failed");
+
+# Test 2: Multiple types
+assert(isValid("()[]{}"), "Valid Parentheses test 2 failed");
+
+# Test 3: Nested valid
+assert(isValid("{[]}"), "Valid Parentheses test 3 failed");
+
+# Test 4: Invalid
+assert(!isValid("(]"), "Valid Parentheses test 4 failed");
+
+# Test 5: Invalid mix
+assert(!isValid("([)]"), "Valid Parentheses test 5 failed");
+
+# Test 6: Empty string
+assert(isValid(""), "Valid Parentheses test 6 failed");
+
+# Test 7: Single open
+assert(!isValid("("), "Valid Parentheses test 7 failed");
+
+# Test 8: Complex nested
+assert(isValid("(({{[[]]}}))"), "Valid Parentheses test 8 failed");
+
+true

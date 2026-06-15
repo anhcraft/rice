@@ -1,0 +1,43 @@
+# 08. Binary Search
+# Given a sorted array and a target, return index of target or -1.
+# Approach: Standard binary search
+
+const binarySearch = func(nums, target) {
+    var lo = 0;
+    var hi = len(nums) - 1;
+
+    for lo <= hi {
+        var mid = lo + (hi - lo) / 2;
+        if nums[mid] == target {
+            return mid;
+        } else if nums[mid] < target {
+            lo = mid + 1;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    return -1;
+};
+
+# Test 1: Target found
+assert(binarySearch(list.of(-1, 0, 3, 5, 9, 12), 9) == 4, "Binary Search test 1 failed");
+
+# Test 2: Target not found
+assert(binarySearch(list.of(-1, 0, 3, 5, 9, 12), 2) == -1, "Binary Search test 2 failed");
+
+# Test 3: Single element found
+assert(binarySearch(list.of(5), 5) == 0, "Binary Search test 3 failed");
+
+# Test 4: Single element not found
+assert(binarySearch(list.of(5), 3) == -1, "Binary Search test 4 failed");
+
+# Test 5: Empty array
+assert(binarySearch(list.new(), 1) == -1, "Binary Search test 5 failed");
+
+# Test 6: First element
+assert(binarySearch(list.of(1, 2, 3, 4, 5), 1) == 0, "Binary Search test 6 failed");
+
+# Test 7: Last element
+assert(binarySearch(list.of(1, 2, 3, 4, 5), 5) == 4, "Binary Search test 7 failed");
+
+true

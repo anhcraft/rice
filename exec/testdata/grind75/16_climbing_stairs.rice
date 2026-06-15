@@ -1,0 +1,35 @@
+# 16. Climbing Stairs
+# You are climbing a staircase with n steps. Each time you can climb 1 or 2 steps.
+# Find the number of distinct ways to reach the top.
+# Approach: Dynamic programming (iterative)
+
+const climbStairs = func(n) {
+    if n <= 2 {
+        return n;
+    }
+    var prev2 = 1;
+    var prev1 = 2;
+    for (var i = 3; i <= n; i++) {
+        const curr = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    return prev1;
+};
+
+# Test 1: n = 2
+assert(climbStairs(2) == 2, "Climbing Stairs test 1 failed");
+
+# Test 2: n = 3
+assert(climbStairs(3) == 3, "Climbing Stairs test 2 failed");
+
+# Test 3: n = 1
+assert(climbStairs(1) == 1, "Climbing Stairs test 3 failed");
+
+# Test 4: n = 5
+assert(climbStairs(5) == 8, "Climbing Stairs test 4 failed");
+
+# Test 5: n = 10
+assert(climbStairs(10) == 89, "Climbing Stairs test 5 failed");
+
+true

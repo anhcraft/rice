@@ -1,0 +1,35 @@
+# 19. Majority Element
+# Given an array of size n, return the element that appears more than n/2 times.
+# Approach: Boyer-Moore Voting Algorithm
+
+const majorityElement = func(nums) {
+    var candidate = nums[0];
+    var count = 1;
+
+    for (var i = 1; i < len(nums); i++) {
+        if count == 0 {
+            candidate = nums[i];
+            count = 1;
+        } else if nums[i] == candidate {
+            count++;
+        } else {
+            count--;
+        }
+    }
+
+    return candidate;
+};
+
+# Test 1: Basic case
+assert(majorityElement(list.of(3, 2, 3)) == 3, "Majority Element test 1 failed");
+
+# Test 2: Majority at start
+assert(majorityElement(list.of(2, 2, 1, 1, 1, 2, 2)) == 2, "Majority Element test 2 failed");
+
+# Test 3: Single element
+assert(majorityElement(list.of(1)) == 1, "Majority Element test 3 failed");
+
+# Test 4: All same
+assert(majorityElement(list.of(5, 5, 5, 5)) == 5, "Majority Element test 4 failed");
+
+true

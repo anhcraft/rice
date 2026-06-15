@@ -1,0 +1,33 @@
+# 01. Two Sum
+# Given an array of integers and a target, return indices of two numbers that add up to target.
+# Approach: Hash map (one-pass)
+
+const twoSum = func(nums, target) {
+    const seen = map.new();
+    for (var i = 0; i < len(nums); i++) {
+        const complement = target - nums[i];
+        if seen.includeKey(complement) {
+            return list.of(seen[complement], i);
+        }
+        seen.put(nums[i], i);
+    }
+    return null;
+};
+
+# Test 1: Basic case
+const r1 = twoSum(list.of(2, 7, 11, 15), 9);
+assert(r1[0] == 0 && r1[1] == 1, "Two Sum test 1 failed");
+
+# Test 2: Non-first elements
+const r2 = twoSum(list.of(3, 2, 4), 6);
+assert(r2[0] == 1 && r2[1] == 2, "Two Sum test 2 failed");
+
+# Test 3: Same element twice
+const r3 = twoSum(list.of(3, 3), 6);
+assert(r3[0] == 0 && r3[1] == 1, "Two Sum test 3 failed");
+
+# Test 4: Negative numbers
+const r4 = twoSum(list.of(-1, -2, -3, -4, -5), -8);
+assert(r4[0] == 2 && r4[1] == 4, "Two Sum test 4 failed");
+
+true

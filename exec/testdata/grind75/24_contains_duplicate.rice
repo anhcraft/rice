@@ -1,0 +1,31 @@
+# 24. Contains Duplicate
+# Given an integer array nums, return true if any value appears at least twice.
+# Approach: Use a set to track seen elements
+
+const containsDuplicate = func(nums) {
+    const seen = set.new();
+    for (var i = 0; i < len(nums); i++) {
+        if seen.include(nums[i]) {
+            return true;
+        }
+        seen.add(nums[i]);
+    }
+    return false;
+};
+
+# Test 1: Has duplicate
+assert(containsDuplicate(list.of(1, 2, 3, 1)), "Contains Duplicate test 1 failed");
+
+# Test 2: No duplicate
+assert(!containsDuplicate(list.of(1, 2, 3, 4)), "Contains Duplicate test 2 failed");
+
+# Test 3: Multiple duplicates
+assert(containsDuplicate(list.of(1, 1, 1, 3, 3, 4, 3, 2, 4, 2)), "Contains Duplicate test 3 failed");
+
+# Test 4: Empty array
+assert(!containsDuplicate(list.new()), "Contains Duplicate test 4 failed");
+
+# Test 5: Single element
+assert(!containsDuplicate(list.of(1)), "Contains Duplicate test 5 failed");
+
+true

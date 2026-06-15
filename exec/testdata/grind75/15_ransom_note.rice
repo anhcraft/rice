@@ -1,0 +1,42 @@
+# 15. Ransom Note
+# Given two strings ransomNote and magazine, return true if ransomNote can be constructed
+# by using the letters from magazine.
+# Approach: Character frequency count
+
+const canConstruct = func(ransomNote, magazine) {
+    const counts = map.new();
+
+    for ch in magazine {
+        if counts.includeKey(ch) {
+            counts[ch] = counts[ch] + 1;
+        } else {
+            counts.put(ch, 1);
+        }
+    }
+
+    for ch in ransomNote {
+        if !counts.includeKey(ch) || counts[ch] == 0 {
+            return false;
+        };
+        counts[ch] = counts[ch] - 1;
+    }
+
+    return true;
+};
+
+# Test 1: Cannot construct
+assert(!canConstruct("a", "b"), "Ransom Note test 1 failed");
+
+# Test 2: Cannot construct (not enough letters)
+assert(!canConstruct("aa", "ab"), "Ransom Note test 2 failed");
+
+# Test 3: Can construct
+assert(canConstruct("aa", "aab"), "Ransom Note test 3 failed");
+
+# Test 4: Empty ransom note
+assert(canConstruct("", "abc"), "Ransom Note test 4 failed");
+
+# Test 5: Exact match
+assert(canConstruct("abc", "abc"), "Ransom Note test 5 failed");
+
+true

@@ -1,0 +1,37 @@
+# 04. Best Time to Buy and Sell Stock
+# Given prices array, find max profit from one buy and one sell.
+# Approach: Track minimum price so far and max profit
+
+const maxProfit = func(prices) {
+    var minPrice = prices[0];
+    var maxProfitVal = 0;
+
+    for (var i = 1; i < len(prices); i++) {
+        if prices[i] < minPrice {
+            minPrice = prices[i];
+        } else {
+            const profit = prices[i] - minPrice;
+            if profit > maxProfitVal {
+                maxProfitVal = profit;
+            }
+        }
+    }
+    return maxProfitVal;
+};
+
+# Test 1: Basic profit
+assert(maxProfit(list.of(7, 1, 5, 3, 6, 4)) == 5, "Buy Sell Stock test 1 failed");
+
+# Test 2: No profit possible (declining)
+assert(maxProfit(list.of(7, 6, 4, 3, 1)) == 0, "Buy Sell Stock test 2 failed");
+
+# Test 3: Single element
+assert(maxProfit(list.of(1)) == 0, "Buy Sell Stock test 3 failed");
+
+# Test 4: Two elements - profit
+assert(maxProfit(list.of(1, 2)) == 1, "Buy Sell Stock test 4 failed");
+
+# Test 5: All same price
+assert(maxProfit(list.of(3, 3, 3, 3)) == 0, "Buy Sell Stock test 5 failed");
+
+true

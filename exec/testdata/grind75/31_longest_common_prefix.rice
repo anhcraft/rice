@@ -1,0 +1,38 @@
+# 31. Longest Common Prefix
+# Write a function to find the longest common prefix string amongst an array of strings.
+# Approach: Compare character by character across all strings
+
+const longestCommonPrefix = func(strs) {
+    if len(strs) == 0 {
+        return "";
+    }
+
+    const first = strs[0];
+    for (var i = 0; i < len(first); i++) {
+        const ch = first[i];
+        for (var j = 1; j < len(strs); j++) {
+            if i >= len(strs[j]) || strs[j][i] != ch {
+                return strings.substr(first, 0, i);
+            }
+        }
+    }
+
+    return first;
+};
+
+# Test 1: Common prefix exists
+assert(longestCommonPrefix(list.of("flower", "flow", "flight")) == "fl", "Longest Common Prefix test 1 failed");
+
+# Test 2: No common prefix
+assert(longestCommonPrefix(list.of("dog", "racecar", "car")) == "", "Longest Common Prefix test 2 failed");
+
+# Test 3: Single string
+assert(longestCommonPrefix(list.of("abc")) == "abc", "Longest Common Prefix test 3 failed");
+
+# Test 4: All identical
+assert(longestCommonPrefix(list.of("aaa", "aaa", "aaa")) == "aaa", "Longest Common Prefix test 4 failed");
+
+# Test 5: Empty array
+assert(longestCommonPrefix(list.new()) == "", "Longest Common Prefix test 5 failed");
+
+true

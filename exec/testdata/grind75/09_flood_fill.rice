@@ -1,0 +1,62 @@
+# 09. Flood Fill
+# An image is represented by a 2D list of integers.
+# Given a starting pixel (sr, sc) and a new color, flood fill the connected region.
+# Approach: BFS using a queue (list used as queue)
+
+const floodFill = func(image, sr, sc, newColor) {
+    const oldColor = image[sr][sc];
+    if oldColor == newColor {
+        return image;
+    }
+
+    const rows = len(image);
+    const cols = len(image[0]);
+    const queue = list.new();
+    queue.append(list.of(sr, sc));
+
+    for len(queue) > 0 {
+        const cell = queue[0];
+        queue.removeAt(0);
+        const r = cell[0];
+        const c = cell[1];
+
+        if r < 0 || r >= rows || c < 0 || c >= cols {
+            continue;
+        }
+        if image[r][c] != oldColor {
+            continue;
+        }
+
+        image[r][c] = newColor;
+
+        queue.append(list.of(r - 1, c));
+        queue.append(list.of(r + 1, c));
+        queue.append(list.of(r, c - 1));
+        queue.append(list.of(r, c + 1));
+    }
+
+    return image;
+};
+
+# Test 1: Basic flood fill
+const img1 = list.of(
+    list.of(1, 1, 1),
+    list.of(1, 1, 0),
+    list.of(1, 0, 1)
+);
+const res1 = floodFill(img1, 1, 1, 2);
+assert(res1[0][0] == 2 && res1[0][1] == 2 && res1[0][2] == 2, "Flood Fill test 1a failed");
+assert(res1[1][0] == 2 && res1[1][1] == 2 && res1[1][2] == 0, "Flood Fill test 1b failed");
+assert(res1[2][0] == 2 && res1[2][1] == 0 && res1[2][2] == 1, "Flood Fill test 1c failed");
+
+# Test 2: Same color - no change
+const img2 = list.of(list.of(0, 0, 0), list.of(0, 0, 0));
+const res2 = floodFill(img2, 0, 0, 0);
+assert(res2[0][0] == 0 && res2[1][2] == 0, "Flood Fill test 2 failed");
+
+# Test 3: Single pixel
+const img3 = list.of(list.of(5));
+const res3 = floodFill(img3, 0, 0, 7);
+assert(res3[0][0] == 7, "Flood Fill test 3 failed");
+
+true
