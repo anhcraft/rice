@@ -1,0 +1,38 @@
+# String native function operations
+# Testing namespace functions: strings.*
+
+const str = "Hello World";
+
+# strings.toUpper / toLower
+const a = strings.toUpper(str);      # "HELLO WORLD"
+const b = strings.toLower(str);      # "hello world"
+
+# strings.index
+const c = strings.index(str, "World");  # 6
+const d = strings.index(str, "xyz");    # -1
+
+# strings.lastIndex
+const e = strings.lastIndex("banana", "a");  # 5
+
+# strings.substr (with end)
+const f = strings.substr(str, 0, 5);     # "Hello"
+# strings.substr (offset only)
+const g = strings.substr(str, 6);         # "World"
+
+# strings.include
+const h = strings.include(str, "ello");  # true
+
+# strings.trim
+const i = strings.trim("  spaced  ");     # "spaced"
+
+# strings.split
+const splitted = strings.split("a,b,c", ",");
+const j = splitted[1];                     # "b"
+
+# strings.join
+const k = strings.join("-", "x", "y", "z");  # "x-y-z"
+
+# strings.format
+const l = strings.format("Hello %s!", "World");  # "Hello World!"
+
+a == "HELLO WORLD" && b == "hello world" && c == 6 && d == -1 && e == 5 && f == "Hello" && g == "World" && h == true && i == "spaced" && j == "b" && k == "x-y-z" && l == "Hello World!"

@@ -1,0 +1,7 @@
+# Scientific notation float literals
+const a = 1e-9;  # 0.000000001 (very small positive)
+const b = 2.5e3;  # 2500.0
+const c = -1E+2;  # -100.0
+
+# Verify the values are floats and correct
+typeof(a) == "Float" && a > 0 && a < 0.00000001 && b == 2500.0 && c == -100.0

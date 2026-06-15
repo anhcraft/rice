@@ -1,0 +1,22 @@
+# Error handling: assert and throw
+
+# assert: condition passes (no error)
+var passCount = 0;
+assert(true, "This should not throw");
+passCount = 1;
+
+# assert with truthy values
+assert(1 == 1, "One equals one");
+assert("hello" == "hello", "Strings equal");
+
+# throw: raises an exception
+# We can't easily test throw in a linear script (it would crash)
+# But we verify that assert with true conditions works
+
+# assert with complex expression
+const a = 10;
+const b = 20;
+assert(a < b, "a should be less than b");
+passCount = 2;
+
+passCount == 2

@@ -1,0 +1,71 @@
+# Map operations: create, put, remove, indexing, selector, iteration
+
+# Create maps
+const empty = map.new();
+const fruit = map.of("a", "apple", "b", "banana", "c", "cherry");
+
+# Indexing by string key
+const a = fruit["a"];  # "apple"
+const b = fruit["b"];  # "banana"
+
+# Indexing by integer key
+const intKey = map.of(1, "one", 2, "two");
+const c = intKey[1];  # "one"
+
+# Selector (.key access - map only)
+const d = fruit.a;  # "apple"
+const e = fruit.c;  # "cherry"
+
+# Element assignment (mutable)
+var mutable = map.of("x", 1, "y", 2);
+mutable["x"] = 99;
+const f = mutable["x"];  # 99
+
+# Put entries (native + type-bound)
+map.put(empty, "k1", "v1", "k2", "v2");
+var boundMap = map.of();
+boundMap.put("name", "Alice", "age", 30);
+
+# IncludeKey check
+const g = map.includeKey(fruit, "a");   # true
+const h = map.includeKey(fruit, "z");   # false
+
+# Remove entries
+var remMap = map.of("x", 1, "y", 2);
+remMap.remove("x");
+const i = remMap.includeKey("x");  # false
+
+# Keys
+const keys = map.keys(fruit);
+const j = keys.include("a");  # true
+const k = keys.include("b");  # true
+const l = keys.include("c");  # true
+
+# Values
+const vals = map.values(fruit);
+const m = vals.include("apple");  # true
+
+# Entries (list of list(key, value))
+const entries = map.entries(fruit);
+const n = len(entries);  # 3
+
+# Iteration: for-in yields list(key, value)
+var keysFound = "";
+for entry in fruit {
+    keysFound = keysFound + entry[0];
+}
+
+# Map (higher-order)
+const mapped = map.map(fruit, func(entry) {
+    return list.of(entry[0], entry[1] + "!");
+});
+const o = mapped["a"];  # "apple!"
+
+# Filter (higher-order)
+const filtered = map.filter(fruit, func(entry) {
+    return entry[1].include("a");
+});
+const p = filtered.includeKey("a");  # true (apple contains 'a')
+const q = len(filtered);  # at least 1
+
+a == "apple" && b == "banana" && c == "one" && d == "apple" && e == "cherry" && f == 99 && g == true && h == false && i == false && j == true && k == true && l == true && m == true && n == 3 && o == "apple!" && p == true && q > 0

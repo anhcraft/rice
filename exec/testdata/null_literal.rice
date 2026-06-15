@@ -1,0 +1,29 @@
+# Null literal: null is a valid value and expression
+
+# Null declaration
+const a = null;
+
+# Null comparison
+const b = a == null;   # true
+const c = null == null; # true
+const d = a != null;    # false
+
+# Null in list
+const li = list.of(1, null, 3);
+const e = li[1];        # null
+const f = li[1] == null; # true
+
+# Null in map
+const m = map.of("key", null);
+const g = m["key"];      # null
+
+# Null as function return
+const returnNull = func() {
+    return null;
+};
+const h = returnNull();  # null
+
+# typeof null
+const i = typeof(null);  # "null"
+
+b == true && c == true && d == false && e == null && f == true && g == null && h == null && i == "null"

@@ -1,0 +1,56 @@
+# Type conversion: typeof, int, float, bool, string, isNumberLike, isNumber
+
+# typeof
+const a = typeof(42);         # "Int"
+const b = typeof(3.14);       # "Float"
+const c = typeof(true);       # "Bool"
+const d = typeof("hello");    # "String"
+const e = typeof(list.of());  # "List"
+const f = typeof(set.of());   # "Set"
+const g = typeof(map.of());   # "Map"
+const h = typeof(func() {});  # "Func"
+const i = typeof(null);       # "null"
+
+# int()
+const j = int(3.7);           # 3
+const k = int("42");          # 42
+const l = int(true);          # 1
+const m = int(false);         # 0
+const n = int(-5.5);          # -5
+
+# float()
+const o = float(42);          # 42.0
+const p = float("3.14");      # 3.14
+const q = float(true);        # 1.0
+
+# bool()
+const r = bool(1);            # true
+const s = bool(0);            # false
+const t = bool("true");       # true
+const u = bool("false");      # false
+
+# string()
+const v = string(123);        # "123"
+const w = string(3.14);       # "3.14"
+const x = string(true);       # "true"
+const y = string(null);       # ""
+
+# isNumberLike
+const z = isNumberLike(42);   # true
+const aa = isNumberLike(3.14); # true
+const ab = isNumberLike(true); # true
+const ac = isNumberLike("hi"); # false
+
+# isNumber
+const ad = isNumber(42);      # true
+const ae = isNumber(3.14);    # true
+const af = isNumber(true);    # false
+const ag = isNumber("hi");    # false
+
+# len()
+const ah = len("hello");      # 5
+const ai = len(list.of(1,2,3)); # 3
+const aj = len(set.of(1,2));  # 2
+const ak = len(map.of("k","v","k2","v2"));  # 2
+
+a == "Int" && b == "Float" && c == "Bool" && d == "String" && e == "List" && f == "Set" && g == "Map" && h == "Func" && i == "null" && j == 3 && k == 42 && l == 1 && m == 0 && n == -5 && o == 42.0 && p == 3.14 && q == 1.0 && r == true && s == false && t == true && u == false && v == "123" && w == "3.14" && x == "true" && y == "" && z == true && aa == true && ab == true && ac == false && ad == true && ae == true && af == false && ag == false && ah == 5 && ai == 3 && aj == 2 && ak == 2

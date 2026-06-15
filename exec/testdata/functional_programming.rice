@@ -1,0 +1,34 @@
+# Functional programming patterns using list and map higher-order functions
+
+const data = list.of(
+    map.of("name", "Alice",   "score", 85),
+    map.of("name", "Bob",     "score", 42),
+    map.of("name", "Charlie", "score", 73),
+    map.of("name", "Diana",   "score", 91),
+    map.of("name", "Eve",     "score", 58)
+);
+
+# Filter: only scores >= 60
+const passing = list.filter(data, func(student) {
+    return student["score"] >= 60;
+});
+
+# Verify filter: Alice, Charlie, Diana pass (3 students)
+const filterCount = len(passing);
+
+# Map: get just the names
+const names = list.map(passing, func(student) {
+    return student["name"];
+});
+
+# Sort: by score descending
+passing.sort(func(a, b) {
+    return a["score"] > b["score"];
+});
+
+const topScore = passing[0]["score"];  # Diana: 91
+const secondScore = passing[1]["score"]; # Alice: 85
+const thirdScore = passing[2]["score"];  # Charlie: 73
+const topName = passing[0]["name"];       # "Diana"
+
+filterCount == 3 && topScore == 91 && secondScore == 85 && thirdScore == 73 && topName == "Diana"

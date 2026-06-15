@@ -1,0 +1,13 @@
+# datetime.now() returns Unix timestamp in milliseconds
+
+const ts = datetime.now();
+
+# Verify it's an integer and is reasonable (> 0)
+const isInt = typeof(ts) == "Int";
+const isPositive = ts > 0;
+
+# Verify the timestamp is in the right ballpark (year >= 2024)
+# 2024-01-01 = 1704067200000 ms
+const isRecent = ts > 1704067200000;
+
+isInt && isPositive && isRecent

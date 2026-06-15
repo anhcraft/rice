@@ -1,0 +1,42 @@
+# Closures: function literal captures the innermost lexical scope
+# where it was defined. It sees changes to that scope.
+
+# --- Basic closure: capturing a variable ---
+const makeAdder = func(x) {
+    return func(y) {
+        return x + y;
+    };
+};
+const add5 = makeAdder(5);
+const add10 = makeAdder(10);
+const a = add5(3);   # 5 + 3 = 8
+const b = add10(3);  # 10 + 3 = 13
+
+# --- Closure sees changes to captured scope (mutable capture) ---
+const makeCounter = func() {
+    var count = 0;
+    return func() {
+        count = count + 1;
+        return count;
+    };
+};
+const counter1 = makeCounter();
+const c1 = counter1();  # 1
+const c2 = counter1();  # 2
+const c3 = counter1();  # 3
+
+# Each closure gets its own captured scope
+const counter2 = makeCounter();
+const d1 = counter2();  # 1
+
+# --- Nested closures ---
+const makeMultiplier = func(factor) {
+    return func(x) {
+        return func(y) {
+            return x * y * factor;
+        };
+    };
+};
+const e = makeMultiplier(2)(3)(4);  # 3 * 4 * 2 = 24
+
+a == 8 && b == 13 && c1 == 1 && c2 == 2 && c3 == 3 && d1 == 1 && e == 24

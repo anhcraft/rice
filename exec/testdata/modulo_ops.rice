@@ -1,0 +1,18 @@
+# Modulo operator (%)
+# Positive modulo
+const a = 10 % 3;  # 1
+const b = 25 % 7;  # 4
+const c = 100 % 10; # 0
+
+# Modulo with negative dividend (should follow truncated division)
+const d = -10 % 3;  # -1
+const e = -10 % 7;  # -3
+
+# Modulo with larger right operand
+const f = 5 % 10;   # 5
+
+# Modulo in complex expression with precedence
+const g = 20 + 3 % 2;  # 20 + 1 = 21
+const h = (20 + 3) % 2; # 23 % 2 = 1
+
+a == 1 && b == 4 && c == 0 && d == -1 && e == -3 && f == 5 && g == 21 && h == 1

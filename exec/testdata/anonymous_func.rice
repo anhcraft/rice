@@ -1,0 +1,31 @@
+# Anonymous function literal: define and immediately invoke
+const a = func() {
+    return 42;
+}();
+
+# Anonymous function stored in variable and called
+const double = func(x) {
+    return x * 2;
+};
+const b = double(7);  # 14
+
+# Anonymous function passed as argument (higher-order)
+const apply = func(fn, val) {
+    return fn(val);
+};
+const triple = func(x) {
+    return x * 3;
+};
+const c = apply(triple, 5);  # 15
+
+# Anonymous function as argument inline
+const d = apply(func(x) {
+    return x + 10;
+}, 3);  # 13
+
+# Anonymous function with no parameters
+const e = func() {
+    return "no args";
+}();
+
+a == 42 && b == 14 && c == 15 && d == 13 && e == "no args"

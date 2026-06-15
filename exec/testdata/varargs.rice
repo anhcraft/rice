@@ -1,0 +1,39 @@
+# Varargs: user-defined functions with variadic parameters
+# Declared with ... after the parameter name
+
+# Variadic function with single vararg
+const sumAll = func(nums...) {
+    var total = 0;
+    for num in nums {
+        total = total + num;
+    }
+    return total;
+};
+
+const a = sumAll();           # 0 (empty varargs)
+const b = sumAll(1, 2, 3);   # 6
+const c = sumAll(10, 20);    # 30
+
+# Variadic function with normal params + vararg
+const greet = func(greeting, names...) {
+    var result = greeting;
+    for name in names {
+        result = result + " " + name;
+    }
+    return result;
+};
+
+const d = greet("Hello");                        # "Hello" (no names)
+const e = greet("Hi", "Alice", "Bob");            # "Hi Alice Bob"
+
+# Variadic with mixed types (dynamic-typed)
+const allTypes = func(values...) {
+    const types = list.new();
+    for v in values {
+        types.append(typeof(v));
+    }
+    return types;
+};
+const f = allTypes(1, "two", true, 4.0);
+
+a == 0 && b == 6 && c == 30 && d == "Hello" && e == "Hi Alice Bob" && f[0] == "Int" && f[1] == "String" && f[2] == "Bool" && f[3] == "Float"

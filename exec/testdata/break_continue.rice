@@ -1,0 +1,61 @@
+# Break and Continue inside for loops
+
+# --- Break: exits the loop immediately ---
+var breakSum = 0;
+for (var i = 0; i < 10; i++) {
+    if i == 5 {
+        break;
+    }
+    breakSum = breakSum + i;  # 0+1+2+3+4 = 10
+}
+
+# --- Continue: skips the rest of the loop body ---
+var continueSum = 0;
+for (var i = 0; i < 10; i++) {
+    if i % 2 == 0 {
+        continue;  # skip even numbers
+    }
+    continueSum = continueSum + i;  # 1+3+5+7+9 = 25
+}
+
+# --- Break in while-style for loop ---
+var whileSum = 0;
+var j = 0;
+for j < 10 {
+    if j == 7 {
+        break;
+    }
+    whileSum = whileSum + j;  # 0+1+2+3+4+5+6 = 21
+    j++;
+}
+
+# --- Continue in while-style for loop ---
+var whileContSum = 0;
+var k = 0;
+for k < 10 {
+    k++;
+    if k % 3 == 0 {
+        continue;
+    }
+    whileContSum = whileContSum + k;  # 1+2+4+5+7+8+10 = 37
+}
+
+# --- Break in for-in loop ---
+var forInSum = 0;
+for item in list.of(1, 2, 3, 4, 5, 6, 7) {
+    if item > 5 {
+        break;
+    }
+    forInSum = forInSum + item;  # 1+2+3+4+5 = 15
+}
+
+# --- Continue in for-in loop ---
+var forInContSum = 0;
+for item in list.of(1, 2, 3, 4, 5) {
+    if item % 2 == 0 {
+        continue;
+    }
+    forInContSum = forInContSum + item;  # 1+3+5 = 9
+}
+
+breakSum == 10 && continueSum == 25 && whileSum == 21 && whileContSum == 37 && forInSum == 15 && forInContSum == 9

@@ -1,0 +1,46 @@
+# Set operations: create, add, remove, include, iteration, map, filter
+
+# Create sets
+const empty = set.new();
+const nums = set.of(1, 2, 3, 4, 5);
+
+# Add elements (native + type-bound)
+set.add(empty, 10, 20, 30);
+var boundSet = set.of("a");
+boundSet.add("b", "c");
+const a = boundSet.include("b");  # true
+
+# Include check
+const b = set.include(nums, 3);   # true
+const c = set.include(nums, 99);  # false
+
+# Remove
+var remSet = set.of(1, 2, 3);
+remSet.remove(2);
+const d = remSet.include(2);  # false
+const e = remSet.include(3);  # true
+
+# Iteration via for-in
+var total = 0;
+for num in nums {
+    total = total + num;
+}
+const f = total;  # 1+2+3+4+5 = 15
+
+# Map
+const doubled = set.map(nums, func(x) { return x * 2; });
+const g = doubled.include(2);   # true (1*2)
+const h = doubled.include(10);  # true (5*2)
+
+# Filter
+const evens = set.filter(nums, func(x) { return x % 2 == 0; });
+const i = evens.include(2);  # true
+const j = evens.include(4);  # true
+const k = evens.include(3);  # false
+
+# Size via len()
+const l = len(nums);     # 5
+const m = len(empty);    # 3
+const n = len(set.new());  # 0
+
+a == true && b == true && c == false && d == false && e == true && f == 15 && g == true && h == true && i == true && j == true && k == false && l == 5 && m == 3 && n == 0

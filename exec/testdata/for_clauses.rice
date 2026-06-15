@@ -1,0 +1,49 @@
+# For loop: C-style with all optional parts
+# init: Optional<SimpleStatement>; cond: Optional<Expression>; post-iteration: Optional<SimpleStatement>
+
+# C-style: all three clauses present
+var a = 0;
+for (var i = 0; i < 5; i++) {
+    a = a + i;
+}
+
+# C-style: no init (declare outside)
+var b = 0;
+var j = 0;
+for (; j < 5; j++) {
+    b = b + j;
+}
+
+# C-style: no post-iteration
+var c = 0;
+for (var k = 0; k < 5;) {
+    c = c + k;
+    k++;
+}
+
+# C-style: no condition (infinite loop broken by break)
+var d = 0;
+var m = 0;
+for (;;) {
+    d = d + m;
+    m++;
+    if m == 5 {
+        break;
+    }
+}
+
+# While-style (condition only)
+var e = 0;
+var n = 0;
+for n < 5 {
+    e = e + n;
+    n++;
+}
+
+# While-style: empty block
+var f = 0;
+for f < 1 {
+    f = 10;
+}
+
+a == 10 && b == 10 && c == 10 && d == 10 && e == 10 && f == 10

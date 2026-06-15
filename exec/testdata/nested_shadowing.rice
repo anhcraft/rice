@@ -1,0 +1,27 @@
+# Variable shadowing across different scope levels
+# Block creates a new lexical scope, allowing variable shadowing
+
+var a = 10;
+var b = 20;
+
+{
+    # Shadow outer 'a'
+    var a = 50;
+    # 'b' is from outer scope (no shadow)
+    b = b + 1;  # b = 21
+    
+    {
+        # Shadow 'a' again
+        var a = 99;
+        # 'b' is still from outermost scope
+        b = b + 1;  # b = 22
+    }
+    
+    # 'a' here is the middle scope value
+    # a should be 50 (unchanged by inner block)
+}
+
+const outerA = a;  # 10 (unchanged)
+const outerB = b;  # 22 (mutated by inner blocks)
+
+outerA == 10 && outerB == 22

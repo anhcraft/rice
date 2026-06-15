@@ -1,0 +1,17 @@
+# I/O functions: print, println, printf, printlnf
+
+# println: prints args with newline (returns null)
+var a = "ok";
+println("Testing println");
+a = "ran";
+
+# print: prints args without newline
+printf("Testing printf: %d", 42);
+a = "done";
+
+# printlnf: formatted print with newline
+printlnf("Testing printlnf: %s", "test");
+a = "final";
+
+# Verify the variable was updated (script ran without errors)
+a == "final"

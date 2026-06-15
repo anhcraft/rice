@@ -1,0 +1,36 @@
+# Element access: bracket syntax on indexed collections
+
+# String element access (returns single character as String)
+const str = "Rice";
+const a = str[0];   # "R"
+const b = str[3];   # "e"
+
+# List element access
+const li = list.of(10, 20, 30);
+const c = li[0];    # 10
+const d = li[2];    # 30
+li[1] = 99;
+const e = li[1];    # 99
+
+# Map element access by string key
+const m1 = map.of("key", "value");
+const f = m1["key"];  # "value"
+
+# Map element access by integer key
+const m2 = map.of(0, "zero", 1, "one");
+const g = m2[0];      # "zero"
+
+# Map element access by bool key
+const m3 = map.of(true, "yes", false, "no");
+const h = m3[true];   # "yes"
+
+# Nested element access
+const nested = map.of("data", list.of(1, 2, 3));
+const i = nested["data"][1];  # 2
+
+# String with unicode indexing
+const uni = "€😎";
+const j = uni[0];  # "€"
+const k = uni[1];  # "😎"
+
+a == "R" && b == "e" && c == 10 && d == 30 && e == 99 && f == "value" && g == "zero" && h == "yes" && i == 2 && j == "€" && k == "😎"

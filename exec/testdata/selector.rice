@@ -1,0 +1,25 @@
+# Selector (.): accessing map members by identifier (turned to string key)
+
+# Basic selector on map
+const m = map.of("firstName", "John", "lastName", "Doe", "age", 30);
+const a = m.firstName;  # "John"
+const b = m.age;        # 30
+
+# Selector vs bracket equivalence
+const c = m.firstName == m["firstName"];  # true
+
+# Chained selector (invalid for non-map types)
+# Selector on function result
+const d = map.of("key", "value").key;  # "value"
+
+# Selector to access type-bound functions
+# e.g. "string".toLower() is actually strings.toLower("string")
+const e = "HELLO".toLower();  # "hello"
+
+# Equivalent native call
+const f = strings.toLower("HELLO");  # "hello"
+
+# Chaining type-bound function calls
+const g = "  TRIM ME  ".trim().toLower();  # "trim me"
+
+a == "John" && b == 30 && c == true && d == "value" && e == "hello" && f == "hello" && g == "trim me"

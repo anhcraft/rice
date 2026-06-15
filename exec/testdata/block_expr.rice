@@ -1,0 +1,43 @@
+# Blocks as expressions: last statement value is the block value
+# Blocks create new lexical scope
+
+# Simple block returning a value
+const a = {
+    const x = 1;
+    const y = 2;
+    x + y
+};
+
+# Nested block
+const b = {
+    const outer = 10;
+    {
+        const inner = 20;
+        outer + inner
+    }
+};
+
+# Empty block
+const c = {};
+
+# Block that shadows outer variable
+var shadowed = "outer";
+{
+    var shadowed = "inner";
+}
+const d = shadowed;  # "outer" (unchanged)
+
+# Block as argument to function
+const apply = func(fn) { return fn(); };
+const e = apply(func() {
+    const x = 7;
+    const y = 3;
+    return x * y;
+});
+
+# Deeply nested blocks
+const f = {{
+    {{{42}}}
+}};
+
+a == 3 && b == 30 && c == null && d == "outer" && e == 21 && f == 42

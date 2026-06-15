@@ -1,0 +1,16 @@
+# Increment and Decrement operators
+# Postfix increment/decrement (return old value, then mutate)
+var a = 5;
+const aOld = a++;  # aOld = 5, a becomes 6
+const aPostDec = a--;  # aPostDec = 6, a becomes 5
+
+# Prefix increment/decrement (mutate, then return new value)
+const bPreInc = ++a;  # a becomes 6, bPreInc = 6
+const bPreDec = --a;  # a becomes 5, bPreDec = 5
+
+# Standalone inc/dec statements (can't return value, but mutate variable)
+a++;  # a becomes 6
+a--;  # a becomes 5
+
+# Verify final values
+aOld == 5 && aPostDec == 6 && bPreInc == 6 && bPreDec == 5 && a == 5

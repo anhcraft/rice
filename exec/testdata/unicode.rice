@@ -1,0 +1,20 @@
+# Unicode literal using \u for 4-digit hex
+# € (Euro sign) is U+20AC
+const euro = "\u20AC";
+
+# Unicode literal using \U for 8-digit hex
+# 😎 is U+1F60E
+const smiley = "\U0001F60E";
+
+# Verify unicode string iteration returns characters as strings
+# "€😎" has 2 unicode characters
+var count = 0;
+for ch in euro + smiley {
+    count = count + 1;
+}
+
+# Verify string indexing works on unicode characters
+# euro is "€" (1 character), indexing returns it as a string
+const firstChar = euro[0];
+
+count == 2 && firstChar == euro

@@ -1,0 +1,71 @@
+# Type-bound functions: verifying the transformation rule
+# V.f(...) = f(V, ...)
+
+# --- String type-bound functions ---
+const str = "Hello World";
+
+# toUpper / toLower
+const a = str.toUpper();          # "HELLO WORLD"
+const b = str.toLower();          # "hello world"
+
+# index
+const c = str.index("World");     # 6
+
+# substr
+const d = str.substr(0, 5);       # "Hello"
+const e = str.substr(6);          # "World"
+
+# trim
+const f = "  spaced  ".trim();    # "spaced"
+
+# include
+const g = str.include("Hello");   # true
+const h = str.include("xyz");     # false
+
+# lastIndex
+const i = "banana".lastIndex("a"); # 5
+
+# split
+const splitted = "a,b,c".split(",");
+const j = splitted[1];            # "b"
+
+# join
+const k = ",".join("x", "y", "z");  # "x,y,z"
+
+# format
+const l = "Hello %s!".format("World");  # "Hello World!"
+
+# --- Int type-bound functions ---
+const n = 16;
+
+# abs
+const m = (-5).abs();             # 5
+
+# sqrt
+const nn = 16.sqrt();             # 4.0
+
+# max / min
+const o = 1.max(2, 3);           # 3
+const p = 1.min(2, 3);           # 1
+
+# floor / ceil (int already)
+const q = 16.floor();             # 16.0
+const r = 16.ceil();              # 16.0
+
+# pow
+const s = 2.pow(3);               # 8.0
+
+# --- Float type-bound functions ---
+const t = 2.5.abs();              # 2.5
+const u = 4.0.sqrt();             # 2.0
+const v = (-1.0).abs();           # 1.0
+const w = 2.5.floor();            # 2.0
+const x = 2.5.ceil();             # 3.0
+const y = 2.0.pow(3.0);           # 8.0
+
+# --- List type-bound functions ---
+const li = list.of(3, 1, 4);
+li.sort(func(a, b) { return a < b; });
+const z = li[0];                  # 1
+
+a == "HELLO WORLD" && b == "hello world" && c == 6 && d == "Hello" && e == "World" && f == "spaced" && g == true && h == false && i == 5 && j == "b" && k == "x,y,z" && l == "Hello World!" && m == 5 && nn == 4.0 && o == 3 && p == 1 && q == 16.0 && r == 16.0 && s == 8.0 && t == 2.5 && u == 2.0 && v == 1.0 && w == 2.0 && x == 3.0 && y == 8.0 && z == 1

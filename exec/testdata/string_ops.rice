@@ -1,0 +1,26 @@
+# String operations: indexing, iteration, slicing
+
+# Indexing: returns a string (character) at position
+const str = "hello world";
+const a = str[0];   # "h"
+const b = str[6];   # "w"
+const c = str[10];  # "d"
+
+# String iteration: yields each character as a String
+var iterResult = "";
+for ch in "abc" {
+    iterResult = iterResult + ch;
+}
+
+# String with unicode iteration
+var uniResult = "";
+for ch in "€😎" {
+    uniResult = uniResult + ch + ",";
+}
+
+# String length via len()
+const d = len(str);  # 11
+const e = len("");   # 0
+const f = len("汉字");  # 2
+
+a == "h" && b == "w" && c == "d" && iterResult == "abc" && d == 11 && e == 0 && f == 2

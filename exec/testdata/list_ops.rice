@@ -1,0 +1,79 @@
+# List operations: indexing, element assignment, iteration, higher-order functions
+
+# Create lists
+const empty = list.new();
+const nums = list.of(10, 20, 30, 40, 50);
+const mixed = list.of(1, "two", true, 4.0);
+
+# Indexing (random access)
+const a = nums[0];   # 10
+const b = nums[4];   # 50
+
+# Element assignment (mutable)
+var mutable = list.of(1, 2, 3);
+mutable[1] = 99;
+const c = mutable[1];  # 99
+
+# Iteration via for-in
+var total = 0;
+for num in nums {
+    total = total + num;
+}
+const d = total;  # 10+20+30+40+50 = 150
+
+# Append (native function and type-bound)
+list.append(empty, 1, 2, 3);
+var boundList = list.of(4);
+boundList.append(5, 6);
+
+# Prepend
+var prependList = list.of("b", "c");
+list.prepend(prependList, "a");
+
+# Include check
+const e = list.include(nums, 30);    # true
+const f = list.include(nums, 99);    # false
+
+# Index / LastIndex
+const g = list.index(nums, 20);      # 1
+const h = list.lastIndex(list.of(1, 2, 1, 2), 1);  # 2
+
+# Map
+const doubled = list.map(nums, func(x) { return x * 2; });
+const i = doubled[0];  # 20
+const j = doubled[4];  # 100
+
+# Filter
+const evens = list.filter(nums, func(x) { return x % 2 == 0; });
+const k = len(evens);   # 3 (10, 20, 40, 50)
+
+# Sort
+var unsorted = list.of(3, 1, 4, 1, 5);
+unsorted.sort(func(a, b) { return a < b; });
+const l = unsorted[0];  # 1
+const m = unsorted[4];  # 5
+
+# Reverse
+var rev = list.of(1, 2, 3);
+rev.reverse();
+const n = rev[0];  # 3
+
+# RemoveAt
+var rem = list.of("a", "b", "c");
+rem.removeAt(1);   # remove "b"
+const o = rem[1];  # "c"
+
+# RemoveAll
+var remAll = list.of("a", "b", "a", "c", "a");
+const removedCount = remAll.removeAll("a");
+
+# Slice
+const sliced = list.slice(nums, 1, 4);
+const p = sliced[0];  # 20
+const q = len(sliced); # 3
+
+# Slice with only start
+const sliced2 = list.slice(nums, 2);
+const r = sliced2[0];  # 30
+
+empty.size() == 3 && c == 99 && d == 150 && e == true && f == false && g == 1 && h == 2 && i == 20 && j == 100 && k == 3 && l == 1 && m == 5 && n == 3 && o == "c" && removedCount == 3 && p == 20 && q == 3 && r == 30

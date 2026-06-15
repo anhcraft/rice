@@ -1,0 +1,23 @@
+# Parenthesized expressions: control evaluation order
+# and allow grouping of complex expressions
+
+# Nested parenthesized
+const a = (1 + 2) * (3 + 4);  # 3 * 7 = 21
+
+# Parenthesized in logical expressions
+const b = (true && false) || (true && true);  # false || true = true
+
+# Parenthesized unary
+const c = -(5 + 3);  # -8
+const d = !(true && false);  # true
+
+# Deeply nested
+const e = (((1 + 2) + 3) + 4);  # 10
+
+# Parenthesized in comparison chain
+const f = (5 > 3) && (2 < 4);  # true
+
+# Parenthesized as standalone expression
+const g = (42);  # 42
+
+a == 21 && b == true && c == -8 && d == true && e == 10 && f == true && g == 42

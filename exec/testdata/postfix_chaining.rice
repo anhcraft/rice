@@ -1,0 +1,37 @@
+# Chaining: postfix operations can be chained
+# element access + function call + selector in sequence
+
+# Chained element access
+const nested = map.of("data", list.of(10, 20, 30));
+const a = nested["data"][1];  # 20
+
+# Chained element access + function call
+const getList = func() {
+    return list.of(1, 2, 3);
+};
+const b = getList()[1];  # 2
+
+# Function call chain
+const add = func(x) {
+    return func(y) {
+        return x + y;
+    };
+};
+const c = add(3)(4);  # 7
+
+# Selector + element access
+const d = map.of("items", list.of("a", "b", "c")).items[0];  # "a"
+
+# Function call + selector
+const getMap = func() {
+    return map.of("x", 42);
+};
+const e = getMap().x;  # 42
+
+# Complex chain: func call + selector + func call
+const f = "hello".toUpper().index("E");  # 1
+
+# Chain: map selector + element access
+const g = map.of("list", list.of(1, 2, 3)).list[2];  # 3
+
+a == 20 && b == 2 && c == 7 && d == "a" && e == 42 && f == 1 && g == 3

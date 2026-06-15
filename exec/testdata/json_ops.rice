@@ -1,0 +1,30 @@
+# JSON encoding and decoding
+
+# json.encode: minified (single arg)
+const data1 = map.of("name", "Alice", "age", 30, "active", true);
+const encoded1 = json.encode(data1);
+const a = typeof(encoded1) == "String";  # true
+
+# json.encode with indent (prettified)
+const encoded2 = json.encode(data1, "  ");
+
+# json.decode: JSON string back to Rice values
+const decoded = json.decode(encoded1);
+const b = decoded["name"];   # "Alice"
+const c = decoded["age"];    # 30
+const d = decoded["active"]; # true
+
+# Decode nested objects
+const nestedJson = "{\"items\":[1,2,3],\"nested\":{\"x\":10}}";
+const nested = json.decode(nestedJson);
+const e = nested["items"][1];   # 2
+const f = nested["nested"]["x"]; # 10
+
+# Encode and decode roundtrip
+const simple = list.of(1, "two", true, null);
+const roundtrip = json.decode(json.encode(simple));
+const g = roundtrip[0];  # 1
+const h = roundtrip[1];  # "two"
+const i = roundtrip[2];  # true
+
+a == true && b == "Alice" && c == 30 && d == true && e == 2 && f == 10 && g == 1 && h == "two" && i == true

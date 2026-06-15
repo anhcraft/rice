@@ -1,0 +1,33 @@
+# Return statement: all forms
+
+# Return with no value
+const noRet = func() {
+    return;
+};
+noRet();
+
+# Return with expression
+const retVal = func(x) {
+    return x * 2;
+};
+const doubleResult = retVal(4);  # 8
+
+# Return with identifier
+const retId = func(n) {
+    const result = n + 1;
+    return result;
+};
+const incResult = retId(9);  # 10
+
+# Early return (conditional)
+const earlyRet = func(x) {
+    if x < 0 {
+        return -1;
+    }
+    if x == 0 {
+        return 0;
+    }
+    return 1;
+};
+
+earlyRet(-5) == -1 && earlyRet(0) == 0 && earlyRet(5) == 1 && noRet() == null && doubleResult == 8 && incResult == 10

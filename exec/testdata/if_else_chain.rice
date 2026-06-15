@@ -1,0 +1,54 @@
+# If expression: returns the value of the picked branch
+
+# Basic if-else returning values
+const a = if true { 1 } else { 0 };
+
+# If with else-if chain
+const classify = func(n) {
+    return if n > 0 {
+        "Positive"
+    } else if n < 0 {
+        "Negative"
+    } else {
+        "Zero"
+    };
+};
+
+const b = classify(10);   # "Positive"
+const c = classify(-5);   # "Negative"
+const d = classify(0);    # "Zero"
+
+# Nested if expressions
+const nested = func(x, y) {
+    return if x > 0 {
+        if y > 0 {
+            "Both positive"
+        } else {
+            "X positive, Y not"
+        }
+    } else {
+        if y > 0 {
+            "X not positive, Y positive"
+        } else {
+            "Neither positive"
+        }
+    };
+};
+
+const e = nested(1, 1);    # "Both positive"
+const f = nested(1, -1);   # "X positive, Y not"
+const g = nested(-1, 1);   # "X not positive, Y positive"
+const h = nested(-1, -1);  # "Neither positive"
+
+# If expression used as argument
+const i = apply(func(x) { return x; }, if 10 > 5 { "yes" } else { "no" });
+
+# Many else-if branches
+const j = 
+    if false { 1 }
+    else if false { 2 }
+    else if false { 3 }
+    else if true { 4 }
+    else { 5 };
+
+a == 1 && b == "Positive" && c == "Negative" && d == "Zero" && e == "Both positive" && f == "X positive, Y not" && g == "X not positive, Y positive" && h == "Neither positive" && i == "yes" && j == 4

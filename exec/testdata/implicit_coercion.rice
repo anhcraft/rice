@@ -1,0 +1,27 @@
+# Implicit type coercion in binary operators
+
+# String coercion: if either operand is String, both become String
+const a = "hello" + 123;     # "hello123"
+const b = 123 + "hello";     # "123hello"
+const c = "value is " + true; # "value is true"
+const d = 3.14 + " is pi";   # "3.14 is pi"
+
+# Bool coercion: if either is Bool (and neither is String)
+# Note: with + operator, this means numeric coercion too
+# Using comparison operators:
+const e = 1 < 2;        # true
+const f = 1 == true;    # ?? (int vs bool comparison with implicit)
+
+# Float coercion: if either is Float, both become Float
+const g = 3 + 2.5;      # 5.5 (float)
+const h = 7 / 2;        # 3.5 (float division in Go-like behavior)
+
+# Int coercion: otherwise both become Int
+const i = 10 + 20;      # 30 (int)
+const j = 5 * 3;        # 15 (int)
+
+# Complex coercion chain
+const k = "result: " + (10 + 20);  # "result: 30"
+const l = true + " is bool";       # "true is bool"
+
+typeof(a) == "String" && typeof(b) == "String" && typeof(c) == "String" && typeof(d) == "String"
