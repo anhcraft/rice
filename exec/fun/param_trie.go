@@ -2,11 +2,12 @@ package fun
 
 import (
 	"fmt"
-	"github.com/anhcraft/rice/lib/queue"
-	"github.com/anhcraft/rice/lib/stack"
 	"reflect"
 	"slices"
 	"strings"
+
+	"github.com/anhcraft/rice/lib/queue"
+	"github.com/anhcraft/rice/lib/stack"
 )
 
 /*
@@ -217,11 +218,16 @@ type MatchResult struct {
 func (t *ParamTrie) MatchHandler(args []reflect.Value) (*MatchResult, error) {
 	argTypes := make([]ArgType, len(args))
 	for i, arg := range args {
-		argType, err := getArgType(arg.Type())
-		if err != nil {
-			return nil, err
+		if !arg.IsValid() {
+			// null literal -> reflect.ValueOf(nil) produces zero Value
+			argTypes[i] = NewNullArgType()
+		} else {
+			argType, err := getArgType(arg.Type())
+			if err != nil {
+				return nil, err
+			}
+			argTypes[i] = argType
 		}
-		argTypes[i] = argType
 	}
 
 	// ArgPair: "next"-th provided arg corresponds to registered "node" children

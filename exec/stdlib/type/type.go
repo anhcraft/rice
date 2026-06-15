@@ -21,6 +21,9 @@ var Functions = fun.FunctionPackage{
 
 // Typeof finds the type name of the given value; return array for vector.
 func Typeof(val types.Value) (types.Value, error) {
+	if val == nil {
+		return values.String("null"), nil
+	}
 	return values.String(val.Type().String()), nil
 }
 

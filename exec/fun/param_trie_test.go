@@ -131,7 +131,13 @@ func TestParamTrie(t *testing.T) {
 		r.t.Helper()
 		argValues := make([]reflect.Value, len(args))
 		for i, arg := range args {
-			argValues[i] = reflect.ValueOf(arg)
+			if arg == nil {
+				// reflect.ValueOf(untyped nil) produces zero Value, which can't be used by reflect.Call
+				// In real code path (buildNativeFuncSet), nil is typed as types.Value interface
+				argValues[i] = reflect.Zero(typeOfValue)
+			} else {
+				argValues[i] = reflect.ValueOf(arg)
+			}
 		}
 
 		res, err := r.MatchHandler(argValues)
@@ -291,6 +297,20 @@ func TestParamTrie(t *testing.T) {
 			r := newTestRegistry(t)
 			register(r, "slice", sliceOfAny)
 			registerAndExpectError(r, "slice", variadicAnySum, "has duplicated handler")
+		})
+	})
+
+	t.Run("Null Argument Resolution", func(t *testing.T) {
+		t.Run("null accepted by any parameter", func(t *testing.T) {
+			r := newTestRegistry(t)
+			register(r, "id", identityAny)
+			call(r, "id", nil, nil)
+		})
+
+		t.Run("null rejected by primitive parameter", func(t *testing.T) {
+			r := newTestRegistry(t)
+			register(r, "idInt", identityInt)
+			callAndExpectError(r, "idInt", "no matching signature", nil)
 		})
 	})
 

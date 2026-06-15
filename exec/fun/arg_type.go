@@ -20,6 +20,12 @@ func NewArgTypeAny(dim uint8) ArgType {
 	return NewArgType(dim, 15)
 }
 
+// NewNullArgType returns an ArgType representing a null argument value.
+// null is a value, not a types.Type — this uses slot 14 which is unused in types.Type.
+func NewNullArgType() ArgType {
+	return NewArgType(0, 14)
+}
+
 func (t ArgType) Dim() uint8 {
 	return uint8((t >> 4) & 0xF)
 }
@@ -32,6 +38,11 @@ func (t ArgType) IsAny() bool {
 	return t.Type() == 15
 }
 
+func (t ArgType) IsNull() bool {
+	// null is a value, not a types.Type — uses unused type-ID slot 14
+	return t.Type() == 14 && t.Dim() == 0
+}
+
 func (t ArgType) MatchAnyType() bool {
 	// Go allows `any` to match any kind of value
 	// But if dim > 0, then `any` can only match `any` (e.g. `[]any != []int`)
@@ -39,10 +50,22 @@ func (t ArgType) MatchAnyType() bool {
 }
 
 func (t ArgType) CanAccept(other ArgType) bool {
+	if other.IsNull() {
+		// null is compatible with non-primitive types and 'any', but not primitives
+		return t.MatchAnyType() || (t.Dim() == 0 && !types.Type(t.Type()).IsPrimitive())
+	}
 	return t.MatchAnyType() || (t.Type() == other.Type() && t.Dim() == other.Dim())
 }
 
 func (t ArgType) CanContainMultiOf(other ArgType) bool {
+	if other.IsNull() {
+		// ...any can hold null
+		if t.IsAny() {
+			return true
+		}
+		// ...T where T is non-primitive can hold null
+		return t.Dim() == 1 && !types.Type(t.Type()).IsPrimitive()
+	}
 	return t.IsAny() && t.Dim() == 1 || // `...any` can hold `<any>, <any>, ...`
 		(t.Type() == other.Type() && t.Dim() == other.Dim()+1)
 }

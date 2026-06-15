@@ -21,7 +21,7 @@ const (
 	Selector
 	_ // unused
 	_ // unused
-	_ // unused
+	_ // special: Null
 	_ // special: Any
 )
 

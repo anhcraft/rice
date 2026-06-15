@@ -177,6 +177,15 @@ func buildNativeFuncSet(boundValue types.Value, id values.Identifier, pt *fun.Pa
 				argValues = append([]reflect.Value{reflect.ValueOf(callCtx)}, argValues...)
 			}
 
+			// Fix up nil args: reflect.ValueOf(untyped nil) produces a zero Value that
+			// reflect.Call rejects. Replace zero Values with a typed nil (types.Value interface).
+			typeOfValue := reflect.TypeOf((*types.Value)(nil)).Elem()
+			for k, arg := range argValues {
+				if !arg.IsValid() {
+					argValues[k] = reflect.Zero(typeOfValue)
+				}
+			}
+
 			env := ctx.Value(ctxkey.Env).(*mem.Environment)
 			env.PushFrame(site)
 			defer env.PopFrame()

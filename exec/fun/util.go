@@ -26,6 +26,10 @@ func isAny(t reflect.Type) bool {
 }
 
 func getArgType(t reflect.Type) (ArgType, error) {
+	if t == nil {
+		return NewNullArgType(), nil
+	}
+
 	baseType, dim := getBaseTypeAndDimension(t)
 
 	if baseType == typeOfValue {
