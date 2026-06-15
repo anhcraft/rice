@@ -3,12 +3,13 @@ package exec
 import (
 	"context"
 	"errors"
+	"math"
+
 	"github.com/anhcraft/rice/exec/ast"
 	"github.com/anhcraft/rice/exec/ast/opr"
 	"github.com/anhcraft/rice/exec/mem"
 	"github.com/anhcraft/rice/exec/types"
 	"github.com/anhcraft/rice/exec/types/values"
-	"math"
 )
 
 func (i *Interpreter) VisitLiteralExpr(expr *ast.LiteralExpr) (types.Value, error) {
@@ -476,28 +477,34 @@ func (i *Interpreter) VisitBinaryExpr(expr *ast.BinaryExpr) (types.Value, error)
 	astNilCheck(expr.Left)
 	astNilCheck(expr.Right)
 
-	var v types.Value
-	var left values.Primitive
-	var right values.Primitive
+	var left types.Value
+	var isLeftPrimitive bool
+	var right types.Value
+	var isRightPrimitive bool
 	var err error
 
-	if v, err = i.eval(expr.Left); err != nil {
+	if left, err = i.eval(expr.Left); err != nil {
 		return nil, i.throw(expr.Left, "cannot eval left operand").causedBy(err)
-	} else if v, ok := v.(values.Primitive); !ok {
-		return nil, i.throw(expr.Left, "left operand is not primitive")
-	} else {
-		left = v
+	} else if _, ok := left.(values.Primitive); ok {
+		isLeftPrimitive = true
 	}
 
-	if v, err = i.eval(expr.Right); err != nil {
+	if right, err = i.eval(expr.Right); err != nil {
 		return nil, i.throw(expr.Right, "cannot eval right operand").causedBy(err)
-	} else if v, ok := v.(values.Primitive); !ok {
-		return nil, i.throw(expr.Right, "right operand is not primitive")
-	} else {
-		right = v
+	} else if _, ok := right.(values.Primitive); ok {
+		isRightPrimitive = true
 	}
 
-	left, right, err = values.ConvertPrimitiveImplicitly(left, right)
+	if left == nil || right == nil || !isLeftPrimitive || !isRightPrimitive {
+		if expr.Op == opr.Eq {
+			return values.Bool(left == right), nil
+		} else if expr.Op == opr.Neq {
+			return values.Bool(left != right), nil
+		}
+		return nil, i.throw(expr, "cannot eval %T %s %T", left, expr.Op, right)
+	}
+
+	left, right, err = values.ConvertPrimitiveImplicitly(left.(values.Primitive), right.(values.Primitive))
 
 	if err != nil {
 		return nil, i.throw(expr, "failed implicit type conversion of %T and %T", left, right).causedBy(err)
@@ -670,9 +677,9 @@ func (i *Interpreter) VisitIfExpr(expr *ast.IfExpr) (types.Value, error) {
 			return i.VisitBlockExpr(expr.ThenBranch)
 		} else if expr.ElseBranch != nil {
 			return i.eval(expr.ElseBranch)
-		} else {
-			return values.Bool(false), nil
 		}
+
+		return values.Bool(false), nil
 	}
 
 	return nil, i.throw(expr.Condition, "expect if-condition to be Bool but got %T", condition)
