@@ -104,6 +104,7 @@ func (i *Interpreter) VisitFuncLiteralExpr(expr *ast.FuncLiteralExpr) (types.Val
 	// when the function literal is defined to when an actual call happens
 	// this matches behavior of Go, JS, Python, etc
 	closure := i.env.CurrentFrame().CurrentScope()
+	closure.MarkCaptured()
 
 	return values.NewFunc(params, expr.Variadic, closure, handle), nil
 }

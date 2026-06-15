@@ -16,18 +16,46 @@ var scopePool = sync.Pool{
 }
 
 type LexicalScope struct {
-	parent *LexicalScope
-	store  map[values.Identifier]Variable
+	parent   *LexicalScope
+	store    map[values.Identifier]Variable
+	captured bool // if true, this scope is captured by a closure and must not be recycled
 }
 
 func NewLexicalScope(parent *LexicalScope) *LexicalScope {
 	scope := scopePool.Get().(*LexicalScope)
+
+	// If the pool returns the same pointer as parent, we have a self-cycle.
+	// Create a fresh scope to break the cycle. This also avoids corrupting
+	// closure-captured scopes that may still be in the pool.
+	if scope == parent {
+		scope = &LexicalScope{
+			store: make(map[values.Identifier]Variable),
+		}
+	}
+
 	scope.parent = parent
+	scope.captured = false
 	// scope store gets cleared on release
 	return scope
 }
 
+// MarkCaptured marks this scope and its entire ancestor chain as captured by a closure.
+// Captured scopes are never returned to the pool because closures hold references to them.
+func (s *LexicalScope) MarkCaptured() {
+	for current := s; current != nil; current = current.parent {
+		if current.captured {
+			break // already marked
+		}
+		current.captured = true
+	}
+}
+
 func releaseLexicalScope(s *LexicalScope) {
+	if s.captured {
+		// This scope is still referenced by a closure; don't recycle it.
+		// The closure holds its own reference to the scope chain.
+		return
+	}
 	for k := range s.store {
 		delete(s.store, k)
 	}
