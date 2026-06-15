@@ -124,6 +124,7 @@ return res;
 ```
 
 ## Increment/Decrement
+- They are statement, not expression
 ```
 ++i # increases i, then read i
 i++ # read i, then increases i

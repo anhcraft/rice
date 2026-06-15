@@ -45,7 +45,7 @@ const j = doubled[4];  # 100
 
 # Filter
 const evens = list.filter(nums, func(x) { return x % 2 == 0; });
-const k = len(evens);   # 3 (10, 20, 40, 50)
+const k = len(evens);   # 5 (10, 20, 30, 40, 50)
 
 # Sort
 var unsorted = list.of(3, 1, 4, 1, 5);
@@ -76,4 +76,4 @@ const q = len(sliced); # 3
 const sliced2 = list.slice(nums, 2);
 const r = sliced2[0];  # 30
 
-empty.size() == 3 && c == 99 && d == 150 && e == true && f == false && g == 1 && h == 2 && i == 20 && j == 100 && k == 3 && l == 1 && m == 5 && n == 3 && o == "c" && removedCount == 3 && p == 20 && q == 3 && r == 30
+len(empty) == 3 && c == 99 && d == 150 && e == true && f == false && g == 1 && h == 2 && i == 20 && j == 100 && k == 5 && l == 1 && m == 5 && n == 3 && o == "c" && removedCount == 3 && p == 20 && q == 3 && r == 30

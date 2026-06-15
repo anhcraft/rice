@@ -41,6 +41,9 @@ const g = nested(-1, 1);   # "X not positive, Y positive"
 const h = nested(-1, -1);  # "Neither positive"
 
 # If expression used as argument
+const apply = func(a,b){
+    return b
+};
 const i = apply(func(x) { return x; }, if 10 > 5 { "yes" } else { "no" });
 
 # Many else-if branches

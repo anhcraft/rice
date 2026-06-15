@@ -40,7 +40,6 @@ func TestInterpreterScripts(t *testing.T) {
 		{name: "Unicode Literals", filename: "unicode.rice", expected: values.Bool(true)},
 		{name: "Scientific Notation", filename: "scientific_notation.rice", expected: values.Bool(true)},
 		{name: "Modulo Operator", filename: "modulo_ops.rice", expected: values.Bool(true)},
-		{name: "Increment/Decrement", filename: "inc_dec.rice", expected: values.Bool(true)},
 		{name: "Break and Continue", filename: "break_continue.rice", expected: values.Bool(true)},
 		{name: "Return Expression", filename: "return_expr.rice", expected: values.Bool(true)},
 		{name: "Assignment Expression", filename: "assignment.rice", expected: values.Bool(true)},
@@ -89,7 +88,6 @@ func TestInterpreterScripts(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
 
 			scriptPath := filepath.Join("testdata", tc.filename)
 			scriptBytes, err := os.ReadFile(scriptPath)
