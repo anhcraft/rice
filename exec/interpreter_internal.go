@@ -283,6 +283,11 @@ func (i *Interpreter) VisitForStmt(expr *ast.ForStmt) (types.Value, error) {
 				if errors.As(err, &breakSignal) {
 					break
 				}
+				var returnSignal ReturnSignal
+				if errors.As(err, &returnSignal) {
+					// for-loop is not an expression; therefore, the signal is propagated up
+					return nil, returnSignal
+				}
 				return nil, i.throw(expr, "iteration gets interrupted").causedBy(err)
 			}
 		}
@@ -339,6 +344,19 @@ func (i *Interpreter) VisitForInStmt(expr *ast.ForInStmt) (types.Value, error) {
 						}
 						return nil, nil
 					}, nil); err != nil {
+						var continueSignal ContinueSignal
+						if errors.As(err, &continueSignal) {
+							continue
+						}
+						var breakSignal BreakSignal
+						if errors.As(err, &breakSignal) {
+							break
+						}
+						var returnSignal ReturnSignal
+						if errors.As(err, &returnSignal) {
+							// for-loop is not an expression; therefore, the signal is propagated up
+							return nil, returnSignal
+						}
 						return nil, i.throw(expr, "iteration gets interrupted").causedBy(err)
 					}
 				}
