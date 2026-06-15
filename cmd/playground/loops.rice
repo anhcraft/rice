@@ -1,0 +1,14 @@
+# For Loops
+var sum = 0;
+
+# C-style for loop
+for (var i = 1; i <= 10; i = i + 1) {
+    sum = sum + i;
+}
+println("sum 1..10 = " + sum);
+
+# For-in loop on a list
+const fruits = list.of("apple", "banana", "cherry");
+for fruit in fruits {
+    println("- " + fruit);
+}

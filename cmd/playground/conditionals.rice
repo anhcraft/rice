@@ -1,0 +1,14 @@
+# Conditionals (if expression)
+var score = 85;
+
+const grade = if score >= 90 {
+    "A";
+} else if score >= 80 {
+    "B";
+} else if score >= 70 {
+    "C";
+} else {
+    "F";
+};
+
+println("Grade: " + grade);

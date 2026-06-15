@@ -1,0 +1,8 @@
+# Maps and Selectors
+const m = map.of("name", "Rice", "version", 1);
+println(m["name"]);
+println("version: " + m["version"]);
+
+# Selector syntax (.key) for maps
+println(m.name);
+println(m.version);

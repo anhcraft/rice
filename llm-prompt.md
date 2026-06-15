@@ -373,6 +373,13 @@ set.of(items ...any)
 set.add(set Set, items ...any): adds multtiple items in-place, returns the given set
 ```
 
+### JSON
+```
+json.encode(val any): convert a Rice value into minified JSON
+json.encode(val any, indent String): convert a Rice value into prettified JSON
+json.decode(val String): convert the given raw JSON into corresponding Rice values 
+```
+
 ## Type-bound functions
 - These are subset of namespaced functions as long as the first parameter accepts the respective type of value
 ```

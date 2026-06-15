@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rice Playground</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+header {
+  background: #252526;
+  border-bottom: 1px solid #3c3c3c;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+}
+
+header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #569cd6;
+  letter-spacing: 0.5px;
+}
+
+header h1 span { color: #d4d4d4; font-weight: 400; }
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+select {
+  background: #3c3c3c;
+  color: #d4d4d4;
+  border: 1px solid #5a5a5a;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+select:focus { outline: 1px solid #007acc; }
+
+.btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-run {
+  background: #0e639c;
+  color: #fff;
+}
+.btn-run:hover { background: #1177bb; }
+.btn-run:active { background: #0d5689; }
+
+.btn-clear { background: #3c3c3c; color: #d4d4d4; }
+.btn-clear:hover { background: #4a4a4a; }
+
+main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.editor-pane .pane-header {
+  background: #2d2d2d;
+  border-bottom: 1px solid #3c3c3c;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+#editor-container { flex: 1; overflow: hidden; }
+
+.output-pane {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #3c3c3c;
+  min-width: 200px;
+}
+
+.output-pane .pane-header {
+  background: #2d2d2d;
+  border-bottom: 1px solid #3c3c3c;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#output {
+  flex: 1;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 12px;
+  font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+#output.error { color: #f48771; }
+#output .dim { color: #808080; }
+
+.resize-handle {
+  width: 4px;
+  background: #3c3c3c;
+  cursor: col-resize;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.resize-handle:hover, .resize-handle.active { background: #007acc; }
+
+.status-bar {
+  background: #007acc;
+  color: #fff;
+  padding: 2px 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 22px;
+}
+
+.status-bar.idle { background: #007acc; }
+.status-bar.running { background: #c5862c; }
+.status-bar.error { background: #d16969; }
+.status-bar.success { background: #4ec9b0; color: #1e1e1e; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Rice <span>Playground</span></h1>
+  <div class="toolbar">
+    <select id="example-select">
+      <option value="">Examples...</option>
+    </select>
+    <button class="btn btn-clear" id="btn-clear">Clear</button>
+    <button class="btn btn-run" id="btn-run">&#9654; Run</button>
+  </div>
+</header>
+
+<main>
+  <div class="editor-pane">
+    <div class="pane-header">Editor</div>
+    <div id="editor-container"></div>
+  </div>
+  <div class="resize-handle" id="resize-handle"></div>
+  <div class="output-pane">
+    <div class="pane-header">
+      <span>Output</span>
+      <button class="btn btn-clear" id="btn-clear-output" style="padding:2px 8px;font-size:11px;">Clear</button>
+    </div>
+    <div id="output"></div>
+  </div>
+</main>
+
+<div class="status-bar idle" id="status-bar">Ready</div>
+
+<script type="module">
+import * as monaco from 'https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/+esm';
+
+// Load Rice language tokenizer
+const monarchDefFn = await fetch('/monarch.js').then(r => r.text());
+(0, eval)(monarchDefFn);
+
+// Register Rice language
+const riceLanguage = monaco.languages.register({ id: 'rice' });
+monaco.languages.setMonarchTokensProvider('rice', _());
+monaco.languages.setLanguageConfiguration('rice', {
+  brackets: [['{','}'], ['[',']'], ['(',')']],
+  autoClosingPairs: [
+    { open: '{', close: '}' },
+    { open: '[', close: ']' },
+    { open: '(', close: ')' },
+    { open: '"', close: '"' },
+  ],
+  surroundingPairs: [
+    { open: '{', close: '}' },
+    { open: '[', close: ']' },
+    { open: '(', close: ')' },
+    { open: '"', close: '"' },
+  ],
+  comments: { lineComment: '#' },
+});
+
+// Color scheme
+monaco.editor.defineTheme('rice-dark', {
+  base: 'vs-dark',
+  inherit: true,
+  rules: [
+    { token: 'keyword', foreground: '569cd6', fontStyle: 'bold' },
+    { token: 'keyword.literal', foreground: '569cd6' },
+    { token: 'identifier', foreground: '9cdcfe' },
+    { token: 'number', foreground: 'b5cea8' },
+    { token: 'number.float', foreground: 'b5cea8' },
+    { token: 'string', foreground: 'ce9178' },
+    { token: 'string.escape', foreground: 'd7ba7d' },
+    { token: 'comment', foreground: '6a9955', fontStyle: 'italic' },
+    { token: 'operator', foreground: 'd4d4d4' },
+    { token: 'delimiter', foreground: '808080' },
+    { token: 'invalid', foreground: 'f44747' },
+  ],
+  colors: {
+    'editor.background': '#1e1e1e',
+    'editor.foreground': '#d4d4d4',
+    'editor.lineHighlightBackground': '#2a2d2e',
+    'editor.selectionBackground': '#264f78',
+    'editorCursor.foreground': '#aeafad',
+    'editorLineNumber.foreground': '#858585',
+    'editorLineNumber.activeForeground': '#c6c6c6',
+  },
+});
+
+const defaultCode = `# Rice Playground
+const greet = func(name) {
+    return "Hello, " + name + "!";
+};
+
+println(greet("World"));
+println(2 + 3 * 4);
+`;
+
+const editor = monaco.editor.create(document.getElementById('editor-container'), {
+  value: defaultCode,
+  language: 'rice',
+  theme: 'rice-dark',
+  fontSize: 14,
+  fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace",
+  minimap: { enabled: false },
+  scrollBeyondLastLine: false,
+  lineNumbers: 'on',
+  renderLineHighlight: 'line',
+  automaticLayout: true,
+  tabSize: 4,
+  insertSpaces: true,
+  wordWrap: 'on',
+  padding: { top: 8 },
+});
+
+// Resize handle
+const resizeHandle = document.getElementById('resize-handle');
+const outputPane = document.querySelector('.output-pane');
+let isResizing = false;
+
+resizeHandle.addEventListener('mousedown', (e) => {
+  isResizing = true;
+  resizeHandle.classList.add('active');
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isResizing) return;
+  const main = document.querySelector('main');
+  const rect = main.getBoundingClientRect();
+  const w = rect.right - e.clientX;
+  const minW = 200;
+  const maxW = rect.width * 0.7;
+  outputPane.style.width = Math.max(minW, Math.min(maxW, w)) + 'px';
+});
+
+document.addEventListener('mouseup', () => {
+  if (!isResizing) return;
+  isResizing = false;
+  resizeHandle.classList.remove('active');
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+});
+
+// DOM
+const outputEl = document.getElementById('output');
+const statusBar = document.getElementById('status-bar');
+const btnRun = document.getElementById('btn-run');
+const btnClear = document.getElementById('btn-clear');
+const btnClearOutput = document.getElementById('btn-clear-output');
+const exampleSelect = document.getElementById('example-select');
+
+function setStatus(state, msg) {
+  statusBar.className = 'status-bar ' + state;
+  statusBar.textContent = msg;
+}
+
+async function runCode() {
+  const code = editor.getValue();
+  outputEl.className = '';
+  outputEl.textContent = '';
+  setStatus('running', 'Running...');
+  btnRun.disabled = true;
+
+  try {
+    const res = await fetch('/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code }),
+    });
+    const data = await res.json();
+
+    let text = '';
+    if (data.output) text += data.output;
+    if (data.error) {
+      text += (text ? '\n' : '') + data.error;
+      outputEl.className = 'error';
+    }
+    outputEl.textContent = text || '(no output)';
+
+    if (data.error) {
+      setStatus('error', 'Error');
+    } else {
+      setStatus('success', 'OK');
+    }
+  } catch (e) {
+    outputEl.className = 'error';
+    outputEl.textContent = 'Network error: ' + e.message;
+    setStatus('error', 'Network error');
+  } finally {
+    btnRun.disabled = false;
+    setTimeout(() => setStatus('idle', 'Ready'), 3000);
+  }
+}
+
+btnRun.addEventListener('click', runCode);
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    runCode();
+  }
+});
+
+btnClear.addEventListener('click', () => {
+  editor.setValue('');
+  editor.focus();
+});
+
+btnClearOutput.addEventListener('click', () => {
+  outputEl.textContent = '';
+  outputEl.className = '';
+});
+
+// Examples - fetched from /examples endpoint
+let examples = {};
+
+async function loadExamples() {
+  try {
+    const res = await fetch('/examples');
+    examples = await res.json();
+    for (const [id, ex] of Object.entries(examples)) {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = ex.label;
+      exampleSelect.appendChild(opt);
+    }
+  } catch (e) {
+    console.error('Failed to load examples:', e);
+  }
+}
+loadExamples();
+
+exampleSelect.addEventListener('change', () => {
+  const id = exampleSelect.value;
+  if (id && examples[id]) {
+    editor.setValue(examples[id].code);
+    exampleSelect.value = '';
+    editor.focus();
+  }
+});
+</script>
+</body>
+</html>

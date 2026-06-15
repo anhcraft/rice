@@ -135,4 +135,4 @@ See: [examples/example.go](examples/example.go) on how to use the lexer, parser 
 | Profiler    | ✅     |
 | Bytecode VM | ❌     |
 | LSP         | ❌     |
-| Playground  | ❌     |
+| Playground  | ✅     |
