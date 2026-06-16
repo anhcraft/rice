@@ -294,7 +294,7 @@ datetime.now(): returns the current Unix timestamp in milliseconds.
 
 ### Type
 ```
-typeof(value any): gets the type name of "Int, Float, Bool, String, List, Set, Map, Func"
+typeof(value any): gets the type name of "Int, Float, Bool, String, List, Set, Map, Func, null"
 float(value any): converts into float
 bool(value any): converts into bool
 int(value any): converts into int
@@ -433,7 +433,7 @@ json.decode(val String): convert the given raw JSON into corresponding Rice valu
 (value of type Map).remove(Map,...any)
 (value of type Map).keys(Map)
 (value of type Map).entries(Map)
-(value of type Map).include(Map,any)
+(value of type Map).includeKey(Map,any)
 (value of type Map).values(Map)
 ```
 
@@ -474,8 +474,8 @@ for_in_statement = "for" , ws , identifier , ws , "in" , ws , expression , ws , 
 
 (* Note: standalone inc/dec is not expression; cannot return value *)
 inc_dec_statement =
-    ( "++" | "--" ) , ws , postfix_expression
-  | postfix_expression , ws , ( "++" | "--" )
+    ( "++" | "--" ) , postfix_expression
+  | postfix_expression , ( "++" | "--" )
   ;
 
 control_statement =
@@ -518,7 +518,7 @@ if_expression = "if" , ws , expression , ws , block_expression ,
 (* --- Language Constructs --- *)
 identifier = ( letter | "_" ) , { letter | digit | "_" } ;
 element_access = "[" , ws , expression , ws , "]" ;
-selector = "." , ws , identifier ;
+selector = "." , identifier ;
 
 function_call = "(" , ws , [ argument_list ] , ws , ")" ;
 argument_list = argument , { ws , "," , ws , argument } ;
@@ -540,7 +540,7 @@ null_lit = "null" ;
 (* --- Lexical Tokens --- *)
 comparison_operator = "==" | "!=" | ">=" | "<=" | ">" | "<" ;
 additive_operator = "+" | "-" ;
-multiplicative_operator = "*" | "/" ;
+multiplicative_operator = "*" | "/" | "%" ;
 unary_operator = "!" | "-" ;
 
 char_in_string = ? any character except quote or backslash ? | '\' , ( '"' | '\' ) ;

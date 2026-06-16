@@ -58,7 +58,10 @@ typeof(list.new())   # "List"
 typeof(set.new())    # "Set"
 typeof(map.new())    # "Map"
 typeof(func(){})     # "Func"
-typeof(null)         # "Null"
+
+# it is intended that type-of null is "null" (lowercase) while others are Title case
+# because null is not a real data type in Rice
+typeof(null)         # "null"
 ```
 
 ## Type Conversion

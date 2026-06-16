@@ -58,9 +58,11 @@ Binary operators perform implicit conversion following this priority order:
 
 ```rice
 "value: " + 42      # "value: 42" (Int → String)
-true + 0            # 1 (Bool → Int conversion)
+1 == true           # true (Int → Bool)
 5 + 3.14            # 8.14 (Int → Float)
 ```
+
+> **Note:** Implicit conversion changes the operand types, but the operator must still be valid for the resulting type. For example, `+` is only defined for `String`, `Int`, and `Float` — not `Bool`. So `true + 0` would convert both operands to `Bool` and then fail because `+` is not a valid `Bool` operator.
 
 ## Modulo Operator
 

@@ -10,11 +10,11 @@ const d = 3.14 + " is pi";   # "3.14 is pi"
 # Note: with + operator, this means numeric coercion too
 # Using comparison operators:
 const e = 1 < 2;        # true
-const f = 1 == true;    # ?? (int vs bool comparison with implicit)
+const f = 1 == true;    # true (Int → Bool conversion: both become Bool)
 
 # Float coercion: if either is Float, both become Float
 const g = 3 + 2.5;      # 5.5 (float)
-const h = 7 / 2;        # 3.5 (float division in Go-like behavior)
+const h = 7 / 2;        # 3 (integer division — both operands are Int)
 
 # Int coercion: otherwise both become Int
 const i = 10 + 20;      # 30 (int)
@@ -24,4 +24,4 @@ const j = 5 * 3;        # 15 (int)
 const k = "result: " + (10 + 20);  # "result: 30"
 const l = true + " is bool";       # "true is bool"
 
-typeof(a) == "String" && typeof(b) == "String" && typeof(c) == "String" && typeof(d) == "String"
+typeof(a) == "String" && typeof(b) == "String" && typeof(c) == "String" && typeof(d) == "String" && e == true && f == true && h == 3

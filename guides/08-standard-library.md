@@ -18,7 +18,7 @@ Located in [`exec/stdlib/type/`](../exec/stdlib/type/type.go).
 
 | Function | Description |
 |----------|-------------|
-| `typeof(value any)` | Returns the type name: `"Int"`, `"Float"`, `"Bool"`, `"String"`, `"List"`, `"Set"`, `"Map"`, `"Func"`, `"Null"` |
+| `typeof(value any)` | Returns the type name: `"Int"`, `"Float"`, `"Bool"`, `"String"`, `"List"`, `"Set"`, `"Map"`, `"Func"`, `"null"` |
 | `float(value any)` | Converts value to Float |
 | `bool(value any)` | Converts value to Bool |
 | `int(value any)` | Converts value to Int |
@@ -244,7 +244,7 @@ These are the same functions called via dot syntax:
 | **Float** | `max()`, `min()`, `abs()`, `sqrt()`, `floor()`, `ceil()`, `pow()` |
 | **List** | `append()`, `include()`, `index()`, `lastIndex()`, `sort()`, `map()`, `reverse()`, `filter()`, `removeAt()`, `removeAll()`, `slice()`, `prepend()` |
 | **Set** | `map()`, `filter()`, `remove()`, `add()`, `include()` |
-| **Map** | `map()`, `filter()`, `put()`, `remove()`, `keys()`, `entries()`, `include()`, `values()` |
+| **Map** | `map()`, `filter()`, `put()`, `remove()`, `keys()`, `entries()`, `includeKey()`, `values()` |
 
 ---
 

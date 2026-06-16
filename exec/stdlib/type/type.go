@@ -2,6 +2,7 @@ package _type
 
 import (
 	"fmt"
+
 	"github.com/anhcraft/rice/exec/fun"
 	"github.com/anhcraft/rice/exec/stdlib"
 	"github.com/anhcraft/rice/exec/types"
@@ -22,6 +23,7 @@ var Functions = fun.FunctionPackage{
 // Typeof finds the type name of the given value; return array for vector.
 func Typeof(val types.Value) (types.Value, error) {
 	if val == nil {
+		// it is intended that type of null is "null" (lowercase) while others are Title case (e.g. "String")
 		return values.String("null"), nil
 	}
 	return values.String(val.Type().String()), nil
