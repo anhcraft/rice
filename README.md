@@ -22,61 +22,6 @@ An official LLM prompt is available to be attached to LLM conversations. It prov
 
 Download here [llm-prompt.md](./llm-prompt.md)
 
-## Install
-
-```bash
-go get github.com/anhcraft/rice
-```
-
-## Quick Start
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-
-	"github.com/anhcraft/rice/exec"
-	"github.com/anhcraft/rice/exec/conf"
-	"github.com/anhcraft/rice/frontend"
-)
-
-func main() {
-	script := `
-    var greet = func (name) {
-        return "Hello, " + name + "!"
-    };
-		greet("Rice");
-	`
-
-	// 1. Tokenize
-	tokens, err := frontend.Tokenize(script)
-	if err != nil {
-		panic(err)
-	}
-
-	// 2. Parse
-	parser := frontend.NewParser(tokens)
-	ast := parser.Parse()
-	if len(parser.Errors()) > 0 {
-		panic(parser.Errors()[0])
-	}
-
-	// 3. Interpret
-	it := exec.NewInterpreter(conf.NewDefaultEnvConfig())
-	result, err := it.Interpret(context.Background(), ast, conf.NewDefaultRunConfig())
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(result) // "Hello, Rice!"
-}
-```
-
-> See [examples/example.go](examples/example.go) for a more advanced usage including error tracing and profiling.
-
 ## Language Tour
 
 ### 1. Data types
@@ -128,7 +73,22 @@ const yes = if typeof(true) == "Bool" {
 };
 ```
 
-> See full language tutorial as code at [tutorial.rice](./examples/tutorial.rice) or via the official LLM prompt [llm-prompt.md](./llm-prompt.md)
+## Guides
+
+The [language guides](./guides/README.md) cover everything from basic syntax to embedding Rice in Go — whether you want to **learn the language** or **integrate Rice**.
+
+## Benchmarks
+
+Run on Intel® Core™ i3-10105 @ 3.70 GHz, Go 1.24, Windows 11. Benchmarks executed via [`exec/bench_test.go`](exec/bench_test.go) with `go test -bench=. -benchmem`.
+
+| Benchmark | Ops/sec | ns/op | B/op | allocs/op | Description |
+|---|---|---|---|---|---|
+| Fibonacci(20) | 16 | 60,194,989 | 28 MB | 395,701 | Recursive function call overhead — `fib(20)` |
+| ForLoop(10000) | 88 | 11,334,590 | 1.8 MB | 149,627 | Tight C-style for-loop, 0..9999 sum |
+| Arithmetic(5000) | 140 | 7,166,243 | 1.3 MB | 117,771 | Integer arithmetic in a loop (add/mul/div) |
+| RecursionDeep(15) | 137 | 7,292,346 | 2.5 MB | 34,993 | Moderately deep recursion — `fib(15)` |
+| StringConcat(1000) | 832 | 1,202,009 | 704 KB | 14,525 | String concatenation loop, 1000 iterations |
+| Functional | 14,946 | 66,921 | 18 KB | 312 | List `filter` + `map` on 5-element dataset |
 
 ## Tools
 ### 1. Error stacktrace
@@ -175,67 +135,6 @@ RuntimeError:
 - The official REPL/CLI allows you to quickly try the language, discover the underlying process of lexing and parsing.
 
 ![](./assets/repl.gif)
-
-## Benchmarks
-
-Run on Intel® Core™ i3-10105 @ 3.70 GHz, Go 1.24, Windows 11. Benchmarks executed via [`exec/bench_test.go`](exec/bench_test.go) with `go test -bench=. -benchmem`.
-
-| Benchmark | Ops/sec | ns/op | B/op | allocs/op | Description |
-|---|---|---|---|---|---|
-| Fibonacci(20) | 16 | 60,194,989 | 28 MB | 395,701 | Recursive function call overhead — `fib(20)` |
-| ForLoop(10000) | 88 | 11,334,590 | 1.8 MB | 149,627 | Tight C-style for-loop, 0..9999 sum |
-| Arithmetic(5000) | 140 | 7,166,243 | 1.3 MB | 117,771 | Integer arithmetic in a loop (add/mul/div) |
-| RecursionDeep(15) | 137 | 7,292,346 | 2.5 MB | 34,993 | Moderately deep recursion — `fib(15)` |
-| StringConcat(1000) | 832 | 1,202,009 | 704 KB | 14,525 | String concatenation loop, 1000 iterations |
-| Functional | 14,946 | 66,921 | 18 KB | 312 | List `filter` + `map` on 5-element dataset |
-
-### Single-run Profiler Reports
-
-**Fibonacci(20)** — deep recursion tree:
-```
-[Root] taken 76.172ms (100.00%) at 0:0
-  └─[Call] taken 76.172ms (100.00%) at 8:107
-    └─[Block] taken 76.172ms (100.00%) at 2:24
-      └─[Call] taken 47.03ms (61.74%) at 6:73
-        └─[Block] taken 47.03ms (100.00%) at 2:24
-          └─[Call] taken 27.709ms (58.92%) at 6:73
-            └─[Block] taken 27.709ms (100.00%) at 2:24
-              └─[Call] taken 18.201ms (65.69%) at 6:73
-                └─[Block] taken 18.201ms (100.00%) at 2:24
-                  └─[Call] taken 9.814ms (53.92%) at 6:73
-                    └─[Block] taken 9.814ms (100.00%) at 2:24
-                      └─[Call] taken 7.063ms (71.97%) at 6:73
-                        └─[Block] taken 7.063ms (100.00%) at 2:24
-                          ...
-```
-
-**ForLoop(10000)** — dominated by the loop body:
-```
-[Root] taken 26.943ms (100.00%) at 0:0
-  └─[ForLoop] taken 26.943ms (100.00%) at 3:20
-    └─[Block] (x10000) taken 17.625ms (65.41%) at 3:52
-```
-
-**Functional** — list higher-order functions on 5 elements:
-```
-[Root] taken 1.01ms (100.00%) at 0:0
-  └─[Call] taken 1.01ms (100.00%) at 9:270
-    └─[Block] (x5) taken 0s (0.00%) at 9:302
-```
-
-**Arithmetic(5000)** — arithmetic in a tight loop:
-```
-[Root] taken 27.948ms (100.00%) at 0:0
-  └─[ForLoop] taken 27.948ms (100.00%) at 3:18
-    └─[Block] (x5000) taken 23.969ms (85.76%) at 3:49
-```
-
-**StringConcat(1000)** — string concatenation in a loop:
-```
-[Root] taken 2.822ms (100.00%) at 0:0
-  └─[ForLoop] taken 2.822ms (100.00%) at 3:19
-    └─[Block] (x1000) taken 2.029ms (71.90%) at 3:50
-```
 
 ## FAQ
 1. What is the file extension of Rice script? Simply, `.rice`
