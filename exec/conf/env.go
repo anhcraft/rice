@@ -22,6 +22,30 @@ type EnvConfig struct {
 	PreAllocatedFrames     uint16
 	ProfilerEnabled        bool
 	LoggingOutput          io.Writer
+
+	// DisableNamespacedPackages lists sub-package identifiers whose standard
+	// packages should be excluded from the interpreter environment.
+	// e.g. {"io"} disables the global io functions (print, printf, etc.).
+	DisableNamespacedPackages []values.Identifier
+
+	// DisableTypeBoundPackages lists types whose standard type-bound
+	// packages should be excluded. e.g. {types.String} disables string methods.
+	DisableTypeBoundPackages []types.Type
+
+	// OverrideNamespacedPackages lists sub-package identifiers for which
+	// custom packages may silently replace standard packages of the same ID.
+	// Without this, merging a custom package over an existing stdlib sub-package
+	// logs a conflict warning.
+	OverrideNamespacedPackages []values.Identifier
+
+	// StrictStdlibMode, when true, disables all standard library packages.
+	// Only packages explicitly listed in EnableNamespacedPackages and those
+	// added via AddNamespacedFunctionPackage/AddGlobalFunctionPackage are available.
+	StrictStdlibMode bool
+
+	// EnableNamespacedPackages lists the stdlib sub-package identifiers to
+	// enable when StrictStdlibMode is true. Ignored when StrictStdlibMode is false.
+	EnableNamespacedPackages []values.Identifier
 }
 
 func NewDefaultEnvConfig() *EnvConfig {
@@ -75,5 +99,41 @@ func (e *EnvConfig) EnableProfiling() *EnvConfig {
 
 func (e *EnvConfig) SetLoggingOutput(o io.Writer) *EnvConfig {
 	e.LoggingOutput = o
+	return e
+}
+
+// DisableNamespacedPackage adds a sub-package identifier to the exclusion list.
+// Standard functions belonging to this sub-package will not be loaded.
+// e.g. DisableNamespacedPackage("io") removes print, printf, println, printlnf.
+func (e *EnvConfig) DisableNamespacedPackage(pkgID values.Identifier) *EnvConfig {
+	e.DisableNamespacedPackages = append(e.DisableNamespacedPackages, pkgID)
+	return e
+}
+
+// DisableTypeBoundPackage adds a type to the type-bound exclusion list.
+// Standard type-bound functions for this type will not be loaded.
+func (e *EnvConfig) DisableTypeBoundPackage(t types.Type) *EnvConfig {
+	e.DisableTypeBoundPackages = append(e.DisableTypeBoundPackages, t)
+	return e
+}
+
+// OverrideNamespacedPackage marks a sub-package so that custom functions
+// may silently replace its standard definitions without a conflict warning.
+func (e *EnvConfig) OverrideNamespacedPackage(pkgID values.Identifier) *EnvConfig {
+	e.OverrideNamespacedPackages = append(e.OverrideNamespacedPackages, pkgID)
+	return e
+}
+
+// SetStrictStdlibMode enables or disables strict stdlib mode.
+// When true, only packages listed via EnableNamespacedPackage are available.
+func (e *EnvConfig) SetStrictStdlibMode(v bool) *EnvConfig {
+	e.StrictStdlibMode = v
+	return e
+}
+
+// EnableNamespacedPackage adds a sub-package identifier to the whitelist
+// used when StrictStdlibMode is true.
+func (e *EnvConfig) EnableNamespacedPackage(pkgID values.Identifier) *EnvConfig {
+	e.EnableNamespacedPackages = append(e.EnableNamespacedPackages, pkgID)
 	return e
 }

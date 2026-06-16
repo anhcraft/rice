@@ -59,17 +59,7 @@ func NewInterpreter(cfg *conf.EnvConfig) *Interpreter {
 	}
 
 	{
-		namespacedPkgs := standardNamespacedPackages
-
-		if cfg.ExtraNamespacedFuncPkg != nil && len(cfg.ExtraNamespacedFuncPkg) > 0 {
-			namespacedPkgs = make(NamespacedFunctionPackageList)
-			for k, v := range standardNamespacedPackages { // clone
-				namespacedPkgs[k] = v
-			}
-			for k, v := range cfg.ExtraNamespacedFuncPkg {
-				namespacedPkgs[k] = union(namespacedPkgs[k], union(v...))
-			}
-		}
+		namespacedPkgs := buildEffectiveNamespacedPkgs(cfg)
 
 		gt := compileNamespacedPkg(namespacedPkgs)
 
@@ -89,17 +79,7 @@ func NewInterpreter(cfg *conf.EnvConfig) *Interpreter {
 	}
 
 	{
-		typeboundPkgs := standardTypeboundPackages
-
-		if cfg.ExtraTypeBoundFuncPkg != nil && len(cfg.ExtraTypeBoundFuncPkg) > 0 {
-			typeboundPkgs = make(TypeboundFunctionPackageList)
-			for k, v := range standardTypeboundPackages { // clone
-				typeboundPkgs[k] = v
-			}
-			for k, v := range cfg.ExtraTypeBoundFuncPkg {
-				typeboundPkgs[k] = union(typeboundPkgs[k], union(v...))
-			}
-		}
+		typeboundPkgs := buildEffectiveTypeboundPkgs(cfg)
 
 		it.typeBoundFuncPkg = compileTypeboundPkg(typeboundPkgs)
 	}

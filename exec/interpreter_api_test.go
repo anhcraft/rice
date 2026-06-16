@@ -10,6 +10,9 @@ import (
 	"testing"
 
 	"github.com/anhcraft/rice/exec/conf"
+	"github.com/anhcraft/rice/exec/fun"
+	"github.com/anhcraft/rice/exec/stdlib"
+	"github.com/anhcraft/rice/exec/types"
 	"github.com/anhcraft/rice/exec/types/values"
 	"github.com/anhcraft/rice/frontend"
 )
@@ -135,4 +138,177 @@ func TestInterpreterScripts(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestCustomPackageIntegration verifies the new package integration features.
+func TestCustomPackageIntegration(t *testing.T) {
+	// Helper: parse and run a script with a given interpreter config.
+	run := func(t *testing.T, it *Interpreter, script string) (types.Value, error) {
+		t.Helper()
+		tokens, err := frontend.Tokenize(script)
+		if err != nil {
+			t.Fatalf("Tokenize failed: %v", err)
+		}
+		parser := frontend.NewParser(tokens)
+		ast := parser.Parse()
+		if len(parser.Errors()) > 0 {
+			t.Fatalf("Parse failed: %v", parser.Errors()[0])
+		}
+		return it.Interpret(context.Background(), ast, conf.NewDefaultRunConfig())
+	}
+
+	t.Run("disable io package", func(t *testing.T) {
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			DisableNamespacedPackage("io"))
+		// print should be unavailable, this should error
+		_, err := run(t, it, `print("hello")`)
+		if err == nil {
+			t.Fatal("expected error when calling print after disabling io, got nil")
+		}
+	})
+
+	t.Run("disable error package", func(t *testing.T) {
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			DisableNamespacedPackage("error"))
+		_, err := run(t, it, `throw("test")`)
+		if err == nil {
+			t.Fatal("expected error when calling throw() after disabling error pkg, got nil")
+		}
+	})
+
+	t.Run("disable io but keep other globals", func(t *testing.T) {
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			DisableNamespacedPackage("io"))
+		// typeof() from stdlib/type should still work
+		val, err := run(t, it, `typeof(list.of(1,2,3))`)
+		if err != nil {
+			t.Fatalf("typeof() should still work after disabling io, got: %v", err)
+		}
+		if val == nil {
+			t.Fatal("expected non-nil result from typeof()")
+		}
+	})
+
+	t.Run("disable non-existent package is no-op", func(t *testing.T) {
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			DisableNamespacedPackage("nonexistent_pkg"))
+		// typeof should still be available
+		val, err := run(t, it, `typeof("hello")`)
+		if err != nil {
+			t.Fatalf("typeof() should work, got: %v", err)
+		}
+		if val == nil {
+			t.Fatal("expected non-nil result")
+		}
+	})
+
+	t.Run("disable io does not affect namespaced packages", func(t *testing.T) {
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			DisableNamespacedPackage("io"))
+		// strings package should still work
+		val, err := run(t, it, `strings.toUpper("hello")`)
+		if err != nil {
+			t.Fatalf("strings.toUpper should work after disabling io, got: %v", err)
+		}
+		expected := values.String("HELLO")
+		if !reflect.DeepEqual(expected, val) {
+			t.Errorf("expected %v, got %v", expected, val)
+		}
+	})
+
+	t.Run("add custom namespaced package", func(t *testing.T) {
+		pkg := fun.FunctionPackage{
+			"greet": {stdlib.Define(func(name values.String) (types.Value, error) {
+				return values.String("Hello, " + string(name) + "!"), nil
+			})},
+		}
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			AddNamespacedFunctionPackage("tools", pkg))
+		val, err := run(t, it, `tools.greet("World")`)
+		if err != nil {
+			t.Fatalf("tools.greet should work, got: %v", err)
+		}
+		expected := values.String("Hello, World!")
+		if !reflect.DeepEqual(expected, val) {
+			t.Errorf("expected %v, got %v", expected, val)
+		}
+	})
+
+	t.Run("strict stdlib mode with enabled subset", func(t *testing.T) {
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			SetStrictStdlibMode(true).
+			EnableNamespacedPackage("math")) // only math is available
+		// math should work
+		val, err := run(t, it, `math.floor(3.7)`)
+		if err != nil {
+			t.Fatalf("math.floor should work in strict mode, got: %v", err)
+		}
+		if val != values.Float(3) {
+			t.Errorf("expected 3, got %v", val)
+		}
+		// strings should NOT be available
+		_, err = run(t, it, `strings.toUpper("x")`)
+		if err == nil {
+			t.Fatal("expected error when calling strings.toUpper in strict mode without enabling strings")
+		}
+	})
+
+	t.Run("strict stdlib mode with custom package", func(t *testing.T) {
+		pkg := fun.FunctionPackage{
+			"halve": {stdlib.Define(func(x values.Float) (types.Value, error) {
+				return values.Float(x / 2), nil
+			})},
+		}
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			SetStrictStdlibMode(true).
+			EnableNamespacedPackage("math").
+			AddGlobalFunctionPackage(pkg))
+		// math should work
+		val, err := run(t, it, `math.abs(-5)`)
+		if err != nil {
+			t.Fatalf("math.abs should work, got: %v", err)
+		}
+		if !reflect.DeepEqual(values.Int(5), val) {
+			t.Errorf("expected 5, got %v", val)
+		}
+		// custom global function should work
+		val, err = run(t, it, `halve(10.0)`)
+		if err != nil {
+			t.Fatalf("halve should work, got: %v", err)
+		}
+		if !reflect.DeepEqual(values.Float(5.0), val) {
+			t.Errorf("expected 5.0, got %v", val)
+		}
+		// strings should NOT be available
+		_, err = run(t, it, `strings.toUpper("x")`)
+		if err == nil {
+			t.Fatal("expected error when calling strings.toUpper in strict mode without enabling strings")
+		}
+	})
+
+	t.Run("disable type-bound string package", func(t *testing.T) {
+		it := NewInterpreter(conf.NewDefaultEnvConfig().
+			DisableTypeBoundPackage(types.String))
+		// type-bound string methods like .toUpper() should not be available
+		_, err := run(t, it, `const x = "hello"; x.toUpper()`)
+		if err == nil {
+			t.Fatal("expected error when calling string.toUpper after disabling type-bound string pkg")
+		}
+	})
+
+	t.Run("backward compatibility - default config works", func(t *testing.T) {
+		it := NewInterpreter(conf.NewDefaultEnvConfig())
+		val, err := run(t, it, `math.abs(-42)`)
+		if err != nil {
+			t.Fatalf("math.abs should work with default config, got: %v", err)
+		}
+		if !reflect.DeepEqual(values.Int(42), val) {
+			t.Errorf("expected 42, got %v", val)
+		}
+		// io should work
+		_, err = run(t, it, `print("hello")`)
+		if err != nil {
+			t.Fatalf("print should work with default config, got: %v", err)
+		}
+	})
 }
