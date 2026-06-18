@@ -32,8 +32,8 @@ for_in_statement = "for" , ws , identifier , ws , "in" , ws , expression , ws , 
 
 (* Note: standalone inc/dec is not expression; cannot return value *)
 inc_dec_statement =
-    ( "++" | "--" ) , ws , postfix_expression
-  | postfix_expression , ws , ( "++" | "--" )
+    ( "++" | "--" ) , postfix_expression
+  | postfix_expression , ( "++" | "--" )
   ;
 
 control_statement =
@@ -64,11 +64,16 @@ primary_expression =
   | identifier
   | parenthesized_expression
   | block_expression
+  | object_literal
   | if_expression
   ;
 
 parenthesized_expression = "(" , ws , expression , ws , ")" ;
-block_expression = "{" , [ ws ] , [ statement_sequence ] , [ ws ] , "}" ;
+block_expression = "{" , [ ws ] , statement_sequence , [ ws ] , "}" ;
+object_literal = "{" , [ ws ] , [ object_literal_entries ] , [ ws ] , "}" ;
+object_literal_entries = object_literal_entry , { ws , "," , ws , object_literal_entry } , [ ws , "," ] ;
+object_literal_entry = object_literal_key , ws , ":" , ws , expression ;
+object_literal_key = identifier | string_lit ;
 if_expression = "if" , ws , expression , ws , block_expression ,
                 { ws , "else" , ws , "if" , ws , expression , ws , block_expression } ,
                 [ ws , "else" , ws , block_expression ] ;
@@ -76,7 +81,7 @@ if_expression = "if" , ws , expression , ws , block_expression ,
 (* --- Language Constructs --- *)
 identifier = ( letter | "_" ) , { letter | digit | "_" } ;
 element_access = "[" , ws , expression , ws , "]" ;
-selector = "." , ws , identifier ;
+selector = "." , identifier ;
 
 function_call = "(" , ws , [ argument_list ] , ws , ")" ;
 argument_list = argument , { ws , "," , ws , argument } ;
@@ -98,7 +103,7 @@ null_lit = "null" ;
 (* --- Lexical Tokens --- *)
 comparison_operator = "==" | "!=" | ">=" | "<=" | ">" | "<" ;
 additive_operator = "+" | "-" ;
-multiplicative_operator = "*" | "/" | "%";
+multiplicative_operator = "*" | "/" | "%" ;
 unary_operator = "!" | "-" ;
 
 char_in_string = ? any character except quote or backslash ? | '\' , ( '"' | '\' ) ;

@@ -18,11 +18,15 @@ list.new().append(
     list.new(),  # dynamic-typed list
     set.new(),   # dynamic-typed set
     map.new(),   # dynamic-typed map
+    {            # object literal (map shorthand)
+        key: "value",
+    },
     func() {     # function
        return
     }
 )
 ```
+- Note: Object literal `{ key: value }` is syntactic sugar for a Map; the key must be an identifier or string literal, the value can be any expression. `{}` creates an empty Map
 - Note: There is no array support, there is no array syntax such as `[...]`; use List as an alternative
 - Note: There is no dedicated Character/Rune support
 - Note: Unicode is fully supported in String; any operation to String involves Unicode and rune-level (NOT byte as in Go)
@@ -50,6 +54,16 @@ list.new().append(
 "string"[0] # return the first character ("s" of type String)
 list.of(1, 2)[0] # return the first element (1)
 map.of("key", "value")["key"] # access the "key" entry
+
+# Object literal: syntactic sugar for map
+const kv = { name: "Alice", age: 30 };
+kv.name   # selector access (same as kv["name"])
+kv["age"] # element access
+# {} is an empty map, NOT an empty block expression
+const empty = {};
+
+# Equivalent to:
+const kv2 = map.of("name", "Alice", "age", 30);
 
 # list iterator returns the element value
 for elem in list.of(1, 2, 3) {
@@ -175,6 +189,8 @@ myFunction(...list, 5, ":", ...set)
 - Block expression is a list of statement. The last statement value is also the block value
 - Block expression is used by many other language constructs such as for loop, for-in, if, etc
 - A block creates a new lexical scope allowing shadowing variables declared previously
+- IMPORTANT: `{}` is an object literal (empty map), NOT an empty block expression. Blocks must contain at least one statement.
+- Object literal disambiguation: `{` followed by `}` or `identifier`/string-literal followed by `:` → object literal; otherwise → block expression.
 ```
 var a = 10;
 {
@@ -506,11 +522,16 @@ primary_expression =
   | identifier
   | parenthesized_expression
   | block_expression
+  | object_literal
   | if_expression
   ;
 
 parenthesized_expression = "(" , ws , expression , ws , ")" ;
-block_expression = "{" , [ ws ] , [ statement_sequence ] , [ ws ] , "}" ;
+block_expression = "{" , [ ws ] , statement_sequence , [ ws ] , "}" ;
+object_literal = "{" , [ ws ] , [ object_literal_entries ] , [ ws ] , "}" ;
+object_literal_entries = object_literal_entry , { ws , "," , ws , object_literal_entry } , [ ws , "," ] ;
+object_literal_entry = object_literal_key , ws , ":" , ws , expression ;
+object_literal_key = identifier | string_lit ;
 if_expression = "if" , ws , expression , ws , block_expression ,
                 { ws , "else" , ws , "if" , ws , expression , ws , block_expression } ,
                 [ ws , "else" , ws , block_expression ] ;
