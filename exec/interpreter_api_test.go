@@ -71,6 +71,9 @@ func TestInterpreterScripts(t *testing.T) {
 		// --- Type-bound functions ---
 		{name: "Type-Bound Functions", filename: "type_bound_funcs.rice", expected: values.Bool(true)},
 
+		// --- Object literal ---
+		{name: "Object Literal", filename: "object_literal.rice", expected: values.Bool(true)},
+
 		// --- Standard library ---
 		{name: "Type Conversions", filename: "type_conversions.rice", expected: values.Bool(true)},
 		{name: "Math Functions", filename: "math_funcs.rice", expected: values.Bool(true)},

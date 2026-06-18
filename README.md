@@ -38,6 +38,10 @@ list.new().append(
     list.new(),  # list
     set.new(),   # set
     map.new(),   # map
+    {            # map (as an Object)
+      name: "Vi",
+      "age": 9
+    },
     func() {     # function
        return
     }

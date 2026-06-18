@@ -48,21 +48,23 @@ func _() {
 	_ = x[rbrace-37]
 	_ = x[comma-38]
 	_ = x[semicolon-39]
-	_ = x[dot-40]
-	_ = x[ellipsis-41]
-	_ = x[increment-42]
-	_ = x[decrement-43]
-	_ = x[eof-44]
-	_ = x[comment-45]
+	_ = x[colon-40]
+	_ = x[dot-41]
+	_ = x[ellipsis-42]
+	_ = x[increment-43]
+	_ = x[decrement-44]
+	_ = x[eof-45]
+	_ = x[comment-46]
 }
 
-const _TokenType_name = "illegalidentifierifKeywordelseKeywordvarKeywordconstKeywordfuncKeywordforKeywordinKeywordbreakKeywordcontinueKeywordreturnKeywordintegerLiteralfloatLiteralstringLiteralbooleanLiteralnullLiteralequalequalEqualbangbangEqualgtgteltlteandorplusminusstarslashpercentlparenrparenlbracketrbracketlbracerbracecommasemicolondotellipsisincrementdecrementeofcomment"
+const _TokenType_name = "illegalidentifierifKeywordelseKeywordvarKeywordconstKeywordfuncKeywordforKeywordinKeywordbreakKeywordcontinueKeywordreturnKeywordintegerLiteralfloatLiteralstringLiteralbooleanLiteralnullLiteralequalequalEqualbangbangEqualgtgteltlteandorplusminusstarslashpercentlparenrparenlbracketrbracketlbracerbracecommasemicoloncolondotellipsisincrementdecrementeofcomment"
 
-var _TokenType_index = [...]uint16{0, 7, 17, 26, 37, 47, 59, 70, 80, 89, 101, 116, 129, 143, 155, 168, 182, 193, 198, 208, 212, 221, 223, 226, 228, 231, 234, 236, 240, 245, 249, 254, 261, 267, 273, 281, 289, 295, 301, 306, 315, 318, 326, 335, 344, 347, 354}
+var _TokenType_index = [...]uint16{0, 7, 17, 26, 37, 47, 59, 70, 80, 89, 101, 116, 129, 143, 155, 168, 182, 193, 198, 208, 212, 221, 223, 226, 228, 231, 234, 236, 240, 245, 249, 254, 261, 267, 273, 281, 289, 295, 301, 306, 315, 320, 323, 331, 340, 349, 352, 359}
 
 func (i TokenType) String() string {
-	if i < 0 || i >= TokenType(len(_TokenType_index)-1) {
+	idx := int(i) - 0
+	if i < 0 || idx >= len(_TokenType_index)-1 {
 		return "TokenType(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _TokenType_name[_TokenType_index[i]:_TokenType_index[i+1]]
+	return _TokenType_name[_TokenType_index[idx]:_TokenType_index[idx+1]]
 }

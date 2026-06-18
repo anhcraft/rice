@@ -27,7 +27,7 @@ null         # Null
 |------|-------------|
 | **List** | Dynamic-typed, ordered, indexed collection — created via [`list.new()`](../exec/stdlib/list/list.go) or [`list.of()`](../exec/stdlib/list/list.go) |
 | **Set** | Dynamic-typed, unordered collection of unique elements — created via [`set.new()`](../exec/stdlib/set/set.go) or [`set.of()`](../exec/stdlib/set/set.go) |
-| **Map** | Dynamic-typed, key-value collection — created via [`map.new()`](../exec/stdlib/map/map.go) or [`map.of()`](../exec/stdlib/map/map.go) |
+| **Map** | Dynamic-typed, key-value collection — created via [`map.new()`](../exec/stdlib/map/map.go), [`map.of()`](../exec/stdlib/map/map.go), or the object literal syntax `{ key: value }` |
 | **Func** | Function literal — created with `func() { ... }` |
 
 ```rice
@@ -37,6 +37,24 @@ map.new()    # empty map
 func() {     # function literal
     return
 }
+```
+
+### Object Literal (Map Shorthand)
+
+Rice provides an object literal syntax `{ key: value }` as syntactic sugar for creating maps. The key must be an identifier or a string literal, and the value can be any expression. The result is a plain [`*values.Map`](../exec/types/values/map.go) — there is no separate "object" type.
+
+```rice
+const kv = {
+    name: "Alice",
+    age: 30,
+    "key-with-dashes": true,
+};
+
+kv.name    # "Alice"
+kv["age"]  # 30
+
+# The above is equivalent to:
+const kv2 = map.of("name", "Alice", "age", 30, "key-with-dashes", true);
 ```
 
 ## Important Notes

@@ -59,6 +59,7 @@ const (
 	rbrace    // "}"
 	comma     // ","
 	semicolon // ";"
+	colon     // ":"
 	dot       // "."
 	ellipsis  // "..."
 	increment // "++"

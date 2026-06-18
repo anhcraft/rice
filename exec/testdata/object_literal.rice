@@ -1,0 +1,58 @@
+# Object literal with identifier keys
+const obj1 = {
+  a: 1,
+  b: "hello",
+  c: true,
+};
+
+const r1 = obj1["a"];  # 1
+const r2 = obj1["b"];  # "hello"
+const r3 = obj1["c"];  # true
+
+# Object literal with string keys
+const obj2 = {
+  "key-1": 100,
+  "key-2": 200,
+};
+
+const r4 = obj2["key-1"];  # 100
+
+# Empty object literal is not distinguishable from empty block; use map.new() instead
+const obj3 = map.new();
+const r5 = len(obj3);  # 0
+
+# Nested object literal
+const obj4 = {
+  inner: {
+    x: 10,
+  },
+};
+const r6 = obj4["inner"]["x"];  # 10
+
+# Selector access on object literal
+const obj5 = { name: "Alice" };
+const r7 = obj5.name;  # "Alice"
+
+# Trailing comma
+const obj6 = {
+  a: 1,
+  b: 2,
+};
+const r8 = obj6.a + obj6.b;  # 3
+
+# Iteration
+var keys = "";
+for entry in obj1 {
+    keys = keys + entry[0];
+}
+const r9 = keys;  # "abc" (may be in any order)
+
+# Object literal used inline
+const obj7 = {
+  x: 10 + 20,
+  y: "foo" + "bar",
+};
+const r10 = obj7.x;  # 30
+const r11 = obj7.y;  # "foobar"
+
+r1 == 1 && r2 == "hello" && r3 == true && r4 == 100 && r5 == 0 && r6 == 10 && r7 == "Alice" && r8 == 3 && r9.include("a") && r9.include("b") && r9.include("c") && r10 == 30 && r11 == "foobar"

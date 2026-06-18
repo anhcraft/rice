@@ -38,6 +38,8 @@ var (
 	excessiveCallArgsSizeErr         = errors.New("too many call arguments")
 	excessiveFuncParamsSizeErr       = errors.New("too many function parameters")
 	invalidAssignmentTargetErr       = errors.New("invalid assignment target")
+	expectColonObjLiteralErr         = errors.New("expect ':' after key in object literal")
+	expectKeyObjLiteralErr           = errors.New("expect identifier or string as key in object literal")
 )
 
 type Parser struct {
@@ -793,8 +795,17 @@ func (p *Parser) takePrimary() ast.Expr {
 		return ast.Invalid
 	}
 
-	// Block expression
+	// Block expression or object literal
 	if p.match(lbrace) {
+		// Lookahead: if next token is identifier or stringLiteral followed by colon,
+		// treat as object literal; otherwise, treat as block expression
+		if p.isObjectLiteral() {
+			expr := p.takeObjectLiteral()
+			if expr == nil {
+				return ast.Invalid
+			}
+			return expr
+		}
 		block := p.takePrimaryBlockExpr()
 		if block == nil {
 			return ast.Invalid
@@ -917,6 +928,85 @@ func (p *Parser) takePrimaryBlockExpr() *ast.BlockExpr {
 	}
 	p.throw(expectRbraceBlockErr, off)
 	return &ast.BlockExpr{}
+}
+
+// isObjectLiteral peeks ahead to determine if the upcoming lbrace starts an object
+// literal (identifier/stringLiteral followed by colon) or a block expression.
+func (p *Parser) isObjectLiteral() bool {
+	pos := p.cursor
+	if pos >= len(p.tokens) || p.tokens[pos].tokenType != lbrace {
+		return false
+	}
+	pos++
+	if pos >= len(p.tokens) {
+		return false
+	}
+	// Object literal requires at least one key: value pair to disambiguate from block
+	t := p.tokens[pos]
+	if t.tokenType != identifier && t.tokenType != stringLiteral {
+		return false
+	}
+	pos++
+	if pos >= len(p.tokens) {
+		return false
+	}
+	return p.tokens[pos].tokenType == colon
+}
+
+// takeObjectLiteral parses an object literal: { key: value, ... }
+func (p *Parser) takeObjectLiteral() ast.Expr {
+	off := p.captureCurrStart()
+	p.next() // consume lbrace
+
+	//goland:noinspection GoPreferNilSlice
+	entries := []ast.ObjectLiteralEntry{}
+
+	for !p.match(rbrace) {
+		var key ast.Expr
+
+		if p.match(identifier) {
+			key = p.takePrimary() // yields *ast.IdentifierExpr
+		} else if p.match(stringLiteral) {
+			key = p.takePrimary() // yields *ast.LiteralExpr with string value
+		} else {
+			p.throw(expectKeyObjLiteralErr, off)
+			return ast.Invalid
+		}
+
+		if !p.match(colon) {
+			p.throw(expectColonObjLiteralErr, off)
+			return ast.Invalid
+		}
+		p.next() // consume colon
+
+		value := p.takeExpr()
+		if value == ast.Invalid {
+			p.throw(expectValueErr, off)
+			return ast.Invalid
+		}
+
+		entries = append(entries, ast.ObjectLiteralEntry{Key: key, Value: value})
+
+		if p.match(comma) {
+			p.next()
+		} else {
+			break
+		}
+	}
+
+	if p.match(rbrace) {
+		p.next()
+		return &ast.ObjectLiteralExpr{
+			BaseNode: ast.BaseNode{
+				Start: off.ast(),
+				End:   p.captureCurrStart().ast(),
+			},
+			Entries: entries,
+		}
+	}
+
+	p.throw(expectRbraceBlockErr, off)
+	return ast.Invalid
 }
 
 func (p *Parser) takePrimaryFuncLitExpr(off Pos) ast.Expr {

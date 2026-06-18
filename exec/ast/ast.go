@@ -470,3 +470,33 @@ func (i *IdentifierExpr) Accept(v Visitor) (types.Value, error) { return v.Visit
 func (i *IdentifierExpr) String() string {
 	return fmt.Sprintf("(Id %s)", i.Value)
 }
+
+type ObjectLiteralEntry struct {
+	Key   Expr
+	Value Expr
+}
+
+type ObjectLiteralExpr struct {
+	BaseNode
+	Entries []ObjectLiteralEntry
+}
+
+func (o *ObjectLiteralExpr) simple()    {}
+func (o *ObjectLiteralExpr) blockLike() {}
+
+func (o *ObjectLiteralExpr) Accept(v Visitor) (types.Value, error) {
+	return v.VisitObjectLiteralExpr(o)
+}
+
+func (o *ObjectLiteralExpr) String() string {
+	var builder strings.Builder
+	builder.WriteString("(Object")
+	for _, entry := range o.Entries {
+		builder.WriteString(" ")
+		builder.WriteString(entry.Key.String())
+		builder.WriteString(" ")
+		builder.WriteString(entry.Value.String())
+	}
+	builder.WriteString(")")
+	return builder.String()
+}

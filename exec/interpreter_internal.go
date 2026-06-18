@@ -32,6 +32,36 @@ func (i *Interpreter) VisitIdentifierExpr(expr *ast.IdentifierExpr) (types.Value
 	return values.Identifier(expr.Value), nil
 }
 
+func (i *Interpreter) VisitObjectLiteralExpr(expr *ast.ObjectLiteralExpr) (types.Value, error) {
+	m := values.NewMap()
+
+	for idx, entry := range expr.Entries {
+		var key values.String
+
+		switch k := entry.Key.(type) {
+		case *ast.IdentifierExpr:
+			key = values.String(k.Value)
+		case *ast.LiteralExpr:
+			if s, ok := k.Value.(string); ok {
+				key = values.String(s)
+			} else {
+				return nil, i.throw(entry.Key, "object literal key must be string, got %T", k.Value)
+			}
+		default:
+			return nil, i.throw(entry.Key, "object literal key must be identifier or string literal, got %T", entry.Key)
+		}
+
+		val, err := i.eval(entry.Value)
+		if err != nil {
+			return nil, i.throw(entry.Value, "cannot eval object literal value at entry #%d", idx).causedBy(err)
+		}
+
+		m.Put(key, val)
+	}
+
+	return m, nil
+}
+
 func (i *Interpreter) VisitFuncLiteralExpr(expr *ast.FuncLiteralExpr) (types.Value, error) {
 	body := expr.Body
 	astNilCheck(body)

@@ -21,4 +21,5 @@ type Visitor interface {
 	VisitSelectorExpr(expr *SelectorExpr) (types.Value, error)
 	VisitIdentifierExpr(expr *IdentifierExpr) (types.Value, error)
 	VisitFuncLiteralExpr(expr *FuncLiteralExpr) (types.Value, error)
+	VisitObjectLiteralExpr(expr *ObjectLiteralExpr) (types.Value, error)
 }

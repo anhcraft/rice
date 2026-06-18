@@ -368,6 +368,9 @@ func (lexer *Lexer) NextToken() (*Token, error) {
 	case '}':
 		lexer.next()
 		tok = lexer.buildToken(offset, rbrace, nil)
+	case ':':
+		lexer.next()
+		tok = lexer.buildToken(offset, colon, nil)
 	case ',':
 		lexer.next()
 		tok = lexer.buildToken(offset, comma, nil)
