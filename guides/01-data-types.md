@@ -41,7 +41,7 @@ func() {     # function literal
 
 ### Object Literal (Map Shorthand)
 
-Rice provides an object literal syntax `{ key: value }` as syntactic sugar for creating maps. The key must be an identifier or a string literal, and the value can be any expression. The result is a plain [`*values.Map`](../exec/types/values/map.go) — there is no separate "object" type.
+Rice provides an object literal syntax `{ key: value }` as syntactic sugar for creating maps. The key must be an identifier or a string literal, and the value can be any expression. An empty `{}` creates an empty map. The result is a plain [`*values.Map`](../exec/types/values/map.go) — there is no separate "object" type.
 
 ```rice
 const kv = {

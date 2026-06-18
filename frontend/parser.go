@@ -931,7 +931,7 @@ func (p *Parser) takePrimaryBlockExpr() *ast.BlockExpr {
 }
 
 // isObjectLiteral peeks ahead to determine if the upcoming lbrace starts an object
-// literal (identifier/stringLiteral followed by colon) or a block expression.
+// literal (empty object or identifier/stringLiteral followed by colon) or a block expression.
 func (p *Parser) isObjectLiteral() bool {
 	pos := p.cursor
 	if pos >= len(p.tokens) || p.tokens[pos].tokenType != lbrace {
@@ -941,7 +941,11 @@ func (p *Parser) isObjectLiteral() bool {
 	if pos >= len(p.tokens) {
 		return false
 	}
-	// Object literal requires at least one key: value pair to disambiguate from block
+	// Empty object literal: {}
+	if p.tokens[pos].tokenType == rbrace {
+		return true
+	}
+	// Object literal with entries: { key: value, ... }
 	t := p.tokens[pos]
 	if t.tokenType != identifier && t.tokenType != stringLiteral {
 		return false

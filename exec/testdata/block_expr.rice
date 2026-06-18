@@ -17,8 +17,8 @@ const b = {
     }
 };
 
-# Empty block
-const c = {};
+# Empty block must contain at least one statement; {} is now an empty object literal
+const c = { null; };
 
 # Block that shadows outer variable
 var shadowed = "outer";

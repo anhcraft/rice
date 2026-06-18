@@ -29,9 +29,29 @@ print(a = 10);  # prints "10" — assignment returns the new value
 # a = 5 = b     # ERROR — chaining is disallowed
 ```
 
-## Block Scope
+## Block Expression
 
-A block (`{ ... }`) creates a new lexical scope. Variables declared inside a block **shadow** variables with the same name from outer scopes:
+A block (`{ ... }`) in Rice is a **first-class expression** — it evaluates to the value of its last statement. It also creates a new lexical scope: variables declared inside a block **shadow** variables with the same name from outer scopes.
+
+```rice
+# Block as an expression: the last statement is the block's value
+const sum = {
+    const x = 10;
+    const y = 20;
+    x + y      # this is the block's value
+};
+sum;  # 30
+
+# Empty block evaluates to null
+const empty = { null; };
+empty;  # null
+```
+
+> ⚠️ `{}` (empty braces) is an **object literal** (empty map), not an empty block expression. Blocks must contain at least one statement. See [01 — Data Types](01-data-types.md#object-literal-map-shorthand).
+
+### Shadowing
+
+Variables declared inside a block shadow variables with the same name from outer scopes:
 
 ```rice
 var a = 10;
