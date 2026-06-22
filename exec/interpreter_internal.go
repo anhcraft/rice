@@ -249,6 +249,9 @@ func (i *Interpreter) VisitDeclareStmt(expr *ast.DeclareStmt) (types.Value, erro
 	}
 
 	if id, ok := target.(values.Identifier); ok {
+		if i.env.IsNamespaceEntry(id) {
+			return nil, i.throw(expr, "cannot declare %q because it conflicts with a built-in function or namespace", id)
+		}
 		ok = i.env.Define(id, val, expr.Const)
 		if !ok {
 			return nil, i.throw(expr, "cannot redeclare %q", id)
@@ -348,6 +351,9 @@ func (i *Interpreter) VisitForInStmt(expr *ast.ForInStmt) (types.Value, error) {
 	}
 
 	if id, ok := key.(values.Identifier); ok {
+		if i.env.IsNamespaceEntry(id) {
+			return nil, i.throw(expr.Key, "cannot declare for..in variable %q because it conflicts with a built-in function or namespace", id)
+		}
 		val, err := i.eval(expr.Value)
 		if err != nil {
 			return nil, i.throw(expr.Value, "cannot eval for-in value").causedBy(err)

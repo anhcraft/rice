@@ -88,6 +88,23 @@ func TestInterpreterScripts(t *testing.T) {
 
 		// --- Implicit coercion ---
 		{name: "Implicit Coercion", filename: "implicit_coercion.rice", expected: values.Bool(true)},
+
+		// --- Namespace conflict detection ---
+		{
+			name:        "Declare const with name of root-level function (println)",
+			filename:    "conflict_const_function.rice",
+			expectError: true,
+		},
+		{
+			name:        "Declare var with name of namespace (strings)",
+			filename:    "conflict_var_namespace.rice",
+			expectError: true,
+		},
+		{
+			name:        "Declare var with name of root-level function (print)",
+			filename:    "conflict_var_print.rice",
+			expectError: true,
+		},
 	}
 
 	it := NewInterpreter(conf.NewDefaultEnvConfig())

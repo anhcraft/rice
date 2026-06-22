@@ -75,6 +75,13 @@ func (e *Environment) ExitScope() {
 	e.CurrentFrame().ExitScope()
 }
 
+// IsNamespaceEntry checks whether the given identifier collides with an entry in the namespace tree
+// (either a root-level native function or a sub-namespace).
+func (e *Environment) IsNamespaceEntry(key values.Identifier) bool {
+	v, err := e.namespace.Element(key)
+	return v != nil && err == nil
+}
+
 // Define defines a variable; return false if it already exists
 func (e *Environment) Define(key values.Identifier, value types.Value, constant bool) bool {
 	return e.CurrentFrame().CurrentScope().Define(key, value, constant)
