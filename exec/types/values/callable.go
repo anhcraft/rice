@@ -3,6 +3,7 @@ package values
 import (
 	"context"
 	"fmt"
+
 	"github.com/anhcraft/rice/exec/ast"
 	"github.com/anhcraft/rice/exec/types"
 )
@@ -32,7 +33,7 @@ func (call CallSite) String() string {
 		return fmt.Sprintf("%s (internal)", call.Caller)
 	}
 
-	return fmt.Sprintf("%s (at %s-%s)", call.Caller, call.StartPos, call.EndPos)
+	return fmt.Sprintf("%s (L%d-L%d)", call.Caller, call.StartPos.Line, call.EndPos.Line)
 }
 
 // InternalCallSite reusable internal context

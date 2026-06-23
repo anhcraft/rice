@@ -2,9 +2,10 @@ package exec
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/anhcraft/rice/exec/ast"
 	"github.com/anhcraft/rice/exec/types/values"
-	"strings"
 )
 
 type RuntimeError struct {
@@ -31,7 +32,7 @@ func (re RuntimeError) Error() string {
 	if re.source.Internal {
 		return fmt.Sprintf("%s (internal)", re.message)
 	}
-	return fmt.Sprintf("%v (at %s-%s)", re.message, re.start, re.end)
+	return fmt.Sprintf("%v (L%d-L%d)", re.message, re.start.Line, re.end.Line)
 }
 
 func (re RuntimeError) Stacktrace() string {
