@@ -572,6 +572,9 @@ func (i *Interpreter) VisitBinaryExpr(expr *ast.BinaryExpr) (types.Value, error)
 		return nil, i.throw(expr, "cannot eval %T %s %T", left, expr.Op, right)
 	}
 
+	_, leftWasStr := left.(values.String)
+	_, rightWasStr := right.(values.String)
+
 	left, right, err = values.ConvertPrimitiveImplicitly(left.(values.Primitive), right.(values.Primitive))
 
 	if err != nil {
@@ -641,6 +644,15 @@ func (i *Interpreter) VisitBinaryExpr(expr *ast.BinaryExpr) (types.Value, error)
 			goto fail
 		}
 	case values.String:
+		// Comparator operators on strings are only allowed when both
+		// operands were originally strings, not when one was implicitly
+		// converted from another type (e.g. bool > string).
+		if !leftWasStr || !rightWasStr {
+			switch expr.Op {
+			case opr.Gt, opr.Gte, opr.Lt, opr.Lte:
+				goto fail
+			}
+		}
 		switch expr.Op {
 		case opr.Sum:
 			return left.(values.String) + right.(values.String), nil
