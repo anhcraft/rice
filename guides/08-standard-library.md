@@ -209,11 +209,15 @@ Located in [`exec/stdlib/datetime/`](../exec/stdlib/datetime/datetime.go).
 |----------|-------------|
 | `datetime.now()` | Returns the current Unix timestamp in milliseconds |
 | `datetime.parse(s String)` | Parses an ISO 8601 / RFC 3339 date string and returns a Unix timestamp in ms |
+| `datetime.format(ts Int, fmt String)` | Formats a Unix millisecond timestamp in UTC. Supported formats: `"rfc3339"`, `"date"`, `"time"`, `"datetime"` |
 
 ```rice
 datetime.now()                       # 1700000000000 (example)
 datetime.parse("2024-01-15T10:30:00Z")  # 1705314600000
 datetime.parse("2024-01-15")            # 1705276800000 (midnight UTC)
+datetime.format(1705314600000, "rfc3339")  # "2024-01-15T10:30:00Z"
+datetime.format(1705314600000, "date")     # "2024-01-15"
+datetime.format(1705314600000, "datetime") # "2024-01-15 10:30:00"
 ```
 
 ---

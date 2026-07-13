@@ -84,6 +84,7 @@ func TestInterpreterScripts(t *testing.T) {
 		{name: "JSON Operations", filename: "json_ops.rice", expected: values.Bool(true)},
 		{name: "DateTime Now", filename: "datetime_now.rice", expected: values.Bool(true)},
 		{name: "DateTime Parse", filename: "datetime_parse.rice", expected: values.Bool(true)},
+		{name: "DateTime Format", filename: "datetime_format.rice", expected: values.Bool(true)},
 		{name: "Duration Parse", filename: "duration_parse.rice", expected: values.Bool(true)},
 		{name: "Duration Days", filename: "duration_days.rice", expected: values.Bool(true)},
 		{name: "String Native Functions", filename: "strings_native.rice", expected: values.Bool(true)},

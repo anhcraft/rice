@@ -11,8 +11,9 @@ import (
 )
 
 var Functions = fun.FunctionPackage{
-	"now":   {stdlib.Define(Now)},
-	"parse": {stdlib.Define(Parse)},
+	"now":    {stdlib.Define(Now)},
+	"parse":  {stdlib.Define(Parse)},
+	"format": {stdlib.Define(Format)},
 }
 
 // Now returns the current Unix timestamp in milliseconds.
@@ -38,4 +39,27 @@ func Parse(s values.String) (types.Value, error) {
 		}
 	}
 	return nil, fmt.Errorf("datetime.parse: cannot parse %q as ISO 8601 date", string(s))
+}
+
+// Format formats a Unix millisecond timestamp into a human-readable string. All
+// output is in UTC. Supported format names:
+//
+//	"rfc3339"  → "2024-01-15T10:30:00Z"
+//	"date"     → "2024-01-15"
+//	"time"     → "10:30:00"
+//	"datetime" → "2024-01-15 10:30:00"
+func Format(ts values.Int, format values.String) (types.Value, error) {
+	t := time.UnixMilli(int64(ts)).UTC()
+	switch string(format) {
+	case "rfc3339":
+		return values.String(t.Format(time.RFC3339)), nil
+	case "date":
+		return values.String(t.Format("2006-01-02")), nil
+	case "time":
+		return values.String(t.Format("15:04:05")), nil
+	case "datetime":
+		return values.String(t.Format("2006-01-02 15:04:05")), nil
+	default:
+		return nil, fmt.Errorf("datetime.format: unknown format %q, use rfc3339, date, time, or datetime", string(format))
+	}
 }

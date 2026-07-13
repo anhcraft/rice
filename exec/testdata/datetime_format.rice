@@ -1,0 +1,13 @@
+# datetime.format() formats a Unix millisecond timestamp into a human-readable string
+
+const ts = 1705314600000; # 2024-01-15T10:30:00Z
+
+const rfc = datetime.format(ts, "rfc3339");
+const date = datetime.format(ts, "date");
+const time = datetime.format(ts, "time");
+const dt = datetime.format(ts, "datetime");
+
+rfc == "2024-01-15T10:30:00Z" &&
+date == "2024-01-15" &&
+time == "10:30:00" &&
+dt == "2024-01-15 10:30:00"

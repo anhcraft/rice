@@ -284,7 +284,7 @@ cfg.DisableTypeBoundPackage(types.String)
 | `"list"` | All `list.*` functions |
 | `"set"` | All `set.*` functions |
 | `"map"` | All `map.*` functions |
-| `"datetime"` | `datetime.now`, `datetime.parse` |
+| `"datetime"` | `datetime.now`, `datetime.parse`, `datetime.format` |
 | `"duration"` | `duration.parse`, `duration.days`, `duration.hours`, `duration.minutes`, `duration.seconds`, `duration.millis` |
 | `"json"` | `json.encode`, `json.decode` |
 
