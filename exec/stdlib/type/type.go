@@ -31,16 +31,25 @@ func Typeof(val types.Value) (types.Value, error) {
 
 // IsNumber checks if the value is either int or float.
 func IsNumber(val types.Value) (types.Value, error) {
+	if val == nil {
+		return values.Bool(false), nil
+	}
 	return values.Bool(val.Type().IsNumeric()), nil
 }
 
 // IsNumberLike checks if the value is one of int, float or bool
 func IsNumberLike(val types.Value) (types.Value, error) {
+	if val == nil {
+		return values.Bool(false), nil
+	}
 	return values.Bool(val.Type().IsNumericLike()), nil
 }
 
-// Len finds the length of the given string or array.
+// Len finds the length of the given string or array. Returns 0 for null.
 func Len(arg types.Value) (types.Value, error) {
+	if arg == nil {
+		return values.Int(0), nil
+	}
 	if v, ok := arg.(values.Collection); ok {
 		return v.Size(), nil
 	}

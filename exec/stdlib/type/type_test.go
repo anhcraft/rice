@@ -15,6 +15,7 @@ func TestTypeof(t *testing.T) {
 		wantErr bool
 	}{
 		{"int type", values.Int(123), values.String("Int"), false},
+		{"null type", nil, values.String("null"), false},
 	}
 
 	for _, tc := range testCases {
@@ -32,6 +33,64 @@ func TestTypeof(t *testing.T) {
 	}
 }
 
+func TestIsNumber(t *testing.T) {
+	testCases := []struct {
+		name    string
+		input   types.Value
+		want    types.Value
+		wantErr bool
+	}{
+		{"int", values.Int(1), values.Bool(true), false},
+		{"float", values.Float(1.0), values.Bool(true), false},
+		{"bool", values.Bool(true), values.Bool(false), false},
+		{"string", values.String("x"), values.Bool(false), false},
+		{"null", nil, values.Bool(false), false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := IsNumber(tc.input)
+
+			if (err != nil) != tc.wantErr {
+				t.Errorf("IsNumber() error = %v, wantErr %v", err, tc.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("IsNumber() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestIsNumberLike(t *testing.T) {
+	testCases := []struct {
+		name    string
+		input   types.Value
+		want    types.Value
+		wantErr bool
+	}{
+		{"int", values.Int(1), values.Bool(true), false},
+		{"float", values.Float(1.0), values.Bool(true), false},
+		{"bool", values.Bool(true), values.Bool(true), false},
+		{"string", values.String("x"), values.Bool(false), false},
+		{"null", nil, values.Bool(false), false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := IsNumberLike(tc.input)
+
+			if (err != nil) != tc.wantErr {
+				t.Errorf("IsNumberLike() error = %v, wantErr %v", err, tc.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("IsNumberLike() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
 func TestLen(t *testing.T) {
 	testCases := []struct {
 		name    string
@@ -40,6 +99,7 @@ func TestLen(t *testing.T) {
 		wantErr bool
 	}{
 		{"string length", values.String("hello"), values.Int(5), false},
+		{"null length", nil, values.Int(0), false},
 	}
 
 	for _, tc := range testCases {
