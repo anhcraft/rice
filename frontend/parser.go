@@ -2,6 +2,7 @@ package frontend
 
 import (
 	"errors"
+
 	"github.com/anhcraft/rice/exec/ast"
 	"github.com/anhcraft/rice/exec/ast/opr"
 )
@@ -406,6 +407,9 @@ func (p *Parser) takeForStmt() ast.Stmt {
 
 				if p.match(lbrace) {
 					body = p.takePrimaryBlockExpr()
+					if body == nil {
+						return ast.Invalid
+					}
 				} else {
 					p.throw(expectLbraceBlockErr, off)
 					return ast.Invalid
@@ -427,6 +431,9 @@ func (p *Parser) takeForStmt() ast.Stmt {
 
 		if p.match(lbrace) {
 			body = p.takePrimaryBlockExpr()
+			if body == nil {
+				return ast.Invalid
+			}
 		} else {
 			p.throw(expectLbraceBlockErr, off)
 			return ast.Invalid
@@ -927,7 +934,7 @@ func (p *Parser) takePrimaryBlockExpr() *ast.BlockExpr {
 		}
 	}
 	p.throw(expectRbraceBlockErr, off)
-	return &ast.BlockExpr{}
+	return nil
 }
 
 // isObjectLiteral peeks ahead to determine if the upcoming lbrace starts an object
@@ -1144,6 +1151,11 @@ func (p *Parser) TakeMultiStatementExpr(endAt TokenType) []ast.Stmt {
 
 func (p *Parser) synchronize() {
 	if !p.panicMode {
+		// advance at least one token to prevent infinite loops
+		// when panicMode is false (e.g. takePrimary returned Invalid without calling throw)
+		if !p.eof() {
+			p.next()
+		}
 		return
 	}
 	p.panicMode = false

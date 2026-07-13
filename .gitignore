@@ -16,6 +16,7 @@ vendor/
 .project
 .classpath
 .settings/
+.commandcode/
 
 .vscode/
 

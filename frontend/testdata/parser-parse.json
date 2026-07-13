@@ -603,5 +603,17 @@
     "input": "1 2",
     "expectedOutput": null,
     "expectedErrorName": "expectStmtTerminatorErr"
+  },
+  {
+    "name": "ERROR: Missing semicolon after non-blocklike statement inside outer block (regression: was infinite loop)",
+    "input": "{ const context = {} { 1=0; } }",
+    "expectedOutput": null,
+    "expectedErrorName": "expectStmtTerminatorErr"
+  },
+  {
+    "name": "ERROR: Missing semicolon after non-blocklike statement at top level (regression)",
+    "input": "const context = {} { 1=0; }",
+    "expectedOutput": null,
+    "expectedErrorName": "expectStmtTerminatorErr"
   }
 ]
