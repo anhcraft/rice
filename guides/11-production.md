@@ -46,6 +46,7 @@ cfg.DisableTypeBoundPackage(types.String)
 | `"error"` | Scripts can intentionally crash execution via `throw()` |
 | `"json"` | Scripts can parse arbitrary JSON (CPU/memory for large input) |
 | `"datetime"` | Low risk, but leaks wall-clock time |
+| `"duration"` | Low risk, pure computation |
 
 ### Removing All I/O
 

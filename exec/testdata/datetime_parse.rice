@@ -1,0 +1,11 @@
+# datetime.parse() parses ISO 8601 / RFC 3339 date strings
+
+const ts1 = datetime.parse("2024-01-15T10:30:00Z");
+const ts2 = datetime.parse("2024-01-15");
+const ts3 = datetime.parse("2024-01-15T10:30:00+07:00");
+
+typeof(ts1) == "Int" &&
+ts1 > 1704067200000 &&
+ts1 == 1705314600000 &&
+ts2 == 1705276800000 &&
+ts3 == 1705314600000 - 7 * 3600000

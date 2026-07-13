@@ -1,0 +1,16 @@
+# duration.parse() parses duration strings into milliseconds
+# Supports Go's time.ParseDuration units: ns, us/µs, ms, s, m, h
+
+const hourMs = 3600000;
+
+const d1 = duration.parse("2h30m");
+const d2 = duration.parse("1.5h");
+const d3 = duration.parse("45s");
+const d4 = duration.parse("500ms");
+const d5 = duration.parse("-1h");
+
+d1 == (2*3600 + 30*60) * 1000 &&
+d2 == 5400000 &&
+d3 == 45000 &&
+d4 == 500 &&
+d5 == -hourMs

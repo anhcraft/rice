@@ -12,6 +12,7 @@ import (
 	"github.com/anhcraft/rice/exec/fun"
 	"github.com/anhcraft/rice/exec/mem"
 	_datetime "github.com/anhcraft/rice/exec/stdlib/datetime"
+	_duration "github.com/anhcraft/rice/exec/stdlib/duration"
 	_error "github.com/anhcraft/rice/exec/stdlib/error"
 	_io "github.com/anhcraft/rice/exec/stdlib/io"
 	_json "github.com/anhcraft/rice/exec/stdlib/json"
@@ -58,6 +59,7 @@ var StandardNamespacedPackageGroups = map[values.Identifier][]StandardNamespaced
 	"set":      {{PkgID: "set", Pkg: _set.Functions}},
 	"map":      {{PkgID: "map", Pkg: _map.Functions}},
 	"datetime": {{PkgID: "datetime", Pkg: _datetime.Functions}},
+	"duration": {{PkgID: "duration", Pkg: _duration.Functions}},
 	"json":     {{PkgID: "json", Pkg: _json.Functions}},
 }
 

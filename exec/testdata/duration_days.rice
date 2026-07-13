@@ -1,0 +1,13 @@
+# duration.days(), hours(), minutes(), seconds(), millis() unit constructors
+
+const d = duration.days(3);
+const h = duration.hours(1.5);
+const m = duration.minutes(30);
+const s = duration.seconds(45);
+const ms = duration.millis(500);
+
+d == 259200000 &&
+h == 5400000 &&
+m == 1800000 &&
+s == 45000 &&
+ms == 500

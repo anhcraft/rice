@@ -208,9 +208,35 @@ Located in [`exec/stdlib/datetime/`](../exec/stdlib/datetime/datetime.go).
 | Function | Description |
 |----------|-------------|
 | `datetime.now()` | Returns the current Unix timestamp in milliseconds |
+| `datetime.parse(s String)` | Parses an ISO 8601 / RFC 3339 date string and returns a Unix timestamp in ms |
 
 ```rice
-datetime.now()   # 1700000000000 (example)
+datetime.now()                       # 1700000000000 (example)
+datetime.parse("2024-01-15T10:30:00Z")  # 1705314600000
+datetime.parse("2024-01-15")            # 1705276800000 (midnight UTC)
+```
+
+---
+
+## Duration
+
+Located in [`exec/stdlib/duration/`](../exec/stdlib/duration/duration.go).
+
+| Function | Description |
+|----------|-------------|
+| `duration.parse(s String)` | Parses a duration string and returns milliseconds. Delegates to Go's `time.ParseDuration` — supports `ns`, `us`/`µs`, `ms`, `s`, `m`, `h` |
+| `duration.days(n Int\|Float\|Bool)` | Converts n days to milliseconds |
+| `duration.hours(n Int\|Float\|Bool)` | Converts n hours to milliseconds |
+| `duration.minutes(n Int\|Float\|Bool)` | Converts n minutes to milliseconds |
+| `duration.seconds(n Int\|Float\|Bool)` | Converts n seconds to milliseconds |
+| `duration.millis(n Int\|Float\|Bool)` | Converts n milliseconds to milliseconds (identity) |
+
+```rice
+duration.parse("2h30m")    # 9000000
+duration.parse("-1h")      # -3600000
+duration.days(1)           # 86400000
+duration.hours(3.5)        # 12600000
+duration.minutes(10)       # 600000
 ```
 
 ---

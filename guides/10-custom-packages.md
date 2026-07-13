@@ -284,7 +284,8 @@ cfg.DisableTypeBoundPackage(types.String)
 | `"list"` | All `list.*` functions |
 | `"set"` | All `set.*` functions |
 | `"map"` | All `map.*` functions |
-| `"datetime"` | `datetime.now` |
+| `"datetime"` | `datetime.now`, `datetime.parse` |
+| `"duration"` | `duration.parse`, `duration.days`, `duration.hours`, `duration.minutes`, `duration.seconds`, `duration.millis` |
 | `"json"` | `json.encode`, `json.decode` |
 
 **Decomposed global namespace**: The `""` (global) namespace is split into tracked sub-packages `"io"`, `"error"`, and `"type"`. Disabling `"io"` does not affect `"error"` or `"type"`.
