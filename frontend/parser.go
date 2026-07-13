@@ -802,6 +802,15 @@ func (p *Parser) takePrimary() ast.Expr {
 		return ast.Invalid
 	}
 
+	// Array literal
+	if p.match(lbracket) {
+		expr := p.takeArrayLiteral()
+		if expr == nil {
+			return ast.Invalid
+		}
+		return expr
+	}
+
 	// Block expression or object literal
 	if p.match(lbrace) {
 		// Lookahead: if next token is identifier or stringLiteral followed by colon,
@@ -1017,6 +1026,45 @@ func (p *Parser) takeObjectLiteral() ast.Expr {
 	}
 
 	p.throw(expectRbraceBlockErr, off)
+	return ast.Invalid
+}
+
+// takeArrayLiteral parses an array literal: [ elem, elem, ... ]
+func (p *Parser) takeArrayLiteral() ast.Expr {
+	off := p.captureCurrStart()
+	p.next() // consume lbracket
+
+	//goland:noinspection GoPreferNilSlice
+	elements := []ast.Expr{}
+
+	for !p.match(rbracket) {
+		elem := p.takeExpr()
+		if elem == ast.Invalid {
+			p.throw(expectValueErr, off)
+			return ast.Invalid
+		}
+
+		elements = append(elements, elem)
+
+		if p.match(comma) {
+			p.next()
+		} else {
+			break
+		}
+	}
+
+	if p.match(rbracket) {
+		p.next()
+		return &ast.ArrayLiteralExpr{
+			BaseNode: ast.BaseNode{
+				Start: off.ast(),
+				End:   p.captureCurrStart().ast(),
+			},
+			Elements: elements,
+		}
+	}
+
+	p.throw(expectRbracketElemAccessErr, off)
 	return ast.Invalid
 }
 

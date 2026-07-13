@@ -2,9 +2,10 @@ package ast
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/anhcraft/rice/exec/ast/opr"
 	"github.com/anhcraft/rice/exec/types"
-	"strings"
 )
 
 // Note: use prefix notation for stringification; avoid ambiguity
@@ -496,6 +497,29 @@ func (o *ObjectLiteralExpr) String() string {
 		builder.WriteString(entry.Key.String())
 		builder.WriteString(" ")
 		builder.WriteString(entry.Value.String())
+	}
+	builder.WriteString(")")
+	return builder.String()
+}
+
+type ArrayLiteralExpr struct {
+	BaseNode
+	Elements []Expr
+}
+
+func (a *ArrayLiteralExpr) simple()    {}
+func (a *ArrayLiteralExpr) blockLike() {}
+
+func (a *ArrayLiteralExpr) Accept(v Visitor) (types.Value, error) {
+	return v.VisitArrayLiteralExpr(a)
+}
+
+func (a *ArrayLiteralExpr) String() string {
+	var builder strings.Builder
+	builder.WriteString("(Array")
+	for _, elem := range a.Elements {
+		builder.WriteString(" ")
+		builder.WriteString(elem.String())
 	}
 	builder.WriteString(")")
 	return builder.String()

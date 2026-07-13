@@ -1,0 +1,46 @@
+# Array literal — empty
+const a = [];
+const r1 = len(a);  # 0
+
+# Array literal with elements
+const b = [1, 2, 3];
+const r2 = len(b);  # 3
+const r3 = b[0];    # 1
+const r4 = b[2];    # 3
+
+# Array literal with mixed types
+const c = [1, "hello", true, null];
+const r5 = c[0];    # 1
+const r6 = c[1];    # "hello"
+const r7 = c[2];    # true
+const r8 = c[3];    # null
+
+# Nested array literals
+const d = [[1, 2], [3, 4]];
+const r9 = d[0][1];   # 2
+const r10 = d[1][0];  # 3
+
+# Trailing comma
+const e = [10, 20,];
+const r11 = len(e);  # 2
+const r12 = e[1];    # 20
+
+# Expressions as elements
+const f = [1 + 2, 3 * 4];
+const r13 = f[0];  # 3
+const r14 = f[1];  # 12
+
+# Inline element access on array literal
+const r15 = [100, 200, 300][1];  # 200
+
+# Array literal used in function call
+const sum = func(arr) {
+    var total = 0;
+    for v in arr {
+        total = total + v;
+    }
+    return total;
+};
+const r16 = sum([5, 10, 15]);  # 30
+
+r1 == 0 && r2 == 3 && r3 == 1 && r4 == 3 && r5 == 1 && r6 == "hello" && r7 == true && r8 == null && r9 == 2 && r10 == 3 && r11 == 2 && r12 == 20 && r13 == 3 && r14 == 12 && r15 == 200 && r16 == 30

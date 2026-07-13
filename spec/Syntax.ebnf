@@ -65,6 +65,7 @@ primary_expression =
   | parenthesized_expression
   | block_expression
   | object_literal
+  | array_literal
   | if_expression
   ;
 
@@ -74,6 +75,8 @@ object_literal = "{" , [ ws ] , [ object_literal_entries ] , [ ws ] , "}" ;
 object_literal_entries = object_literal_entry , { ws , "," , ws , object_literal_entry } , [ ws , "," ] ;
 object_literal_entry = object_literal_key , ws , ":" , ws , expression ;
 object_literal_key = identifier | string_lit ;
+array_literal = "[" , [ ws ] , [ array_literal_elements ] , [ ws ] , "]" ;
+array_literal_elements = expression , { ws , "," , ws , expression } , [ ws , "," ] ;
 if_expression = "if" , ws , expression , ws , block_expression ,
                 { ws , "else" , ws , "if" , ws , expression , ws , block_expression } ,
                 [ ws , "else" , ws , block_expression ] ;

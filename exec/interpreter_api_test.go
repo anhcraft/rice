@@ -74,6 +74,9 @@ func TestInterpreterScripts(t *testing.T) {
 		// --- Object literal ---
 		{name: "Object Literal", filename: "object_literal.rice", expected: values.Bool(true)},
 
+		// --- Array literal ---
+		{name: "Array Literal", filename: "array_literal.rice", expected: values.Bool(true)},
+
 		// --- Standard library ---
 		{name: "Type Conversions", filename: "type_conversions.rice", expected: values.Bool(true)},
 		{name: "Math Functions", filename: "math_funcs.rice", expected: values.Bool(true)},

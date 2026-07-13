@@ -62,6 +62,20 @@ func (i *Interpreter) VisitObjectLiteralExpr(expr *ast.ObjectLiteralExpr) (types
 	return m, nil
 }
 
+func (i *Interpreter) VisitArrayLiteralExpr(expr *ast.ArrayLiteralExpr) (types.Value, error) {
+	l := values.NewList()
+
+	for idx, elem := range expr.Elements {
+		val, err := i.eval(elem)
+		if err != nil {
+			return nil, i.throw(elem, "cannot eval array literal element at index #%d", idx).causedBy(err)
+		}
+		l.Append(val)
+	}
+
+	return l, nil
+}
+
 func (i *Interpreter) VisitFuncLiteralExpr(expr *ast.FuncLiteralExpr) (types.Value, error) {
 	body := expr.Body
 	astNilCheck(body)

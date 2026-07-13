@@ -25,18 +25,37 @@ null         # Null
 
 | Type | Description |
 |------|-------------|
-| **List** | Dynamic-typed, ordered, indexed collection — created via [`list.new()`](../exec/stdlib/list/list.go) or [`list.of()`](../exec/stdlib/list/list.go) |
+| **List** | Dynamic-typed, ordered, indexed collection — created via [`list.new()`](../exec/stdlib/list/list.go), [`list.of()`](../exec/stdlib/list/list.go), or the array literal syntax `[ value, ... ]` |
 | **Set** | Dynamic-typed, unordered collection of unique elements — created via [`set.new()`](../exec/stdlib/set/set.go) or [`set.of()`](../exec/stdlib/set/set.go) |
 | **Map** | Dynamic-typed, key-value collection — created via [`map.new()`](../exec/stdlib/map/map.go), [`map.of()`](../exec/stdlib/map/map.go), or the object literal syntax `{ key: value }` |
 | **Func** | Function literal — created with `func() { ... }` |
 
 ```rice
 list.new()   # empty list
+[]           # empty list (array literal)
+[1, 2, 3]    # list with elements (array literal)
 set.new()    # empty set
 map.new()    # empty map
 func() {     # function literal
     return
 }
+```
+
+### Array Literal (List Shorthand)
+
+Rice provides an array literal syntax `[ value, ... ]` as syntactic sugar for creating lists. The result is a plain [`*values.List`](../exec/types/values/list.go). A trailing comma is allowed.
+
+```rice
+const a = [];            # empty list
+const b = [1, 2, 3];     # list with three elements
+const c = ["a", true,];  # trailing comma is allowed
+const d = [[1, 2], [3]]; # nested array literals
+
+b[0]    # 1
+b[2]    # 3
+
+# The above is equivalent to:
+const b2 = list.of(1, 2, 3);
 ```
 
 ### Object Literal (Map Shorthand)
