@@ -9,7 +9,8 @@ var _ = types.Map.DefineType((*Map)(nil))
 var _ IndexedCollection = (*Map)(nil)
 
 type Map struct {
-	hmap map[types.Value]types.Value
+	hmap   map[types.Value]types.Value
+	frozen bool
 }
 
 func NewMap() *Map {
@@ -52,6 +53,14 @@ func (m *Map) Remove(key types.Value) {
 	delete(m.hmap, key)
 }
 
+func (m *Map) Freeze() {
+	m.frozen = true
+}
+
+func (m *Map) IsFrozen() bool {
+	return m.frozen
+}
+
 func (m *Map) Keys() []types.Value {
 	ks := make([]types.Value, 0)
 	for k := range m.hmap {
@@ -68,6 +77,9 @@ func (m *Map) Element(id types.Value) (types.Value, error) {
 }
 
 func (m *Map) PutElement(id types.Value, item types.Value) error {
+	if m.frozen {
+		return FrozenErr
+	}
 	m.hmap[id] = item
 	return nil
 }

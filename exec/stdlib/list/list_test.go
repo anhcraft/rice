@@ -279,3 +279,108 @@ func TestSlice0(t *testing.T) {
 		}
 	})
 }
+
+func TestFreeze(t *testing.T) {
+	t.Run("Freeze returns same list", func(t *testing.T) {
+		li := values.ListOf([]types.Value{values.Int(1), values.Int(2), values.Int(3)})
+		result, err := Freeze(li)
+		if err != nil {
+			t.Fatalf("Freeze() returned an unexpected error: %v", err)
+		}
+		if result != li {
+			t.Error("Freeze() should return the same list instance")
+		}
+		if !li.IsFrozen() {
+			t.Error("list should be frozen after Freeze()")
+		}
+	})
+
+	t.Run("Prepend on frozen list returns error", func(t *testing.T) {
+		li := values.ListOf([]types.Value{values.Int(1)})
+		Freeze(li)
+		_, err := Prepend(li, values.Int(0))
+		if err == nil {
+			t.Error("expected frozen error from Prepend, got nil")
+		}
+	})
+
+	t.Run("Append on frozen list returns error", func(t *testing.T) {
+		li := values.ListOf([]types.Value{values.Int(1)})
+		Freeze(li)
+		_, err := Append(li, values.Int(2))
+		if err == nil {
+			t.Error("expected frozen error from Append, got nil")
+		}
+	})
+
+	t.Run("Sort on frozen list returns error", func(t *testing.T) {
+		li := values.ListOf([]types.Value{values.Int(3), values.Int(1), values.Int(2)})
+		Freeze(li)
+		comparator := newMockFunc(func(ctxsite values.CallSite, args []types.Value) (types.Value, error) {
+			a := args[0].(values.Int)
+			b := args[1].(values.Int)
+			return values.Bool(a < b), nil
+		})
+		_, err := Sort(context.Background(), li, comparator)
+		if err == nil {
+			t.Error("expected frozen error from Sort, got nil")
+		}
+	})
+
+	t.Run("Reverse on frozen list returns error", func(t *testing.T) {
+		li := values.ListOf([]types.Value{values.Int(3), values.Int(1)})
+		Freeze(li)
+		_, err := Reverse(li)
+		if err == nil {
+			t.Error("expected frozen error from Reverse, got nil")
+		}
+	})
+
+	t.Run("RemoveAt on frozen list returns error", func(t *testing.T) {
+		li := values.ListOf([]types.Value{values.Int(1), values.Int(2)})
+		Freeze(li)
+		_, err := RemoveAt(li, 0)
+		if err == nil {
+			t.Error("expected frozen error from RemoveAt, got nil")
+		}
+	})
+
+	t.Run("RemoveAll on frozen list returns error", func(t *testing.T) {
+		li := values.ListOf([]types.Value{values.Int(1), values.Int(1), values.Int(2)})
+		Freeze(li)
+		_, err := RemoveAll(li, values.Int(1))
+		if err == nil {
+			t.Error("expected frozen error from RemoveAll, got nil")
+		}
+	})
+
+	t.Run("Non-mutating operations work on frozen list", func(t *testing.T) {
+		li := values.ListOf([]types.Value{values.Int(1), values.Int(2), values.Int(3)})
+		Freeze(li)
+
+		found, err := Include(li, values.Int(2))
+		if err != nil || found != values.Bool(true) {
+			t.Errorf("Include() should work on frozen list: err=%v, found=%v", err, found)
+		}
+
+		idx, err := Index(li, values.Int(3))
+		if err != nil || idx != values.Int(2) {
+			t.Errorf("Index() should work on frozen list: err=%v, idx=%v", err, idx)
+		}
+
+		result, err := Map(context.Background(), li, newMockFunc(func(site values.CallSite, args []types.Value) (types.Value, error) {
+			return args[0].(values.Int) * 2, nil
+		}))
+		if err != nil {
+			t.Errorf("Map() should work on frozen list: %v", err)
+		}
+		_ = result
+
+		result, err = Filter(context.Background(), li, newMockFunc(func(site values.CallSite, args []types.Value) (types.Value, error) {
+			return values.Bool(true), nil
+		}))
+		if err != nil {
+			t.Errorf("Filter() should work on frozen list: %v", err)
+		}
+	})
+}

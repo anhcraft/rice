@@ -12,6 +12,7 @@ import (
 var Functions = fun.FunctionPackage{
 	"new":     {stdlib.Define(New)},
 	"of":      {stdlib.Define(Of)},
+	"freeze":  {stdlib.Define(Freeze)},
 	"add":     {stdlib.Define(Add)},
 	"include": {stdlib.Define(Include)},
 	"map":     {stdlib.Define(Map)},
@@ -38,12 +39,25 @@ func Of(items ...types.Value) (types.Value, error) {
 	return st, nil
 }
 
+// Freeze freezes the set, preventing any further mutations.
+// Attempts to modify a frozen set will return a "frozen: cannot mutate" error.
+//
+// @param st (*values.Set): The set to freeze.
+// @return (*values.Set): The set itself.
+func Freeze(st *values.Set) (types.Value, error) {
+	st.Freeze()
+	return st, nil
+}
+
 // Add adds one or multiple items to the set.
 //
 // @param li (*values.Set): The set to modify.
 // @param items (...types.Value): The items to add.
 // @return (*values.Set): The set itself.
 func Add(st *values.Set, items ...types.Value) (types.Value, error) {
+	if st.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	for _, item := range items {
 		st.Add(item)
 	}
@@ -114,6 +128,9 @@ func Filter(ctx context.Context, st *values.Set, lambda *values.Func) (types.Val
 // @param item (types.Value): The item to remove.
 // @return (*values.Set): The set itself.
 func Remove(st *values.Set, item types.Value) (types.Value, error) {
+	if st.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	st.Remove(item)
 	return st, nil
 }

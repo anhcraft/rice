@@ -10,7 +10,8 @@ var _ = types.List.DefineType((*List)(nil))
 var _ IndexedCollection = (*List)(nil)
 
 type List struct {
-	arr []types.Value
+	arr    []types.Value
+	frozen bool
 }
 
 func NewList() *List {
@@ -67,6 +68,9 @@ func (l *List) Iterate() iter.Seq[types.Value] {
 }
 
 func (l *List) PutElement(id types.Value, item types.Value) error {
+	if l.frozen {
+		return FrozenErr
+	}
 	if i, ok := id.(Int); ok {
 		if i < 0 || int(i) >= len(l.arr) {
 			return indexOutOfBoundErr
@@ -76,6 +80,14 @@ func (l *List) PutElement(id types.Value, item types.Value) error {
 	} else {
 		return elementNotIntErr
 	}
+}
+
+func (l *List) Freeze() {
+	l.frozen = true
+}
+
+func (l *List) IsFrozen() bool {
+	return l.frozen
 }
 
 func (l *List) At(id Int) types.Value {

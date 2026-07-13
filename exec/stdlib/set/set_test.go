@@ -247,3 +247,68 @@ func TestRemove(t *testing.T) {
 		assertSetContents(t, st, v2)
 	})
 }
+
+func TestFreeze(t *testing.T) {
+	t.Run("Freeze returns same set", func(t *testing.T) {
+		st := values.NewSet()
+		st.Add(values.Int(1))
+		st.Add(values.Int(2))
+		result, err := Freeze(st)
+		if err != nil {
+			t.Fatalf("Freeze() returned an unexpected error: %v", err)
+		}
+		if result != st {
+			t.Error("Freeze() should return the same set instance")
+		}
+		if !st.IsFrozen() {
+			t.Error("set should be frozen after Freeze()")
+		}
+	})
+
+	t.Run("Add on frozen set returns error", func(t *testing.T) {
+		st := values.NewSet()
+		st.Add(values.Int(1))
+		Freeze(st)
+		_, err := Add(st, values.Int(2))
+		if err == nil {
+			t.Error("expected frozen error from Add, got nil")
+		}
+	})
+
+	t.Run("Remove on frozen set returns error", func(t *testing.T) {
+		st := values.NewSet()
+		st.Add(values.Int(1))
+		Freeze(st)
+		_, err := Remove(st, values.Int(1))
+		if err == nil {
+			t.Error("expected frozen error from Remove, got nil")
+		}
+	})
+
+	t.Run("Non-mutating operations work on frozen set", func(t *testing.T) {
+		st := values.NewSet()
+		st.Add(values.Int(1))
+		st.Add(values.Int(2))
+		Freeze(st)
+
+		found, err := Include(st, values.Int(1))
+		if err != nil || found != values.Bool(true) {
+			t.Errorf("Include() should work on frozen set: err=%v, found=%v", err, found)
+		}
+
+		result, err := Map(context.Background(), st, mockFunc(func(_ context.Context, self *values.Func, site values.CallSite, args []types.Value) (types.Value, error) {
+			return args[0].(values.Int) * 2, nil
+		}))
+		if err != nil {
+			t.Errorf("Map() should work on frozen set: %v", err)
+		}
+		_ = result
+
+		result, err = Filter(context.Background(), st, mockFunc(func(_ context.Context, self *values.Func, site values.CallSite, args []types.Value) (types.Value, error) {
+			return values.Bool(true), nil
+		}))
+		if err != nil {
+			t.Errorf("Filter() should work on frozen set: %v", err)
+		}
+	})
+}

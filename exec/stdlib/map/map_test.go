@@ -348,3 +348,62 @@ func TestFilter(t *testing.T) {
 		t.Errorf("Key 'b' was not found or has wrong value. Found: %v, Value: %v", foundB, valB)
 	}
 }
+
+func TestFreeze(t *testing.T) {
+	t.Run("Freeze returns same map", func(t *testing.T) {
+		m := newTestMap(values.String("a"), values.Int(1))
+		result, err := Freeze(m)
+		if err != nil {
+			t.Fatalf("Freeze() returned an unexpected error: %v", err)
+		}
+		if result != m {
+			t.Error("Freeze() should return the same map instance")
+		}
+		if !m.IsFrozen() {
+			t.Error("map should be frozen after Freeze()")
+		}
+	})
+
+	t.Run("Put on frozen map returns error", func(t *testing.T) {
+		m := newTestMap(values.String("a"), values.Int(1))
+		Freeze(m)
+		_, err := Put(m, values.String("b"), values.Int(2))
+		if err == nil {
+			t.Error("expected frozen error from Put, got nil")
+		}
+	})
+
+	t.Run("Remove on frozen map returns error", func(t *testing.T) {
+		m := newTestMap(values.String("a"), values.Int(1))
+		Freeze(m)
+		_, err := Remove(m, values.String("a"))
+		if err == nil {
+			t.Error("expected frozen error from Remove, got nil")
+		}
+	})
+
+	t.Run("Non-mutating operations work on frozen map", func(t *testing.T) {
+		m := newTestMap(values.String("a"), values.Int(1), values.String("b"), values.Int(2))
+		Freeze(m)
+
+		found, err := IncludeKey(m, values.String("a"))
+		if err != nil || found != values.Bool(true) {
+			t.Errorf("IncludeKey() should work on frozen map: err=%v, found=%v", err, found)
+		}
+
+		keys, err := Keys(m)
+		if err != nil || keys == nil {
+			t.Errorf("Keys() should work on frozen map: err=%v, keys=%v", err, keys)
+		}
+
+		vals, err := Values(m)
+		if err != nil || vals == nil {
+			t.Errorf("Values() should work on frozen map: err=%v, vals=%v", err, vals)
+		}
+
+		entries, err := Entries(m)
+		if err != nil || entries == nil {
+			t.Errorf("Entries() should work on frozen map: err=%v, entries=%v", err, entries)
+		}
+	})
+}

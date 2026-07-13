@@ -12,6 +12,7 @@ import (
 var Functions = fun.FunctionPackage{
 	"new":       {stdlib.Define(New)},
 	"of":        {stdlib.Define(Of)},
+	"freeze":    {stdlib.Define(Freeze)},
 	"prepend":   {stdlib.Define(Prepend)},
 	"append":    {stdlib.Define(Append)},
 	"include":   {stdlib.Define(Include)},
@@ -43,12 +44,25 @@ func Of(items ...types.Value) (types.Value, error) {
 	return li, nil
 }
 
+// Freeze freezes the list, preventing any further mutations.
+// Attempts to modify a frozen list will return a "frozen: cannot mutate" error.
+//
+// @param li (*values.List): The list to freeze.
+// @return (*values.List): The list itself.
+func Freeze(li *values.List) (types.Value, error) {
+	li.Freeze()
+	return li, nil
+}
+
 // Prepend prepends one or multiple items to the head of the list.
 //
 // @param li (*values.List): The list to modify.
 // @param items (...types.Value): The items to prepend.
 // @return (*values.List): The list itself.
 func Prepend(li *values.List, items ...types.Value) (types.Value, error) {
+	if li.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	li.PrependAll(items)
 	return li, nil
 }
@@ -59,6 +73,9 @@ func Prepend(li *values.List, items ...types.Value) (types.Value, error) {
 // @param items (...types.Value): The items to append.
 // @return (*values.List): The list itself.
 func Append(li *values.List, items ...types.Value) (types.Value, error) {
+	if li.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	li.AppendAll(items)
 	return li, nil
 }
@@ -117,6 +134,9 @@ func LastIndex(li *values.List, valueToFind types.Value) (types.Value, error) {
 //
 // @return (*values.List): The list itself.
 func Sort(ctx context.Context, li *values.List, lambda *values.Func) (types.Value, error) {
+	if li.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	size := li.Size()
 	if size < 2 {
 		return li, nil
@@ -158,6 +178,9 @@ func Sort(ctx context.Context, li *values.List, lambda *values.Func) (types.Valu
 //
 // @return (*values.List): The list itself.
 func Reverse(li *values.List) (types.Value, error) {
+	if li.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	li.Reverse()
 	return li, nil
 }
@@ -221,6 +244,9 @@ func Filter(ctx context.Context, li *values.List, lambda *values.Func) (types.Va
 // @param idx (values.Int): The index of the element to remove.
 // @return (*values.List): The list itself.
 func RemoveAt(li *values.List, idx values.Int) (types.Value, error) {
+	if li.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	return li, li.RemoveAt(idx)
 }
 
@@ -230,6 +256,9 @@ func RemoveAt(li *values.List, idx values.Int) (types.Value, error) {
 // @param item (types.Value): The item to remove.
 // @return (values.Int): The number of elements removed.
 func RemoveAll(li *values.List, item types.Value) (types.Value, error) {
+	if li.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	return li.RemoveAll(item), nil
 }
 

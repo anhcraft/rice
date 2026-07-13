@@ -12,6 +12,7 @@ import (
 var Functions = fun.FunctionPackage{
 	"new":        {stdlib.Define(New)},
 	"of":         {stdlib.Define(Of)},
+	"freeze":     {stdlib.Define(Freeze)},
 	"put":        {stdlib.Define(Put)},
 	"remove":     {stdlib.Define(Remove)},
 	"includeKey": {stdlib.Define(IncludeKey)},
@@ -46,6 +47,16 @@ func Of(kvs ...types.Value) (types.Value, error) {
 	return m, nil
 }
 
+// Freeze freezes the map, preventing any further mutations.
+// Attempts to modify a frozen map will return a "frozen: cannot mutate" error.
+//
+// @param m (*values.Map): The map to freeze.
+// @return (*values.Map): The map itself.
+func Freeze(m *values.Map) (types.Value, error) {
+	m.Freeze()
+	return m, nil
+}
+
 // Put adds one or more key-value pairs to the map.
 // The arguments must be provided in pairs (key1, value1, key2, value2, ...).
 //
@@ -53,6 +64,9 @@ func Of(kvs ...types.Value) (types.Value, error) {
 // @param kvs (...types.Value): A sequence of key-value pairs.
 // @return (*values.Map): The modified map.
 func Put(m *values.Map, kvs ...types.Value) (types.Value, error) {
+	if m.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	if len(kvs)%2 != 0 {
 		return nil, fmt.Errorf("put requires an even number of arguments for key-value pairs, but got %d", len(kvs))
 	}
@@ -70,6 +84,9 @@ func Put(m *values.Map, kvs ...types.Value) (types.Value, error) {
 // @param keys (...types.Value): The keys to remove.
 // @return (*values.Map): The modified map.
 func Remove(m *values.Map, keys ...types.Value) (types.Value, error) {
+	if m.IsFrozen() {
+		return nil, values.FrozenErr
+	}
 	for _, key := range keys {
 		m.Remove(key)
 	}

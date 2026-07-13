@@ -10,7 +10,8 @@ var _ = types.Set.DefineType((*Set)(nil))
 var _ Collection = (*Set)(nil)
 
 type Set struct {
-	hs *set.Set[types.Value]
+	hs     *set.Set[types.Value]
+	frozen bool
 }
 
 func NewSet() *Set {
@@ -51,6 +52,14 @@ func (s *Set) Contain(item types.Value) Bool {
 
 func (s *Set) Remove(item types.Value) {
 	s.hs.Remove(item)
+}
+
+func (s *Set) Freeze() {
+	s.frozen = true
+}
+
+func (s *Set) IsFrozen() bool {
+	return s.frozen
 }
 
 func (s *Set) AsList() *List {
