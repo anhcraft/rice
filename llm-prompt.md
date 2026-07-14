@@ -16,6 +16,8 @@ list.new().append(
 
     # Composites
     list.new(),  # dynamic-typed list
+    [],          # empty list (array literal)
+    [1, 2, 3],   # list with elements (array literal)
     set.new(),   # dynamic-typed set
     map.new(),   # dynamic-typed map
     {            # object literal (map shorthand)
@@ -27,7 +29,7 @@ list.new().append(
 )
 ```
 - Note: Object literal `{ key: value }` is syntactic sugar for a Map; the key must be an identifier or string literal, the value can be any expression. `{}` creates an empty Map
-- Note: There is no array support, there is no array syntax such as `[...]`; use List as an alternative
+- Note: Array literal `[value, ...]` is syntactic sugar for a List; the result is a plain List. `[]` creates an empty List. A trailing comma is allowed
 - Note: There is no dedicated Character/Rune support
 - Note: Unicode is fully supported in String; any operation to String involves Unicode and rune-level (NOT byte as in Go)
 
@@ -95,8 +97,9 @@ for ch in "hello world" {
 ---
 
 # Statement
-- Statement does not return any value except increment/decrement, expression (a code block is also an expression)
+- Statement does not return any value except expression (a code block is also an expression)
 - Simple Statement includes declaration, increment/decrement and expression
+- NOTE: Increment/decrement are statements, NOT expressions — they do NOT return a value and cannot be used inline in expressions
 
 ## Declaration
 ```
@@ -132,13 +135,15 @@ break;
 continue;
 
 # Function controls
-return; # no value
+return; # return null (no value)
 return "OK";
 return res;
 ```
+- Note: Functions that don't have an explicit `return` implicitly return the value of the last expression in the body, or `null` if the body is empty
 
 ## Increment/Decrement
-- They are statement, not expression
+- They are statement, not expression — they do NOT return a value
+- Cannot be used inline in expressions (e.g. `var x = i++;` is an error)
 ```
 ++i # increases i, then read i
 i++ # read i, then increases i
@@ -178,6 +183,14 @@ a && (b || c) && (d > 10);
   - Second: If either left or right operand is Bool, convert both into Bool
   - Third: If either left or right operand is Float, convert both into Float
   - Otherwise: If either left or right operand is Int, convert both into Int
+- Note: Implicit conversion changes operand types, but the operator must still be valid for the resulting type. E.g., `+` is only defined for String/Int/Float (not Bool), so `true + 0` would convert both to Bool then fail
+
+### Short-circuit evaluation
+- `&&` stops at the first falsy value
+- `||` stops at the first truthy value
+
+### Modulo
+- The `%` operator works on both Int and Float (e.g., `15.5 % 3` returns `0.5`)
 
 ### Spread
 - Spread operator can only be used within an argument list, used to fill a collection value into the argument list; it could be positioned anywhere (does not necessarily at the end)
@@ -202,6 +215,7 @@ print(a); # 10
 
 ## If expression
 - If expression returns the value of the picked branch
+- The final `else` is optional; if omitted and no condition matches, the `if` expression evaluates to `null`
 ```
 var choiceCode = 
     if choice == "Apple" {0}
@@ -209,15 +223,22 @@ var choiceCode =
     else if choice == "Coconut" {2}
     else if choice == "Durian" {3}
     else if choice == "Elderberry" {4};
+
+# Without else — produces null when condition is false
+var maybe = if x > 0 { "positive" };
 ```
 
 ## Element access
 - Element access (brackets `[...]`) could be used on collection values in which their type is an indexed collection
 - The element could be of any type, it is important to match the correct type with what the collection expects
+- For mutable indexed collections (list, map), you can also assign new values to elements via `col[key] = value`. For maps, assigning to a non-existent key inserts a new entry
 ```
 "Hello"[0] # return "H"
 map.of("key", "value")["key"] # return "value"
 map.of(0, "value")[0] # return "value"
+var m = map.of("a", 1);
+m["a"] = 2; # map mutation
+m["b"] = 3; # map insertion via assignment
 ```
 
 ## Functions and Call
@@ -306,6 +327,18 @@ map.filter(map Map, lambda Func): creates a new map from the filter function of 
 ### Datetime
 ```
 datetime.now(): returns the current Unix timestamp in milliseconds.
+datetime.parse(s String): parses an ISO 8601 / RFC 3339 date string and returns a Unix timestamp in ms
+datetime.format(ts Int, fmt String): formats a Unix millisecond timestamp in UTC. Supported formats: "rfc3339", "date", "time", "datetime"
+```
+
+### Duration
+```
+duration.parse(s String): parses a duration string (Go's time.ParseDuration syntax) and returns milliseconds. Supports ns, us/µs, ms, s, m, h
+duration.days(n Int|Float|Bool): converts n days to milliseconds
+duration.hours(n Int|Float|Bool): converts n hours to milliseconds
+duration.minutes(n Int|Float|Bool): converts n minutes to milliseconds
+duration.seconds(n Int|Float|Bool): converts n seconds to milliseconds
+duration.millis(n Int|Float|Bool): converts n milliseconds to milliseconds (identity)
 ```
 
 ### Type
@@ -523,6 +556,7 @@ primary_expression =
   | parenthesized_expression
   | block_expression
   | object_literal
+  | array_literal
   | if_expression
   ;
 
@@ -532,6 +566,8 @@ object_literal = "{" , [ ws ] , [ object_literal_entries ] , [ ws ] , "}" ;
 object_literal_entries = object_literal_entry , { ws , "," , ws , object_literal_entry } , [ ws , "," ] ;
 object_literal_entry = object_literal_key , ws , ":" , ws , expression ;
 object_literal_key = identifier | string_lit ;
+array_literal = "[" , [ ws ] , [ array_literal_elements ] , [ ws ] , "]" ;
+array_literal_elements = expression , { ws , "," , ws , expression } , [ ws , "," ] ;
 if_expression = "if" , ws , expression , ws , block_expression ,
                 { ws , "else" , ws , "if" , ws , expression , ws , block_expression } ,
                 [ ws , "else" , ws , block_expression ] ;
