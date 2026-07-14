@@ -54,6 +54,7 @@ func runInterpreter(ctx context.Context, it *exec.Interpreter, wg *sync.WaitGrou
 				fmt.Print(" ")
 			}
 			fmt.Print("\n")
+			fmt.Printf("* Checksum: %s\n", frontend.Checksum(tokens))
 
 			parser := frontend.NewParser(tokens)
 			astTree := parser.Parse()
