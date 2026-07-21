@@ -112,6 +112,18 @@ func TestInterpreterScripts(t *testing.T) {
 			filename:    "conflict_var_print.rice",
 			expectError: true,
 		},
+
+		// --- Nil safety ---
+		{
+			name:        "SelectorOnNull",
+			filename:    "selector_on_null.rice",
+			expectError: true,
+		},
+		{
+			name:        "ElementAccessOnNull",
+			filename:    "element_access_on_null.rice",
+			expectError: true,
+		},
 	}
 
 	it := NewInterpreter(conf.NewDefaultEnvConfig())

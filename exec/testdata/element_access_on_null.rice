@@ -1,0 +1,2 @@
+# Element access on nil: should produce "cannot access element on nil" error
+null[0]

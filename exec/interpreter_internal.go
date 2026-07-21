@@ -161,6 +161,9 @@ func (i *Interpreter) VisitSelectorExpr(expr *ast.SelectorExpr) (types.Value, er
 	if err != nil {
 		return nil, i.throw(expr.Object, "cannot eval object").causedBy(err)
 	}
+	if obj == nil {
+		return nil, i.throw(expr.Object, "cannot select on nil")
+	}
 
 	idx, err := i.evalc(expr.Target, ExceptId)
 	if err != nil {
@@ -188,6 +191,9 @@ func (i *Interpreter) VisitElementAccessExpr(expr *ast.ElementAccessExpr) (types
 	obj, err := i.eval(expr.Object)
 	if err != nil {
 		return nil, i.throw(expr.Object, "cannot eval object").causedBy(err)
+	}
+	if obj == nil {
+		return nil, i.throw(expr.Object, "cannot access element on nil")
 	}
 
 	if v, ok := obj.(values.IndexedCollection); ok {
