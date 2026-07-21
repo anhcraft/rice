@@ -1,8 +1,9 @@
 package values
 
 import (
-	"github.com/anhcraft/rice/exec/types"
 	"iter"
+
+	"github.com/anhcraft/rice/exec/types"
 )
 
 var _ = types.Map.DefineType((*Map)(nil))
@@ -41,15 +42,24 @@ func (m *Map) Iterate() iter.Seq[types.Value] {
 }
 
 func (m *Map) Put(key types.Value, value types.Value) {
+	if ident, ok := key.(Identifier); ok {
+		key = String(ident)
+	}
 	m.hmap[key] = value
 }
 
 func (m *Map) Get(key types.Value) (types.Value, Bool) {
+	if ident, ok := key.(Identifier); ok {
+		key = String(ident)
+	}
 	val, ok := m.hmap[key]
 	return val, Bool(ok)
 }
 
 func (m *Map) Remove(key types.Value) {
+	if ident, ok := key.(Identifier); ok {
+		key = String(ident)
+	}
 	delete(m.hmap, key)
 }
 
@@ -79,6 +89,9 @@ func (m *Map) Element(id types.Value) (types.Value, error) {
 func (m *Map) PutElement(id types.Value, item types.Value) error {
 	if m.frozen {
 		return FrozenErr
+	}
+	if ident, ok := id.(Identifier); ok {
+		id = String(ident)
 	}
 	m.hmap[id] = item
 	return nil
