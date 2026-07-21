@@ -484,6 +484,8 @@ func (p *Parser) takeRightAssocBinary() ast.Expr {
 			target = t
 		case *ast.ElementAccessExpr:
 			target = t
+		case *ast.SelectorExpr:
+			target = t
 		default:
 			p.throw(invalidAssignmentTargetErr, off)
 			return ast.Invalid

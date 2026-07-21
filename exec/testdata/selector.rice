@@ -22,4 +22,18 @@ const f = strings.toLower("HELLO");  # "hello"
 # Chaining type-bound function calls
 const g = "  TRIM ME  ".trim().toLower();  # "trim me"
 
-a == "John" && b == 30 && c == true && d == "value" && e == "hello" && f == "hello" && g == "trim me"
+# Selector assignment (write via dot syntax)
+const writeM = map.of("key", "old");
+writeM.key = "new";
+const h = writeM.key;  # "new"
+
+# Selector assignment creates new key
+writeM.newKey = "added";
+const i = writeM.newKey;  # "added"
+
+# Chained selector assignment
+const nested = map.of("inner", map.of("value", 0));
+nested.inner.value = 42;
+const j = nested.inner.value;  # 42
+
+a == "John" && b == 30 && c == true && d == "value" && e == "hello" && f == "hello" && g == "trim me" && h == "new" && i == "added" && j == 42
