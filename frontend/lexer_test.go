@@ -496,3 +496,29 @@ func testNextToken(t *testing.T) {
 		})
 	}
 }
+
+func TestNewlineAgnostic(t *testing.T) {
+	const lf = "var a = 1\nvar b = 2\n"
+	forms := []string{lf, "var a = 1\r\nvar b = 2\r\n", "var a = 1\rvar b = 2\r"}
+	base, err := Tokenize(lf)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, src := range forms {
+		got, err := Tokenize(src)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(got) != len(base) {
+			t.Fatalf("token count %d, want %d", len(got), len(base))
+		}
+		for i := range base {
+			if got[i].tokenType != base[i].tokenType || got[i].start != base[i].start || got[i].end != base[i].end {
+				t.Fatalf("token %d: got %+v, want %+v", i, got[i], base[i])
+			}
+			if !reflect.DeepEqual(got[i].literal, base[i].literal) {
+				t.Fatalf("token %d literal: got %v, want %v", i, got[i].literal, base[i].literal)
+			}
+		}
+	}
+}

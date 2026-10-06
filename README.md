@@ -136,7 +136,17 @@ RuntimeError:
 ```
 
 ### 3. REPL/CLI
-- The official REPL/CLI allows you to quickly try the language, discover the underlying process of lexing and parsing.
+
+```
+go run ./cmd/rice run script.rice
+go run ./cmd/rice run script.ricebc
+go run ./cmd/rice repl [--debug]
+go run ./cmd/rice build -o out.ricebc script.rice
+go run ./cmd/rice disasm script.rice
+go run ./cmd/rice check script.rice
+```
+
+`run` compiles a `.rice` script or loads a `.ricebc` module, then executes it. `repl` keeps globals across lines (`--debug` prints tokens, checksum, and AST). `build` writes a portable module; `disasm` prints the listing; `check` compiles and exits 0 or 1.
 
 ![](./assets/repl.gif)
 

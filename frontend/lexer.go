@@ -43,7 +43,24 @@ type Lexer struct {
 }
 
 func NewLexerFromString(input string) *Lexer {
-	return &Lexer{input: []rune(input), line: 1}
+	return &Lexer{input: canonicalizeNewlines([]rune(input)), line: 1}
+}
+
+// canonicalizeNewlines rewrites CR and CRLF to a single LF so source positions,
+// and therefore compiled bytecode, do not depend on the file's newline convention.
+func canonicalizeNewlines(in []rune) []rune {
+	out := make([]rune, 0, len(in))
+	for i := 0; i < len(in); i++ {
+		if in[i] != '\r' {
+			out = append(out, in[i])
+			continue
+		}
+		out = append(out, '\n')
+		if i+1 < len(in) && in[i+1] == '\n' {
+			i++
+		}
+	}
+	return out
 }
 
 func (lexer *Lexer) eof() bool {
