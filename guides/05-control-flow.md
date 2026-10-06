@@ -46,6 +46,8 @@ for (;;) {
 - `cond`: optional expression (loop continues while truthy)
 - `post`: optional simple statement (executed after each iteration)
 
+Variables declared in `init` (such as `var i = 0`) are created **per iteration**. Closures created in the loop body capture that iteration's value. The `post` statement (`i++`) updates the *next* iteration's variable, so captured functions still see the value from the body. Names declared outside the loop (`for (; i < n; i++)`) stay shared across iterations.
+
 ## For Loop (Short Form / While Loop)
 
 Omit the parentheses and semicolons for a while-style loop:
@@ -69,7 +71,7 @@ for elem in list.of(1, 2, 3) {
 }
 ```
 
-The loop variable (`elem` above) is declared in the loop's scope and receives each element in order.
+The loop variable (`elem` above) is declared **per iteration** and receives each element in order. Closures created in the body capture that iteration's value.
 
 | Collection | What each iteration yields |
 |------------|---------------------------|

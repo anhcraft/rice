@@ -112,6 +112,8 @@ counter();      # 2
 counter();      # 3
 ```
 
+Loop variables declared in a `for` init clause (`for (var i = 0; ...)`) are captured per iteration, so each closure keeps the value from the iteration that created it.
+
 ## Call Syntax
 
 Function calls use parentheses and support the spread operator:

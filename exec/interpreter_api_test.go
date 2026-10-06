@@ -49,6 +49,7 @@ func TestInterpreterScripts(t *testing.T) {
 		{name: "Assignment Expression", filename: "assignment.rice", expected: values.Bool(true)},
 		{name: "Anonymous Functions", filename: "anonymous_func.rice", expected: values.Bool(true)},
 		{name: "Closures", filename: "closures.rice", expected: values.Bool(true)},
+		{name: "Per-Iteration Loop Variables", filename: "loop_var.rice", expected: values.Bool(true)},
 		{name: "Varargs", filename: "varargs.rice", expected: values.Bool(true)},
 		{name: "Spread Operator", filename: "spread.rice", expected: values.Bool(true)},
 		{name: "Parenthesized Expressions", filename: "paren_expr.rice", expected: values.Bool(true)},

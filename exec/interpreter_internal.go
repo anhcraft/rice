@@ -294,6 +294,10 @@ func (i *Interpreter) VisitForStmt(expr *ast.ForStmt) (types.Value, error) {
 		return nil, i.throw(expr, "for-loop evaluation gets interrupted").causedBy(err)
 	}
 
+	if decl, ok := expr.Init.(*ast.DeclareStmt); ok {
+		return i.visitForStmtPerIter(expr, decl)
+	}
+
 	// init is executed in a new lexical scope
 	if _, err := i.eval(expr.Init); err != nil {
 		return nil, i.throw(expr.Init, "cannot eval for-loop init").causedBy(err)
@@ -348,6 +352,121 @@ func (i *Interpreter) VisitForStmt(expr *ast.ForStmt) (types.Value, error) {
 
 		return nil, nil
 	}()
+}
+
+// visitForStmtPerIter runs a C-style for whose init is a variable declaration
+// (var/const i = ...). Other inits (assignment, empty, while-style) stay on the
+// shared-binding path in VisitForStmt.
+//
+// Semantics follow Go 1.22 loopvar. Each iteration owns a distinct i:
+//
+//  1. Init declares iteration 0's variable in a fresh scope.
+//  2. Cond and the body use that iteration's i. Assignments in the body update
+//     it in place (closures capture the variable, not a snapshot of its value).
+//  3. After the body — and on continue — the current value is copied into a
+//     new scope, then post (i++) runs against that next iteration's i.
+//     Closures from the body therefore still see the pre-post value (0,1,2
+//     rather than 1,2,3). break and return skip the copy and post.
+//
+// Scope layout: VisitForStmt's outer scope (anchor) → per-iteration scope
+// (owns i) → execBlockExpr's body scope (where closures are typically created;
+// MarkCaptured pins the body, this iteration's scope, and the anchor).
+//
+// Memory vs the old single binding, 64-bit:
+//
+//   - No escaping closure: +1 live LexicalScope for the whole loop, not per
+//     iteration. Recycled through mem.scopePool, so retained cost does not
+//     grow with N. Peak extra is one scope struct (~24B) plus a one-entry
+//     map (a few hundred bytes including the map bucket). lexicalScopeDepth
+//     is +1 versus the non-declaration path; it does not grow with N.
+//   - Escaping closures: that iteration's scope is not pooled. Extra retained
+//     memory is about 0.3–0.5 KiB per captured iteration (LexicalScope +
+//     1-entry map), on top of the body scope the Func already held. N
+//     captured iterations therefore retain O(N) extra scopes until those
+//     closures are unreachable.
+func (i *Interpreter) visitForStmtPerIter(expr *ast.ForStmt, decl *ast.DeclareStmt) (types.Value, error) {
+	i.env.EnterScope()
+	iterOpen := true
+	defer func() {
+		if iterOpen {
+			i.env.ExitScope()
+		}
+	}()
+	if err := i.checkScopeThrottle(); err != nil {
+		return nil, i.throw(expr, "for-loop evaluation gets interrupted").causedBy(err)
+	}
+
+	if _, err := i.eval(decl); err != nil {
+		return nil, i.throw(decl, "cannot eval for-loop init").causedBy(err)
+	}
+
+	id := values.Identifier(decl.Target.Value)
+
+	i.loopDepth++
+	defer func() {
+		i.loopDepth--
+	}()
+
+	for {
+		if err := i.checkContext(); err != nil {
+			return nil, i.throw(expr, "iteration gets interrupted").causedBy(err)
+		}
+
+		if expr.Cond != nil {
+			cond, err := i.eval(expr.Cond)
+			if err != nil {
+				return nil, i.throw(expr.Cond, "cannot eval for-loop condition").causedBy(err)
+			}
+
+			if b, err := values.AsBool(cond); err != nil {
+				return nil, i.throw(expr.Cond, "cannot implicitly convert condition of type %T to Bool", cond).causedBy(err)
+			} else if !b {
+				break
+			}
+		}
+
+		_, err := i.execBlockExpr(expr.Body, nil, nil)
+		if err != nil {
+			var breakSignal BreakSignal
+			if errors.As(err, &breakSignal) {
+				break
+			}
+			var returnSignal ReturnSignal
+			if errors.As(err, &returnSignal) {
+				return nil, returnSignal
+			}
+			var continueSignal ContinueSignal
+			if !errors.As(err, &continueSignal) {
+				return nil, i.throw(expr, "iteration gets interrupted").causedBy(err)
+			}
+		}
+
+		// Handoff: next iteration's i is declared before post, initialized
+		// from this iteration's value (see visitForStmtPerIter godoc).
+		val, ok := i.env.Get(id)
+		if !ok {
+			return nil, i.throw(expr, "cannot read for-loop variable %q", id)
+		}
+
+		i.env.ExitScope()
+		iterOpen = false
+
+		i.env.EnterScope()
+		iterOpen = true
+		if err := i.checkScopeThrottle(); err != nil {
+			return nil, i.throw(expr, "for-loop evaluation gets interrupted").causedBy(err)
+		}
+
+		if !i.env.Define(id, val, decl.Const) {
+			return nil, i.throw(expr, "cannot declare for-loop variable %q", id)
+		}
+
+		if _, err := i.eval(expr.Post); err != nil {
+			return nil, i.throw(expr.Post, "cannot eval for-loop post").causedBy(err)
+		}
+	}
+
+	return nil, nil
 }
 
 func (i *Interpreter) VisitForInStmt(expr *ast.ForInStmt) (types.Value, error) {
