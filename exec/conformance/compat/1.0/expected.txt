@@ -1,0 +1,7 @@
+# Frozen RICE 1.0 corpus. Do not regenerate with -update.
+arithmetic_ops.rice	float	10.5
+closures.rice	bool	true
+conflict_var_print.rice	error
+literals.rice	null
+port_vectors.rice	bool	true
+variables.rice	int	30

@@ -8,7 +8,10 @@ import (
 
 type Profiler interface {
 	Start(node ast.Hotspot)
+	StartAt(label string, pos ast.Pos)
 	End()
+	Depth() int
+	Unwind(depth int)
 	Reset()
 	Report() string
 }
@@ -24,7 +27,13 @@ func NewMuted() Muted {
 
 func (m Muted) Start(_ ast.Hotspot) {}
 
+func (m Muted) StartAt(_ string, _ ast.Pos) {}
+
 func (m Muted) End() {}
+
+func (m Muted) Depth() int { return 0 }
+
+func (m Muted) Unwind(_ int) {}
 
 func (m Muted) Reset() {}
 
@@ -75,8 +84,12 @@ func (p *Impl) getRecord(label string, pos ast.Pos, depth int, start time.Time) 
 }
 
 func (p *Impl) Start(node ast.Hotspot) {
+	p.StartAt(node.Label(), node.StartPos())
+}
+
+func (p *Impl) StartAt(label string, pos ast.Pos) {
 	p.depth++
-	record := p.getRecord(node.Label(), node.StartPos(), p.depth, time.Now())
+	record := p.getRecord(label, pos, p.depth, time.Now())
 
 	if !p.stack.IsEmpty() {
 		top, ok := p.stack.Peek()
@@ -87,6 +100,14 @@ func (p *Impl) Start(node ast.Hotspot) {
 		p.root = record
 	}
 	p.stack.Push(record)
+}
+
+func (p *Impl) Depth() int { return p.depth }
+
+func (p *Impl) Unwind(depth int) {
+	for p.depth > depth {
+		p.End()
+	}
 }
 
 func (p *Impl) End() {

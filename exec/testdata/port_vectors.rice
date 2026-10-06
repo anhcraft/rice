@@ -1,0 +1,28 @@
+# Port-rule vectors: float format, parse, code-point string order.
+
+# Float to string: Go strconv.FormatFloat(x, 'g', -1, 64)
+const f1 = string(1000000.0);
+const f2 = string(1.0);
+
+# ParseInt base 10, ParseFloat, ParseBool
+const i1 = int("42");
+const fl = float("1.5");
+const bTRUE = bool("TRUE");
+const btrue = bool("true");
+const bTrue = bool("True");
+const b1 = bool("1");
+const bt = bool("t");
+const bT = bool("T");
+const b0 = bool("0");
+const bfalse = bool("false");
+const bFALSE = bool("FALSE");
+const bFalse = bool("False");
+const bf = bool("f");
+const bF = bool("F");
+
+# Code-point order (UTF-8 / Go byte order on well-formed UTF-8)
+const o1 = "a" < "b";
+const o2 = "é" < "ê";
+const o3 = "e\u0301" < "\u00e9";
+
+f1 == "1e+06" && f2 == "1" && i1 == 42 && fl == 1.5 && bTRUE && btrue && bTrue && b1 && bt && bT && !b0 && !bfalse && !bFALSE && !bFalse && !bf && !bF && o1 && o2 && o3

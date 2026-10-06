@@ -8,9 +8,7 @@ import (
 	"time"
 
 	"github.com/anhcraft/rice/exec/conf"
-	"github.com/anhcraft/rice/exec/ctxkey"
 	"github.com/anhcraft/rice/exec/fun"
-	"github.com/anhcraft/rice/exec/mem"
 	_datetime "github.com/anhcraft/rice/exec/stdlib/datetime"
 	_duration "github.com/anhcraft/rice/exec/stdlib/duration"
 	_error "github.com/anhcraft/rice/exec/stdlib/error"
@@ -40,7 +38,7 @@ type CompiledTypeboundFunctionPackageList = map[types.Type]CompiledFunctionPacka
 // StandardNamespacedPackageEntry tracks a stdlib sub-package with its identity
 // so that individual sub-packages can be selectively disabled or overridden.
 type StandardNamespacedPackageEntry struct {
-	PkgID values.Identifier     // unique sub-package identifier, e.g. "io", "error", "type"
+	PkgID values.Identifier // unique sub-package identifier, e.g. "io", "error", "type"
 	Pkg   fun.FunctionPackage
 }
 
@@ -327,7 +325,8 @@ func buildNativeFuncSet(boundValue types.Value, id values.Identifier, pt *fun.Pa
 			}
 
 			if lookup.Contextual {
-				callCtx, _ := context.WithTimeout(ctx, execTimeout)
+				callCtx, cancel := context.WithTimeout(ctx, execTimeout)
+				defer cancel()
 
 				argValues = append([]reflect.Value{reflect.ValueOf(callCtx)}, argValues...)
 			}
@@ -340,10 +339,6 @@ func buildNativeFuncSet(boundValue types.Value, id values.Identifier, pt *fun.Pa
 					argValues[k] = reflect.Zero(typeOfValue)
 				}
 			}
-
-			env := ctx.Value(ctxkey.Env).(*mem.Environment)
-			env.PushFrame(site)
-			defer env.PopFrame()
 
 			out := lookup.Handler.Call(argValues)
 

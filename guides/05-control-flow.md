@@ -13,14 +13,14 @@ var choiceCode =
     else {4};
 ```
 
-Each branch must be a block expression. The final `else` is optional (if omitted, the `if` expression evaluates to `null` when no condition matches).
+Each branch must be a block expression. The final `else` is optional (if omitted, the `if` expression evaluates to `false` when no condition matches).
 
 ```rice
 var result = if x > 0 { "positive" } else { "non-positive" };
 
-# Without else — produces null when condition is false
+# Without else — produces false when the condition is false
 var maybe = if x > 0 { "positive" };
-print(maybe);   # null if x <= 0
+print(maybe);   # false if x <= 0
 ```
 
 ## For Loop (C-Style)
@@ -132,6 +132,8 @@ for (var i = 0; i < 3; i++) {
 ```
 
 There is no labeled break/continue — to exit an outer loop, use a flag variable.
+
+`break` and `continue` outside a loop, and `return` at script level, are compile errors. Integer division or remainder by zero is a runtime error.
 
 ---
 

@@ -143,7 +143,7 @@ RuntimeError:
 ## FAQ
 1. What is the file extension of Rice script? Simply, `.rice`
 2. Does Rice support resource constraints? Time-bound limit is supported per user-defined function, native function and the overall script (via Go context)
-3. What kind of interpreting Rice performs? Currently, it features an AST tree-walking interpreter, and eventually switch to bytecode interpreter in near future
+3. What kind of interpreting Rice performs? A stack bytecode VM. The compiler emits a portable `RICE` module (see [`docs/bytecode.md`](./docs/bytecode.md)).
 4. How can I extend Rice with custom Go functions? Rice is designed to be highly extensible. You can expose your own Go functions and types to the environment
 
 ## Roadmap
@@ -153,6 +153,6 @@ RuntimeError:
 | Base        | ✅     |
 | REPL/CLI    | ✅     |
 | Profiler    | ✅     |
-| Bytecode VM | ❌     |
+| Bytecode VM | ✅     |
 | LSP         | ❌     |
 | Playground  | ✅     |

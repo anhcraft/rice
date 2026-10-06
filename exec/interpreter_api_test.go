@@ -96,6 +96,7 @@ func TestInterpreterScripts(t *testing.T) {
 
 		// --- Implicit coercion ---
 		{name: "Implicit Coercion", filename: "implicit_coercion.rice", expected: values.Bool(true)},
+		{name: "Port Rule Vectors", filename: "port_vectors.rice", expected: values.Bool(true)},
 
 		// --- Namespace conflict detection ---
 		{

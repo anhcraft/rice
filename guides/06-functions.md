@@ -114,6 +114,8 @@ counter();      # 3
 
 Loop variables declared in a `for` init clause (`for (var i = 0; ...)`) are captured per iteration, so each closure keeps the value from the iteration that created it.
 
+Names in a block are resolved for the whole block (including later `var`/`const` in that block). A closure that reads a name before its declaration runs gets an unresolved-reference error, even if an outer binding exists. A function parameter with the same name as a built-in shadows the built-in inside that function.
+
 ## Call Syntax
 
 Function calls use parentheses and support the spread operator:

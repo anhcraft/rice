@@ -302,7 +302,7 @@ Based on the benchmark suite in [`exec/bench_test.go`](../exec/bench_test.go):
 - Collection operations (list/map/set): proportional to element count
 - Native function calls: overhead of reflection dispatch (~1-2µs)
 
-The interpreter is a tree-walking evaluator — it is not JIT-compiled. For throughput-sensitive workloads, push heavy logic into native Go functions and keep Rice scripts lightweight (configuration, DSL rules, simple transformations).
+The runtime is a stack bytecode VM — it is not JIT-compiled. For throughput-sensitive workloads, push heavy logic into native Go functions and keep Rice scripts lightweight (configuration, DSL rules, simple transformations).
 
 ---
 

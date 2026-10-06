@@ -58,7 +58,7 @@ var, const, if, else, func, for, in, continue, break, return
 
 ## Execution Model
 
-Rice scripts are parsed, compiled to an AST, and interpreted by the Go-based runtime. There is no JIT or bytecode compiler — execution is pure tree-walking interpretation, which keeps the embeddable footprint small.
+Rice scripts are parsed to an AST, compiled to a portable `RICE` bytecode module, and executed by a stack VM. The wire format is documented in [`docs/bytecode.md`](../docs/bytecode.md); `Interpret` still accepts an AST and compiles internally.
 
 ---
 

@@ -4,17 +4,22 @@ This guide covers how to embed the Rice scripting engine into your Go applicatio
 
 ## Overview
 
-The integration pipeline has three stages:
+The integration pipeline has four stages:
 
 ```
-Script (.rice) ──► Tokenize ──► Parse ──► Interpret
+Script (.rice) ──► Tokenize ──► Parse ──► Compile ──► VM
 ```
 
 | Stage | Package | Input | Output |
 |-------|---------|-------|--------|
 | Tokenize | [`frontend.Tokenize()`](../frontend/tokenizer.go) | `string` | `[]Token, error` |
 | Parse | [`frontend.NewParser()`](../frontend/parser.go) + `.Parse()` | `[]Token` | `[]ast.Stmt` |
+| Compile | [`compiler.Compile()`](../exec/compiler/compiler.go) | `[]ast.Stmt` | `*vm.Module` (see [`docs/bytecode.md`](../docs/bytecode.md)) |
+| Encode / Decode | [`(*Module).Encode`](../exec/vm/codec.go) / [`vm.Decode`](../exec/vm/codec.go) | module ↔ `[]byte` | portable `RICE` blob |
 | Interpret | [`(*Interpreter).Interpret()`](../exec/interpreter_api.go) | `[]ast.Stmt` + config | `types.Value, error` |
+| ExecuteModule | [`(*Interpreter).ExecuteModule()`](../exec/interpreter_api.go) | `*vm.Module` + config | `types.Value, error` |
+
+`Interpret` still accepts an AST: it compiles each statement to bytecode and runs the VM. `ExecuteModule` runs an already-decoded blob (the same bytes a TypeScript or Java port would load). `Decode` accepts older `major.minor` modules this VM still supports and rejects anything newer; see [Versioning](../docs/bytecode.md#versioning).
 
 ## Minimal Example
 

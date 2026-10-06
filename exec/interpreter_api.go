@@ -8,15 +8,15 @@ import (
 	"time"
 
 	"github.com/anhcraft/rice/exec/ast"
+	"github.com/anhcraft/rice/exec/compiler"
 	"github.com/anhcraft/rice/exec/conf"
 	"github.com/anhcraft/rice/exec/ctxkey"
 	"github.com/anhcraft/rice/exec/mem"
 	"github.com/anhcraft/rice/exec/profiler"
 	"github.com/anhcraft/rice/exec/types"
 	"github.com/anhcraft/rice/exec/types/values"
+	"github.com/anhcraft/rice/exec/vm"
 )
-
-var _ ast.Visitor = (*Interpreter)(nil)
 
 // Interpreter a single-threaded interpreter
 type Interpreter struct {
@@ -31,6 +31,7 @@ type Interpreter struct {
 	lock      sync.Mutex
 	sessionId uint16
 	env       *mem.Environment
+	vm        *vm.VM
 
 	// Per-execution
 	// -config
@@ -39,9 +40,7 @@ type Interpreter struct {
 	lexicalScopeLimit uint32
 
 	// -state
-	functionDepth int
-	loopDepth     int
-	dirty         bool
+	dirty bool
 }
 
 func NewInterpreter(cfg *conf.EnvConfig) *Interpreter {
@@ -50,6 +49,7 @@ func NewInterpreter(cfg *conf.EnvConfig) *Interpreter {
 		nativeFuncTimeout: cfg.NativeFuncTimeout,
 		env:               mem.NewEnvironment(cfg.PreAllocatedFrames),
 		typeBoundFuncPkg:  make(CompiledTypeboundFunctionPackageList),
+		vm:                &vm.VM{},
 	}
 
 	if cfg.ProfilerEnabled {
@@ -145,10 +145,15 @@ func (i *Interpreter) InterpretStream(ctx context.Context,
 
 	idx := 0
 	for e := range script {
-		val, err = i.eval(e)
-
-		if err != nil {
-			err = i.throw(e, "cannot eval script statement #%d", idx+1).causedBy(err)
+		mod, cerr := compiler.Compile([]ast.Stmt{e})
+		if cerr != nil {
+			err = cerr
+			val = nil
+		} else {
+			val, err = i.vm.Run(mod, i)
+			if err != nil {
+				err = i.throw(e, "cannot eval script statement #%d", idx+1).causedBy(faultToRuntime(err))
+			}
 		}
 
 		if errorRecover != nil {
@@ -163,4 +168,48 @@ func (i *Interpreter) InterpretStream(ctx context.Context,
 	}
 
 	return val, err
+}
+
+// ExecuteModule runs a decoded bytecode module with this interpreter as host.
+func (i *Interpreter) ExecuteModule(ctx context.Context, mod *vm.Module, cfg *conf.RunConfig) (types.Value, error) {
+	i.lock.Lock()
+	defer i.lock.Unlock()
+
+	if i.dirty {
+		i.cleanUp()
+	}
+
+	i.sessionId++
+	i.ctx = ctx
+	i.ctx = context.WithValue(i.ctx, ctxkey.SessionId, i.sessionId)
+	i.ctx = context.WithValue(i.ctx, ctxkey.LoggingOutput, i.loggingOutput)
+	i.ctx = context.WithValue(i.ctx, ctxkey.Env, i.env)
+	i.userFuncTimeout = cfg.UserFuncTimeout
+	i.lexicalScopeLimit = cfg.LexicalScopeLimit
+
+	i.env.PushFrame(values.RootCallSite)
+	i.profiler.Start(ast.Root{})
+	defer func() {
+		i.profiler.End()
+		i.env.PopFrame()
+		i.dirty = true
+	}()
+
+	for id, v := range cfg.Constants {
+		i.env.Define(id, v, true)
+	}
+
+	for id, v := range cfg.Variables {
+		if !i.env.Define(id, v, false) {
+			if err := i.env.Assign(id, v); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	val, err := i.vm.Run(mod, i)
+	if err != nil {
+		return nil, faultToRuntime(err)
+	}
+	return val, nil
 }

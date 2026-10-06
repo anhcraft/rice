@@ -1,0 +1,61 @@
+# filename, kind (null|bool|int|float|string|error|other), optional payload
+anonymous_func.rice	bool	true
+arithmetic_ops.rice	float	10.5
+array_literal.rice	bool	true
+assignment.rice	bool	true
+block_expr.rice	bool	true
+block_scope.rice	int	100
+break_continue.rice	bool	true
+closures.rice	bool	true
+comparison_ops.rice	bool	true
+conflict_const_function.rice	error
+conflict_var_namespace.rice	error
+conflict_var_print.rice	error
+datetime_format.rice	bool	true
+datetime_now.rice	bool	true
+datetime_parse.rice	bool	true
+duration_days.rice	bool	true
+duration_parse.rice	bool	true
+element_access.rice	bool	true
+element_access_on_null.rice	error
+error_handling.rice	bool	true
+for_clauses.rice	bool	true
+for_in_loop.rice	int	6
+for_loop.rice	int	10
+functional_programming.rice	bool	true
+if_else_chain.rice	bool	true
+if_expression.rice	string	"Positive"
+implicit_coercion.rice	bool	true
+io_funcs.rice	bool	true
+json_ops.rice	bool	true
+list_ops.rice	bool	true
+literals.rice	null
+logical_ops.rice	bool	true
+loop_var.rice	bool	true
+map_ops.rice	bool	true
+math_funcs.rice	bool	true
+modulo_ops.rice	bool	true
+nested_loop_control.rice	bool	true
+nested_shadowing.rice	bool	true
+null_literal.rice	bool	true
+object_literal.rice	bool	true
+operator_precedence.rice	bool	true
+paren_expr.rice	bool	true
+port_vectors.rice	bool	true
+postfix_chaining.rice	bool	true
+recursion.rice	int	55
+return_expr.rice	bool	true
+scientific_notation.rice	bool	true
+selector.rice	bool	true
+selector_on_null.rice	error
+set_ops.rice	bool	true
+short_circuit.rice	bool	true
+spread.rice	bool	true
+string_ops.rice	bool	true
+strings_native.rice	bool	true
+type_bound_funcs.rice	bool	true
+type_conversions.rice	bool	true
+unicode.rice	bool	true
+user_func.rice	int	25
+varargs.rice	bool	true
+variables.rice	int	30

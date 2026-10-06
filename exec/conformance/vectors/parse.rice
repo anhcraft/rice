@@ -1,0 +1,1 @@
+int("42") == 42 && float("1.5") == 1.5 && bool("TRUE") && bool("true") && bool("True") && bool("1") && bool("t") && bool("T") && !bool("0") && !bool("false") && !bool("FALSE") && !bool("False") && !bool("f") && !bool("F")
