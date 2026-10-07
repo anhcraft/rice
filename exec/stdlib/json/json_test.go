@@ -242,7 +242,7 @@ func TestEncodeFuncErrors(t *testing.T) {
 }
 
 func TestEncodeNativeFuncSetErrors(t *testing.T) {
-	nf := values.NewNativeFunctionSet(nil, nil)
+	nf := values.NewNativeFunctionSet(nil, "", nil)
 	_, err := Encode(nf)
 	if err == nil {
 		t.Error("Encode of a NativeFunctionSet should return an error")

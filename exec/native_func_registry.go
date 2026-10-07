@@ -303,7 +303,9 @@ func buildNativeFuncSet(boundValue types.Value, id values.Identifier, pt *fun.Pa
 
 	return values.NewNativeFunctionSet(
 		boundValue,
+		id,
 		func(ctx context.Context, self values.NativeFunctionSet, site values.CallSite, args []types.Value) (types.Value, error) {
+			ctx = values.WithCallSite(ctx, site)
 			var argValues []reflect.Value
 
 			if boundValue == nil {

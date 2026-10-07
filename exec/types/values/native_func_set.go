@@ -12,15 +12,20 @@ var _ Callable = NativeFunctionSet{}
 
 type NativeFunctionSet struct {
 	boundValue types.Value
+	name       Identifier
 	delegate   NativeFunctionSetDelegate
 }
 
-func NewNativeFunctionSet(val types.Value, delegate NativeFunctionSetDelegate) NativeFunctionSet {
-	return NativeFunctionSet{boundValue: val, delegate: delegate}
+func NewNativeFunctionSet(val types.Value, name Identifier, delegate NativeFunctionSetDelegate) NativeFunctionSet {
+	return NativeFunctionSet{boundValue: val, name: name, delegate: delegate}
 }
 
 func (f NativeFunctionSet) String() string {
 	return "NativeFunctionSet"
+}
+
+func (f NativeFunctionSet) Name() Identifier {
+	return f.name
 }
 
 func (f NativeFunctionSet) Type() types.Type {

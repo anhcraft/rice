@@ -118,6 +118,11 @@ type VM struct {
 	iters      []iterScope
 	scopeDepth uint32
 	argBuf     []types.Value
+
+	debug   bool
+	step    chan struct{}
+	curr    chan DebugPos
+	dbgDone chan struct{}
 }
 
 func (vm *VM) Run(mod *Module, host Host) (types.Value, error) {
@@ -132,7 +137,9 @@ func (vm *VM) Run(mod *Module, host Host) (types.Value, error) {
 	vm.iters = vm.iters[:0]
 	vm.scopeDepth = 0
 	vm.argBuf = vm.argBuf[:0]
-	return vm.execFn(mod, int(mod.Entry), nil, nil, values.RootCallSite)
+	val, err := vm.execFn(mod, int(mod.Entry), nil, nil, values.RootCallSite)
+	vm.debugFinish()
+	return val, err
 }
 
 func (vm *VM) invokeClosure(ctx context.Context, self *values.Func, site values.CallSite, args []types.Value) (types.Value, error) {
@@ -249,6 +256,10 @@ func (vm *VM) interpret(fr *frame) types.Value {
 	code := fr.fn.Bytecode
 	args := fr.fn.Arguments
 	for fr.ip < len(code) {
+		if debug && vm.debug {
+			<-vm.step
+		}
+
 		op := code[fr.ip]
 		arg := args[fr.ip]
 		fr.ip++
@@ -511,6 +522,10 @@ func (vm *VM) interpret(fr *frame) types.Value {
 		default:
 			panic(vm.fault("unknown opcode %#x", op))
 		}
+
+		if debug && vm.debug {
+			vm.curr <- DebugPos{Func: fr.fnIndex, IP: fr.ip}
+		}
 	}
 
 	if len(vm.Stack) > fr.stackBase {
@@ -568,7 +583,7 @@ func (vm *VM) call(fr *frame, callee types.Value, args []types.Value) types.Valu
 		panic(vm.fault("callee of type %T is not callable", callee))
 	}
 	sp := vm.span(fr, fr.ip-1)
-	site := values.CallSite{Caller: "CallExpr", StartPos: sp.start(), EndPos: sp.end()}
+	site := values.CallSite{Caller: calleeName(callee), StartPos: sp.start(), EndPos: sp.end()}
 
 	vm.scopeDepth++
 	if err := vm.checkScope(); err != nil {
@@ -579,7 +594,7 @@ func (vm *VM) call(fr *frame, callee types.Value, args []types.Value) types.Valu
 
 	res, err := callable.Call(vm.host.Context(), site, args)
 	if err != nil {
-		panic(vm.wrapErr(err))
+		panic(vm.noteCall(err, site))
 	}
 	return res
 }
@@ -736,6 +751,38 @@ func (vm *VM) site() values.CallSite {
 		return values.RootCallSite
 	}
 	return vm.frame().site
+}
+
+func calleeName(callee types.Value) string {
+	switch c := callee.(type) {
+	case *values.Func:
+		return c.String()
+	case values.NativeFunctionSet:
+		if c.Name() != "" {
+			return string(c.Name())
+		}
+		return "NativeFunctionSet"
+	default:
+		return "CallExpr"
+	}
+}
+
+func (vm *VM) noteCall(err error, site values.CallSite) error {
+	if err == nil {
+		return nil
+	}
+	if f, ok := err.(Fault); ok {
+		if !f.Source.Equal(site) {
+			return Fault{
+				Message: site.Caller,
+				Source:  site,
+				Start:   site.StartPos,
+				End:     site.EndPos,
+			}.causedBy(f)
+		}
+		return f
+	}
+	return vm.wrapErr(err)
 }
 
 func (vm *VM) fault(msg string, args ...any) Fault {

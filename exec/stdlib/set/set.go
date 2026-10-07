@@ -82,7 +82,7 @@ func Include(st *values.Set, valueToFind types.Value) (types.Value, error) {
 func Map(ctx context.Context, st *values.Set, lambda *values.Func) (types.Value, error) {
 	clone := values.NewSet()
 	for v := range st.Iterate() {
-		r, err := lambda.Call(ctx, values.InternalCallSite, []types.Value{v})
+		r, err := lambda.Call(ctx, values.CallbackCallSite(ctx), []types.Value{v})
 		if err != nil {
 			return nil, err
 		}
@@ -104,7 +104,7 @@ func Filter(ctx context.Context, st *values.Set, lambda *values.Func) (types.Val
 	newSet := values.NewSet()
 
 	for v := range st.Iterate() {
-		r, err := lambda.Call(ctx, values.InternalCallSite, []types.Value{v})
+		r, err := lambda.Call(ctx, values.CallbackCallSite(ctx), []types.Value{v})
 		if err != nil {
 			return nil, err
 		}

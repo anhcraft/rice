@@ -97,21 +97,19 @@ Run on Intel® Core™ i3-10105 @ 3.70 GHz, Go 1.24, Windows 11. Benchmarks exec
 ## Tools
 ### 1. Error stacktrace
 ```
-RuntimeError:
-└─Caused at <root> (at 0:0-0:0)
- ↑ cannot eval script statement #10 (at 97:2111-97:2166)
- └─Caused at CallExpr (at 97:2111-97:2166)
-  ↑ cannot eval block statement #4 (at 89:1910-89:1931)
-  ↑ cannot eval declaration value (at 89:1920-89:1931)
-  └─Caused at CallExpr (at 89:1920-89:1931)
-   ↑ cannot eval block statement #1 (at 54:1189-58:1344)
-   ↑ iteration gets interrupted (at 54:1189-58:1344)
-   ↑ cannot eval block statement #1 (at 56:1306-57:1334)
-   ↑ cannot eval assignment value (at 56:1313-57:1334)
-   ↑ cannot eval args[0] (at 56:1320-56:1324)
-   ↑ cannot eval index (at 56:1322-56:1323)
-   ↑ unresolved reference "j"
+RuntimeError: unresolved reference "missing" (2:22)
+ | 		const f = func() { missing };
+ | .....................^
+└─ at <root> (4:63-5:68)
+    while cannot eval script statement #3
+└─ at func() (4:63-5:68)
+    while func()
+└─ at func() (3:54-3:58)
+    while cannot eval declaration value
+    while unresolved reference "missing"
 ```
+
+`RuntimeError.Bind(source)` fills line/column and a caret snippet from the script text. `Frames()` and `Unwrap()` expose the same chain for host code. Single-step the VM with `Interpreter.Debug()` / `Step()` / `Position()` when built with `-tags rice_debug`.
 
 ### 2. Profiling
 ```

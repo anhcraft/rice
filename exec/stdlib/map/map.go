@@ -153,7 +153,7 @@ func Entries(m *values.Map) (types.Value, error) {
 func Map(ctx context.Context, m *values.Map, lambda *values.Func) (types.Value, error) {
 	newMap := values.NewMap()
 	for entry := range m.Iterate() {
-		result, err := lambda.Call(ctx, values.InternalCallSite, []types.Value{entry})
+		result, err := lambda.Call(ctx, values.CallbackCallSite(ctx), []types.Value{entry})
 		if err != nil {
 			return nil, err
 		}
@@ -179,7 +179,7 @@ func Map(ctx context.Context, m *values.Map, lambda *values.Func) (types.Value, 
 func Filter(ctx context.Context, m *values.Map, lambda *values.Func) (types.Value, error) {
 	newMap := values.NewMap()
 	for entry := range m.Iterate() {
-		result, err := lambda.Call(ctx, values.InternalCallSite, []types.Value{entry})
+		result, err := lambda.Call(ctx, values.CallbackCallSite(ctx), []types.Value{entry})
 		if err != nil {
 			return nil, err
 		}

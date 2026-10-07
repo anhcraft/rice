@@ -193,13 +193,14 @@ counter = counter + 1;    # mutable variable
 
 ## Error Handling
 
-Interpretation errors are returned as [`RuntimeError`](../exec/runtime_error.go), which includes a stack trace:
+Interpretation errors are returned as [`RuntimeError`](../exec/runtime_error.go), which includes a stack trace. Pass the script text to `Bind` to get an expr-style caret snippet:
 
 ```go
 result, err := it.Interpret(ctx, ast, runCfg)
 if err != nil {
     var re exec.RuntimeError
     if errors.As(err, &re) {
+        re = re.Bind(script)
         fmt.Println("Stack trace:")
         fmt.Println(re.Stacktrace())
     } else {
@@ -208,6 +209,8 @@ if err != nil {
     return
 }
 ```
+
+Single-step execution is available on the interpreter (`Debug`, `Step`, `Position`, `CallStack`) when built with `-tags rice_debug`. After each `Position` event, read `CallStack()` (and the VM operand stack), then call `Step` again.
 
 ### Error Recovery in Stream Mode
 

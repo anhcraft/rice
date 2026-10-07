@@ -1,51 +1,36 @@
 package exec
 
 import (
-	"errors"
 	"strings"
 )
 
-func buildErrorStacktrace(sb *strings.Builder, root *RuntimeError, depth int) {
-	if root == nil {
-		return
+func buildErrorStacktrace(re RuntimeError) string {
+	frames := re.Frames()
+	var sb strings.Builder
+	sb.WriteString("RuntimeError: ")
+	if len(frames) == 0 {
+		sb.WriteString(re.Error())
+		sb.WriteRune('\n')
+		return sb.String()
 	}
 
-	indent := strings.Repeat(" ", depth)
-	sb.WriteString(indent)
-	sb.WriteString("└─Caused at ")
-	sb.WriteString(root.source.String())
+	inner := frames[len(frames)-1]
+	sb.WriteString(inner.formatError())
 	sb.WriteRune('\n')
 
-	node := root
-	source := root.source
-
-	for node != nil {
-		if node.source != source {
-			break
-		}
-
-		sb.WriteString(indent)
-		sb.WriteString(" ↑ ")
-		sb.WriteString(node.Error())
+	for i := 0; i < len(frames); {
+		site := frames[i]
+		sb.WriteString("└─ at ")
+		sb.WriteString(site.siteString())
 		sb.WriteRune('\n')
-
-		cause := node.cause
-		if cause != nil {
-			var re RuntimeError
-
-			if errors.As(cause, &re) {
-				node = &re
-				continue
-			} else {
-				sb.WriteString(indent)
-				sb.WriteString(" ↑ ")
-				sb.WriteString(cause.Error())
-				sb.WriteRune('\n')
-			}
+		j := i
+		for j < len(frames) && frames[j].sameSite(site) {
+			sb.WriteString("    while ")
+			sb.WriteString(frames[j].Message)
+			sb.WriteRune('\n')
+			j++
 		}
-
-		return
+		i = j
 	}
-
-	buildErrorStacktrace(sb, node, depth+1)
+	return sb.String()
 }

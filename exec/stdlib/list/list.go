@@ -148,7 +148,7 @@ func Sort(ctx context.Context, li *values.List, lambda *values.Func) (types.Valu
 			return false
 		}
 
-		resultVal, err := lambda.Call(ctx, values.InternalCallSite, []types.Value{
+		resultVal, err := lambda.Call(ctx, values.CallbackCallSite(ctx), []types.Value{
 			li.At(values.Int(i)),
 			li.At(values.Int(j)),
 		})
@@ -196,7 +196,7 @@ func Map(ctx context.Context, li *values.List, lambda *values.Func) (types.Value
 	clone := values.NewList()
 	for i := values.Int(0); i < li.Size(); i++ {
 		v := li.At(i)
-		v, err = lambda.Call(ctx, values.InternalCallSite, []types.Value{v})
+		v, err = lambda.Call(ctx, values.CallbackCallSite(ctx), []types.Value{v})
 		if err != nil {
 			return nil, err
 		}
@@ -220,7 +220,7 @@ func Filter(ctx context.Context, li *values.List, lambda *values.Func) (types.Va
 
 	for i := values.Int(0); i < size; i++ {
 		element := li.At(i)
-		resultVal, err := lambda.Call(ctx, values.InternalCallSite, []types.Value{element})
+		resultVal, err := lambda.Call(ctx, values.CallbackCallSite(ctx), []types.Value{element})
 		if err != nil {
 			return nil, err
 		}

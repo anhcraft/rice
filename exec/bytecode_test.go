@@ -162,10 +162,12 @@ func TestInterpretStreamSequential(t *testing.T) {
 }
 
 func TestNestedErrorTrace(t *testing.T) {
-	_, err := runScript(t, `
+	script := `
 		const f = func() { missing };
-		f()
-	`)
+		const g = func() { f() };
+		g()
+	`
+	_, err := runScript(t, script)
 	if err == nil {
 		t.Fatal("expected error")
 	}
@@ -176,5 +178,63 @@ func TestNestedErrorTrace(t *testing.T) {
 	st := re.Stacktrace()
 	if !strings.Contains(st, "unresolved") {
 		t.Fatalf("trace:\n%s", st)
+	}
+	frames := re.Frames()
+	if len(frames) < 2 {
+		t.Fatalf("expected a call chain, got %d frames:\n%s", len(frames), st)
+	}
+	if re.Unwrap() == nil {
+		t.Fatal("expected Unwrap to return the cause")
+	}
+	var inner RuntimeError
+	if !errors.As(re.Unwrap(), &inner) {
+		t.Fatalf("expected Unwrap RuntimeError, got %T", re.Unwrap())
+	}
+	callees := 0
+	for _, f := range frames {
+		if f.Caller == "func()" {
+			callees++
+		}
+	}
+	if callees < 2 {
+		t.Fatalf("expected caller frames for f and g, got %d:\n%s", callees, st)
+	}
+
+	bound := re.Bind(script)
+	bst := bound.Stacktrace()
+	if !strings.Contains(bst, "unresolved") || !strings.Contains(bst, "^") {
+		t.Fatalf("bound trace:\n%s", bst)
+	}
+	last := bound.Frames()[len(bound.Frames())-1]
+	if last.Snippet == "" || !strings.Contains(last.Snippet, "^") {
+		t.Fatalf("expected caret snippet on the root cause: %+v", last)
+	}
+	if !strings.Contains(bst, "(") || last.Line < 1 {
+		t.Fatalf("expected (line:column) on the root cause: %+v\n%s", last, bst)
+	}
+}
+
+func TestCallbackErrorTrace(t *testing.T) {
+	_, err := runScript(t, `list.of(1).map(func(x){ missing })`)
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	var re RuntimeError
+	if !errors.As(err, &re) {
+		t.Fatalf("expected RuntimeError, got %T %v", err, err)
+	}
+	st := re.Stacktrace()
+	if !strings.Contains(st, "unresolved") {
+		t.Fatalf("trace:\n%s", st)
+	}
+	sawMap := false
+	for _, f := range re.Frames() {
+		if f.Caller == "map" && !f.Internal {
+			sawMap = true
+			break
+		}
+	}
+	if !sawMap {
+		t.Fatalf("expected a non-internal map call in the trace:\n%s", st)
 	}
 }
